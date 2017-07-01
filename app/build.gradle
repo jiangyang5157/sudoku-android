@@ -34,4 +34,9 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:25.4.0'
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    compile project(':go-sudoku')
+    compile project(':kotlin-core')
+    compile project(':kotlin-android-core')
+    compile project(':kotlin-android-sql')
 }
