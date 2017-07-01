@@ -1,1 +1,1 @@
-include ':app'
+include ':app', ':go-sudoku', ':kotlin-android-sql', ':kotlin-android-core', ':kotlin-core'
