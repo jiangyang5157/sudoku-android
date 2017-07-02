@@ -13,10 +13,9 @@ class AppSqliteOpenHelper(context: Context) : BaseSqliteOpenHelper(context, DB_F
         private val DB_VERSION: Int = 5
     }
 
-    override val sqlsCreateTableOnCreate: Array<String>
-        get() = arrayOf(PuzzleTable.SQL_CREATE_TABLE)
+    override val sqlsTableOnCreate: Array<String>
+        get() = arrayOf(PuzzleTable.SQL_TABLE_CREATION)
 
-    override val namesDropTableOnUpgrade: Array<String>
+    override val tableNamesOnUpgrade: Array<String>
         get() = arrayOf(PuzzleTable.TABLE_NAME)
-
 }
