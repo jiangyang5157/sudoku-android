@@ -1,6 +1,21 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
+    /*
+     Android Studio 3.0 C4
+     Gradle 4.0
+     com.android.tools.build:gradle:3.0.0-alpha4
+     =
+     Everything seems to be working fine except for the fact that .so native libraries files I have in a local AAR file are not packaged into the final APK.
+     There is no lib folder inside it.
+      */
+    ext.gradle_version = '2.3.2'
+
+    ext.junit_version = '4.12'
+    ext.espresso_core_version = '2.2.2'
+
+    ext.appcompat_v7_version = '25.0.0'
+    ext.constraint_layout_version = '1.0.2'
+
     ext.kotlin_version = '1.1.2-4'
 
     repositories {
@@ -9,7 +24,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-alpha4'
+        classpath "com.android.tools.build:gradle:$gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
