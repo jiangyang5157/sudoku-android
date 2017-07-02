@@ -1,10 +1,11 @@
 package com.gmail.jiangyang5157.sudoku.puzzle
 
 import android.support.test.runner.AndroidJUnit4
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import sudoku.Sudoku;
+import sudoku.Sudoku
 
 /**
  * Created by Yang Jiang on July 02, 2017
@@ -24,7 +25,7 @@ class SolverTest {
                     "........." +
                     "........."
 
-    // 2 solutions 9x9 puzzle
+    // 2 passable solutions 9x9 puzzle
     val hasTwo: String =
             "..3456789" +
                     "456789123" +
@@ -36,45 +37,26 @@ class SolverTest {
                     "642978531" +
                     "978531642"
 
-    /*
-    TODO
-    java.lang.UnsatisfiedLinkError:
-    dalvik.system.PathClassLoader[
-        DexPathList[
-            [
-                zip file "/system/framework/android.test.runner.jar",
-                zip file "/data/app/com.gmail.jiangyang5157.sudoku.test-1/base.apk",
-                zip file "/data/app/com.gmail.jiangyang5157.sudoku-2/base.apk"
-            ],
-            nativeLibraryDirectories=
-                [
-                    /data/app/com.gmail.jiangyang5157.sudoku.test-1/lib/x86_64,
-                    /data/app/com.gmail.jiangyang5157.sudoku-2/lib/x86_64,
-                    /system/lib64, /vendor/lib64
-                ]
-        ]
-    ] couldn't find "libgojni.so"
-     */
     @Test
     fun test_solver_none() {
-        var result: String
-        result = Sudoku.solveRaw(3, hasNone, 0)
-        println("test_solver result=" + result)
+        var result: String = Sudoku.solveRaw(3, hasNone, 0)
+        assertTrue(result.isNullOrEmpty())
         result = Sudoku.solveRaw(3, hasNone, 1)
-        println("test_solver result=" + result)
+        assertTrue(result.isNullOrEmpty())
     }
 
     @Test
     fun test_solver_two() {
-        var result: String
-        result = Sudoku.solveRaw(3, hasTwo, 0)
-        println("test_solver result=" + result)
+        val prefix = Sudoku.SOLUTION_PREFIX.toChar()
+        var result: String = Sudoku.solveRaw(3, hasTwo, 0)
+        assertEquals("${prefix}123456789456789123789123456214365897365897214897214365531642978642978531978531642", result)
         result = Sudoku.solveRaw(3, hasTwo, 1)
-        println("test_solver result=" + result)
+        assertEquals("${prefix}123456789456789123789123456214365897365897214897214365531642978642978531978531642", result)
         result = Sudoku.solveRaw(3, hasTwo, 2)
-        println("test_solver result=" + result)
+        assertEquals("${prefix}123456789456789123789123456214365897365897214897214365531642978642978531978531642" +
+                "${prefix}213456789456789123789123456124365897365897214897214365531642978642978531978531642", result)
         result = Sudoku.solveRaw(3, hasTwo, 3)
-        println("test_solver result=" + result)
+        assertEquals("${prefix}123456789456789123789123456214365897365897214897214365531642978642978531978531642" +
+                "${prefix}213456789456789123789123456124365897365897214897214365531642978642978531978531642", result)
     }
-
 }
