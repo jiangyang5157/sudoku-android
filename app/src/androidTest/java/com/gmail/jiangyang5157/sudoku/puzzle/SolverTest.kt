@@ -14,7 +14,7 @@ class SolverTest {
 
     @Test
     fun test_solver_9x9_0() {
-        val resultString = Sudoku.solveString(terminalJson_9x9_0)
+        val resultString = Sudoku.solveString(data.terminalJson_9x9_0)
         Assert.assertNotNull(resultString)
         Assert.assertTrue(resultString.isNotEmpty())
         Assert.assertEquals(resultString, "null")
@@ -22,7 +22,7 @@ class SolverTest {
 
     @Test
     fun test_solver_9x9_1() {
-        val resultString = Sudoku.solveString(terminalJson_9x9_1)
+        val resultString = Sudoku.solveString(data.terminalJson_9x9_1)
         Assert.assertNotNull(resultString)
         Assert.assertTrue(resultString.isNotEmpty())
         Assert.assertNotEquals(resultString, "null")
@@ -30,13 +30,14 @@ class SolverTest {
 
     @Test
     fun test_solver_9x9_2() {
-        val resultString = Sudoku.solveString(terminalJson_9x9_2)
+        val resultString = Sudoku.solveString(data.terminalJson_9x9_2)
         Assert.assertNotNull(resultString)
         Assert.assertTrue(resultString.isNotEmpty())
         Assert.assertNotEquals(resultString, "null")
     }
 
-    val terminalJson_9x9_0 = """
+    object data {
+        val terminalJson_9x9_0 = """
     {
         "E":9,
         "C":[
@@ -133,7 +134,7 @@ class SolverTest {
     }
     """
 
-    // "........." +
+        // "........." +
 // 	"..41.26.." +
 // 	".3..5..2." +
 // 	".2..1..3." +
@@ -142,7 +143,7 @@ class SolverTest {
 // 	".7..2..6." +
 // 	"..14.35.." +
 // 	"........." // 1 solutions puzzle
-    val terminalJson_9x9_1 = """
+        val terminalJson_9x9_1 = """
     {
         "E":9,
         "C":[
@@ -239,7 +240,7 @@ class SolverTest {
     }
     """
 
-    // "..3456789" +
+        // "..3456789" +
 // 	"456789123" +
 // 	"789123456" +
 // 	"..4365897" +
@@ -248,7 +249,7 @@ class SolverTest {
 // 	"531642978" +
 // 	"642978531" +
 // 	"978531642" // 2 solutions puzzle
-    val terminalJson_9x9_2 = """
+        val terminalJson_9x9_2 = """
     {
         "E":9,
         "C":[
@@ -344,5 +345,5 @@ class SolverTest {
         ]
     }
     """
-
+    }
 }
