@@ -12,13 +12,16 @@ import sudoku.Sudoku
 @RunWith(AndroidJUnit4::class)
 class GeneratorTest {
 
-    // 9x9 puzzle
-    val squares: Long = 3
-
     @Test
     fun test_generator() {
-        // func GeneratePuzzle(squares int, minSubGiven int, minTotalGiven int) string
-        val result = Sudoku.generatePuzzle(squares, 1, 23)
-        Assert.assertFalse(result.isNullOrEmpty())
+        val tBytes = Sudoku.genByte(9, 0, 4, 55)
+        Assert.assertNotNull(tBytes)
+        Assert.assertTrue(tBytes.isNotEmpty())
+        Assert.assertNotEquals("null", tBytes)
+        val tString = Sudoku.genString(9, 0, 4, 55)
+        Assert.assertNotNull(tString)
+        Assert.assertTrue(tString.isNotEmpty())
+        Assert.assertNotEquals("null", tString)
     }
+
 }
