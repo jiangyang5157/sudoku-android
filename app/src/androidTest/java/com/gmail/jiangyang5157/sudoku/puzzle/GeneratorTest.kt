@@ -14,11 +14,11 @@ class GeneratorTest {
 
     @Test
     fun test_generator() {
-        val tBytes = Sudoku.genByte(9, 0, 4, 55)
+        val tBytes = Sudoku.genByte(9, 4, 55)
         Assert.assertNotNull(tBytes)
         Assert.assertTrue(tBytes.isNotEmpty())
         Assert.assertNotEquals("null", tBytes)
-        val tString = Sudoku.genString(9, 0, 4, 55)
+        val tString = Sudoku.genString(9, 4, 55)
         Assert.assertNotNull(tString)
         Assert.assertTrue(tString.isNotEmpty())
         Assert.assertNotEquals("null", tString)
