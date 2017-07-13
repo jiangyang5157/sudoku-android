@@ -3,29 +3,21 @@ package com.gmail.jiangyang5157.sudoku.data
 /**
  * Created by Yang Jiang on July 09, 2017
  */
-class Terminal() {
+class Terminal(val e: Int) {
 
-    val edge: Int = 0
+    var c = arrayOfNulls<Cell>(e * e)
 
     override fun toString(): String {
-        return "TODO Terminal.toString"
+        val sb = StringBuilder()
+        sb.append("[$e]")
+        for (i in c.indices) {
+            if (i % e == 0) {
+                sb.append("\n")
+            }
+            sb.append("${c[i]}, ")
+        }
+        sb.append("\n")
+        return sb.toString()
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other?.javaClass != javaClass) return false
-
-        other as Terminal
-
-        // TODO
-//        if (id != other.id) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        // TODO
-//        return id?.hashCode() ?: 0
-        return 0
-    }
 }

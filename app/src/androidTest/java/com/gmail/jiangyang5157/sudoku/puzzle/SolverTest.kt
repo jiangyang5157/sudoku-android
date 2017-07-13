@@ -1,6 +1,7 @@
 package com.gmail.jiangyang5157.sudoku.puzzle
 
 import android.support.test.runner.AndroidJUnit4
+import org.json.JSONObject
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,6 +35,18 @@ class SolverTest {
         Assert.assertNotNull(resultString)
         Assert.assertTrue(resultString.isNotEmpty())
         Assert.assertNotEquals(resultString, "null")
+
+        val jsonObj = JSONObject(resultString)
+        val e = jsonObj.getInt("E")
+        Assert.assertEquals(9, e)
+        val c = jsonObj.getJSONArray("C")
+        Assert.assertEquals(81, c.length())
+        for (i in 0..c.length() - 1) {
+            val b = c.getJSONObject(i).getInt("B")
+            val d = c.getJSONObject(i).getInt("D")
+            Assert.assertTrue(b >= 0)
+            Assert.assertTrue(d >= 0)
+        }
     }
 
     object data {
