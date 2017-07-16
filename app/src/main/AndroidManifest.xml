@@ -29,6 +29,12 @@
             android:parentActivityName=".ui.SettingsActivity"
             android:theme="@style/AppTheme" />
 
+        <activity
+            android:name=".ui.PuzzleActivity"
+            android:label="@string/label_puzzle"
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/AppTheme" />
+
     </application>
 
 </manifest>

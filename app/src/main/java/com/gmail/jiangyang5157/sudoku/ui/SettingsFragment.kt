@@ -18,12 +18,12 @@ class SettingsFragment : BasePreferenceFragment() {
         addPreferencesFromResource(R.xml.preference_settings)
 
         val pPalette = findPreference(getString(R.string.label_palette))
-        pPalette.setOnPreferenceClickListener { preference ->
+        pPalette.setOnPreferenceClickListener { _ ->
             Log.d(TAG, "pPalette onClick")
             true
         }
         val pAbout = findPreference(getString(R.string.label_about))
-        pAbout.setOnPreferenceClickListener {
+        pAbout.setOnPreferenceClickListener { _ ->
             startActivity(Intent(activity, AboutActivity::class.java))
             true
         }

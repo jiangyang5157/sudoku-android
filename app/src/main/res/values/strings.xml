@@ -8,5 +8,6 @@
     <string name="label_about">About</string>
     <string name="label_version">Version</string>
     <string name="label_storage">Storage</string>
+    <string name="label_puzzle">Puzzle</string>
 
 </resources>
