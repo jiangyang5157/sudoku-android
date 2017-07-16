@@ -16,6 +16,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:label="@string/label_settings"
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".ui.AboutActivity"
+            android:label="@string/label_about"
+            android:parentActivityName=".ui.SettingsActivity"
+            android:theme="@style/AppTheme" />
+
     </application>
 
 </manifest>

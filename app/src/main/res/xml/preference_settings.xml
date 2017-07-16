@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <PreferenceCategory android:title="@string/label_basics">
+        <Preference
+            android:icon="@drawable/ic_palette_gray_24px"
+            android:key="@string/label_palette"
+            android:title="@string/label_palette" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/label_advanced">
+        <Preference
+            android:icon="@drawable/ic_info_gray_24px"
+            android:key="@string/label_about"
+            android:title="@string/label_about" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
