@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Sudoku Endless</string>
+    <string name="label_settings">Settings</string>
 </resources>
