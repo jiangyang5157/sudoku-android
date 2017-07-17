@@ -8,9 +8,9 @@ import com.gmail.jiangyang5157.kotlin_core.render.FrameRate
 /**
  * Created by Yang Jiang on July 16, 2017
  */
-class RenderThread(fps: Int, holder: SurfaceHolder, listener: RenderingListener) : Thread() {
+class RenderThread(fps: Int, holder: SurfaceHolder, listener: OnRenderListener) : Thread() {
 
-    interface RenderingListener {
+    interface OnRenderListener {
         fun onRender(canvas: Canvas)
     }
 
@@ -67,6 +67,7 @@ class RenderThread(fps: Int, holder: SurfaceHolder, listener: RenderingListener)
 
     fun paint(canvas: Canvas) {
         synchronized(lock) {
+            Log.d(TAG, "paint")
             renderingListener.onRender(canvas)
         }
     }
