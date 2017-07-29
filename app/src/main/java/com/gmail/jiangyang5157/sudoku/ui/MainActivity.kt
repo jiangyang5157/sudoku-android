@@ -30,10 +30,6 @@ class MainActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         when (id) {
-            R.id.menu_storage -> {
-                Log.d(TAG, "onOptionsItemSelected R.id.menu_storage")
-                return true
-            }
             R.id.menu_settings -> {
                 startActivity(Intent(this, SettingsActivity::class.java))
                 return true

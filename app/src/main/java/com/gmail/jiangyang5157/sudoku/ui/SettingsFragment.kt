@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
 import com.gmail.jiangyang5157.sudoku.R
-import android.content.Intent
 
 /**
  * Created by Yang Jiang on July 16, 2017
@@ -17,16 +16,8 @@ class SettingsFragment : BasePreferenceFragment() {
 
         addPreferencesFromResource(R.xml.preference_settings)
 
-        val pPalette = findPreference(getString(R.string.label_palette))
-        pPalette.setOnPreferenceClickListener { _ ->
-            Log.d(TAG, "pPalette onClick")
-            true
-        }
-        val pAbout = findPreference(getString(R.string.label_about))
-        pAbout.setOnPreferenceClickListener { _ ->
-            startActivity(Intent(activity, AboutActivity::class.java))
-            true
-        }
+        val pVersion = findPreference(getString(R.string.label_version))
+        pVersion.title = activity.packageManager.getPackageInfo(activity.packageName, 0).versionName
     }
 
     override fun getSharedPreferences(): SharedPreferences {
