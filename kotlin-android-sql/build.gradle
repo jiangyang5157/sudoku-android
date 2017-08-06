@@ -1,2 +1,2 @@
 configurations.maybeCreate("default")
-artifacts.add("default", file('kotlin-android-sql-release.aar'))
+artifacts.add("default", file('kotlin-android-sql-debug.aar'))

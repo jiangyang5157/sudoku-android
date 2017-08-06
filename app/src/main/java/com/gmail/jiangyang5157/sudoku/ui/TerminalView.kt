@@ -1,12 +1,11 @@
 package com.gmail.jiangyang5157.sudoku.ui
 
 import android.content.Context
-import android.graphics.Canvas
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import com.gmail.jiangyang5157.sudoku.render.RenderThread
 import android.view.MotionEvent
+import com.gmail.jiangyang5157.kotlin_core.render.RenderThread
 
 /**
  * Created by Yang Jiang on July 18, 2017
@@ -33,7 +32,7 @@ class TerminalView(ctx: Context) : SurfaceView(ctx), SurfaceHolder.Callback, Ren
     override fun surfaceCreated(holder: SurfaceHolder?) {
         Log.d(TAG, "surfaceCreated")
         if (renderThread == null || renderThread!!.state === Thread.State.TERMINATED) {
-            renderThread = RenderThread(60, holder!!, this)
+            renderThread = RenderThread(60, this)
         }
         renderThread!!.onStart()
         renderThread!!.onPause()
@@ -56,8 +55,13 @@ class TerminalView(ctx: Context) : SurfaceView(ctx), SurfaceHolder.Callback, Ren
         return super.onTouchEvent(event)
     }
 
-    override fun onRender(canvas: Canvas) {
+    override fun onRender() {
         Log.d(TAG, "onRender")
+        if (holder.surface.isValid) {
+            val canvas = holder.lockCanvas(null)
+            // TODO
+            holder.unlockCanvasAndPost(canvas)
+        }
     }
 
     companion object {
