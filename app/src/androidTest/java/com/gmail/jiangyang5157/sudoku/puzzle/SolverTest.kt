@@ -41,7 +41,7 @@ class SolverTest {
         Assert.assertEquals(9, e)
         val c = jsonObj.getJSONArray("C")
         Assert.assertEquals(81, c.length())
-        for (i in 0..c.length() - 1) {
+        for (i in 0 until c.length()) {
             val b = c.getJSONObject(i).getInt("B")
             val d = c.getJSONObject(i).getInt("D")
             Assert.assertTrue(b >= 0)

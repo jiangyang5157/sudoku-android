@@ -6,7 +6,6 @@ import android.view.MenuItem
 import com.gmail.jiangyang5157.kotlin_android_core.utils.instance
 import com.gmail.jiangyang5157.sudoku.R
 import android.content.Intent
-import android.util.Log
 
 class MainActivity : BaseActivity() {
 
