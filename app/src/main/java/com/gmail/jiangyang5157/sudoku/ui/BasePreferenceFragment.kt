@@ -16,12 +16,12 @@ abstract class BasePreferenceFragment : PreferenceFragment(), SharedPreferences.
     }
 
     override fun onResume() {
-        super.onDestroy()
+        super.onResume()
         getSharedPreferences().registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onPause() {
-        super.onDestroy()
+        super.onPause()
         getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this)
     }
 }

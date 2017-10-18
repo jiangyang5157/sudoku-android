@@ -3,28 +3,15 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">0dp</dimen>
 
-    <dimen name="space">8dp</dimen>
-    <dimen name="small_space">4dp</dimen>
-    <dimen name="tiny_space">2dp</dimen>
-
-    <dimen name="card_view_elevation">2dp</dimen>
+    <dimen name="space_normal">8dp</dimen>
+    <dimen name="space_small">4dp</dimen>
+    <dimen name="space_tiny">2dp</dimen>
 
     <dimen name="action_bar_height">56dp</dimen>
+    <dimen name="action_bar_content_view_margin_left">24dp</dimen>
 
     <dimen name="keypad_button_min_width">56dip</dimen>
     <dimen name="keypad_button_min_height">56dip</dimen>
     <dimen name="keypad_indention">28dip</dimen>
-
-    <dimen name="icon_button_padding">24dp</dimen>
-
-    <dimen name="action_bar_custom_view_margin_left">24dp</dimen>
-
-    <dimen name="puzzle_drawable_width">100dp</dimen>
-    <dimen name="puzzle_drawable_height">100dp</dimen>
-
-    <dimen name="palette_drawable_width">72dip</dimen>
-    <dimen name="palette_drawable_height">72dip</dimen>
-
-    <dimen name="list_item_height_single_line">48dip</dimen>
 
 </resources>

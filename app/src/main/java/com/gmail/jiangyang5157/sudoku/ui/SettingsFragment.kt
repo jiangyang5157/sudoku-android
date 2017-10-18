@@ -17,7 +17,9 @@ class SettingsFragment : BasePreferenceFragment() {
         addPreferencesFromResource(R.xml.preference_settings)
 
         val pVersion = findPreference(getString(R.string.label_version))
-        pVersion.title = activity.packageManager.getPackageInfo(activity.packageName, 0).versionName
+        pVersion.title = String.format("%s %s",
+                getString(R.string.label_version),
+                activity.packageManager.getPackageInfo(activity.packageName, 0).versionName)
     }
 
     override fun getSharedPreferences(): SharedPreferences {
