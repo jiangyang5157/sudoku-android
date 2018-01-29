@@ -3,13 +3,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion android_compile_sdk_version
+    buildToolsVersion android_build_tools_version
 
     defaultConfig {
         applicationId "com.gmail.jiangyang5157.sudoku"
-        minSdkVersion 21
-        targetSdkVersion 25
+        minSdkVersion android_min_sdk_version
+        targetSdkVersion android_target_sdk_version
         versionCode 22000
         versionName "2.2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
