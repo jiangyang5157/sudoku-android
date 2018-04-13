@@ -40,8 +40,6 @@ dependencies {
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    compile "com.google.inject:guice:$guice_version"
-
     compile project(':go-sudoku')
     compile project(':kotlin-core')
     compile project(':kotlin-android-core')
