@@ -21,6 +21,8 @@ buildscript {
 
     ext.kotlin_version = '1.2.30'
 
+    ext.guice_version = '3.0'
+
     repositories {
         google()
         jcenter()
