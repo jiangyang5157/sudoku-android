@@ -28,20 +28,20 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     testCompile "junit:junit:$junit_version"
     androidTestCompile("com.android.support.test.espresso:espresso-core:$espresso_core_version", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile "com.android.support:appcompat-v7:$appcompat_v7_version"
-    compile "com.android.support.constraint:constraint-layout:$constraint_layout_version"
+    implementation "com.android.support:appcompat-v7:$appcompat_v7_version"
+    implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    compile project(':go-sudoku')
-    compile project(':kotlin-core')
-    compile project(':kotlin-android-core')
-    compile project(':kotlin-android-sql')
+    implementation project(':go-sudoku')
+    implementation project(':kotlin-core')
+    implementation project(':kotlin-android-core')
+    implementation project(':kotlin-android-sql')
 }

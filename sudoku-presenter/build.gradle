@@ -33,7 +33,9 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    compile project(':kotlin-core')
+    implementation "com.google.inject:guice:$guice_version"
+
+    implementation project(':kotlin-injector')
 }
 
 repositories {

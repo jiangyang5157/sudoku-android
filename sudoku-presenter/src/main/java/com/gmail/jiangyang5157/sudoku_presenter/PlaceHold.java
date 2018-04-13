@@ -5,7 +5,4 @@ package com.gmail.jiangyang5157.sudoku_presenter;
  */
 public class PlaceHold {
 
-    public void asd() {
-        AppInjector sd;
-    }
 }
