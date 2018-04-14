@@ -15,7 +15,7 @@ class SolverTest {
 
     @Test
     fun test_solver_9x9_0() {
-        val resultString = Sudoku.solveString(data.terminalJson_9x9_0)
+        val resultString = Sudoku.solveString(TestData.terminalJson_9x9_0)
         Assert.assertNotNull(resultString)
         Assert.assertTrue(resultString.isNotEmpty())
         Assert.assertEquals(resultString, "null")
@@ -23,7 +23,7 @@ class SolverTest {
 
     @Test
     fun test_solver_9x9_1() {
-        val resultString = Sudoku.solveString(data.terminalJson_9x9_1)
+        val resultString = Sudoku.solveString(TestData.terminalJson_9x9_1)
         Assert.assertNotNull(resultString)
         Assert.assertTrue(resultString.isNotEmpty())
         Assert.assertNotEquals(resultString, "null")
@@ -31,7 +31,7 @@ class SolverTest {
 
     @Test
     fun test_solver_9x9_2() {
-        val resultString = Sudoku.solveString(data.terminalJson_9x9_2)
+        val resultString = Sudoku.solveString(TestData.terminalJson_9x9_2)
         Assert.assertNotNull(resultString)
         Assert.assertTrue(resultString.isNotEmpty())
         Assert.assertNotEquals(resultString, "null")
@@ -49,7 +49,7 @@ class SolverTest {
         }
     }
 
-    object data {
+    object TestData {
         const val terminalJson_9x9_0 = """
     {
         "E":9,

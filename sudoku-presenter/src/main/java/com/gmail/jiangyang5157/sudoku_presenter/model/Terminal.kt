@@ -5,7 +5,32 @@ package com.gmail.jiangyang5157.sudoku_presenter.model
  */
 data class Terminal(val e: Int) {
 
-    var c = arrayOfNulls<Cell>(e * e)
+    val c = arrayOfNulls<Cell>(e * e)
+
+//    fun fromJson(json: String): Boolean {
+//        try {
+//            val jsonObj = JSONObject(json)
+//            val e = jsonObj.getInt("E")
+//            if (e != this.e) {
+//                return false
+//            }
+//
+//            val c = jsonObj.getJSONArray("C")
+//            if (c.length() != this.c.size) {
+//                return false
+//            }
+//
+//            for (i in 0 until c.length()) {
+//                val b = c.getJSONObject(i).getInt("B")
+//                val d = c.getJSONObject(i).getInt("D")
+//                this.c[i] = Cell(b, d)
+//            }
+//        } catch (e: JSONException) {
+//            return false
+//        }
+//
+//        return true
+//    }
 
     override fun toString(): String {
         val sb = StringBuilder()

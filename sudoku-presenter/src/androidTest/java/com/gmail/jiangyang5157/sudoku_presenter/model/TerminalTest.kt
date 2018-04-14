@@ -12,7 +12,7 @@ import org.junit.runner.RunWith
 class TerminalTest {
 
     @Test
-    fun test_ToString() {
+    fun test_toString() {
         val terminal = Terminal(2)
         terminal.c[1] = Cell(1, 2)
 
@@ -96,5 +96,16 @@ class TerminalTest {
 
         Assert.assertTrue(t21.copy() == t41.copy())
     }
+
+//    @Test
+//    fun test_fromJson() {
+//        val t1 = Terminal(1)
+//        val t2 = Terminal(8)
+//        val t3 = Terminal(9)
+//
+//        Assert.assertFalse(t1.fromJson(""))
+//        Assert.assertFalse(t2.fromJson(SolverTest.TestData.terminalJson_9x9_2))
+//        Assert.assertTrue(t3.fromJson(SolverTest.TestData.terminalJson_9x9_2))
+//    }
 
 }

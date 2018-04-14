@@ -13,7 +13,7 @@ import org.junit.runner.RunWith
 class CellTest {
 
     @Test
-    fun test_ToString() {
+    fun test_toString() {
         val cell = Cell(b = 1, d = 2)
 
         Assert.assertEquals("#1@2:2", cell.toString())
