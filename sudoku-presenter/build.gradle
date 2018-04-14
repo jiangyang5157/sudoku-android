@@ -35,6 +35,8 @@ dependencies {
 
     implementation "com.google.inject:guice:$guice_version"
 
+    implementation "com.google.code.gson:gson:$gson_version"
+
     implementation project(':go-sudoku')
     implementation project(':kotlin-injector')
 }

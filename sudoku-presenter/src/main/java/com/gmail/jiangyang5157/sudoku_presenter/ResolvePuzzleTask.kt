@@ -2,6 +2,7 @@ package com.gmail.jiangyang5157.sudoku_presenter
 
 import android.os.AsyncTask
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
+import com.google.gson.Gson
 import sudoku.Sudoku
 
 /**
@@ -19,15 +20,10 @@ class ResolvePuzzleTask(puzzleResolution: SudokuContract.PuzzleResolution) : Asy
     }
 
     override fun doInBackground(vararg params: Terminal?): Terminal {
-        val tIn = params[0]!!
+        val t = params[0]!!
 
-        // todo convert Terminal 2 String
-        val sIn = ""
-        val sOut = Sudoku.solveString(sIn)
-        // todo convert String 2 Terminal
-        val tOut = Terminal(tIn.e)
-
-        return tOut
+        val s = Sudoku.solveString(t.toString())
+        return Gson().fromJson(s, Terminal::class.java)
     }
 
     override fun onCancelled(result: Terminal?) {

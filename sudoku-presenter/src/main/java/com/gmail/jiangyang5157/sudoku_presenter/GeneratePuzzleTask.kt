@@ -2,6 +2,7 @@ package com.gmail.jiangyang5157.sudoku_presenter
 
 import android.os.AsyncTask
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
+import com.google.gson.Gson
 import sudoku.Sudoku
 
 /**
@@ -24,10 +25,7 @@ class GeneratePuzzleTask(puzzleGeneration: SudokuContract.PuzzleGeneration) : As
         val minTotalGiven = params[2]!!
 
         val s = Sudoku.genString(0, edge.toLong(), minSubGiven.toLong(), minTotalGiven.toLong())
-        // todo convert String 2 Terminal
-        val t = Terminal(edge)
-
-        return t
+        return Gson().fromJson(s, Terminal::class.java)
     }
 
     override fun onCancelled(result: Terminal?) {

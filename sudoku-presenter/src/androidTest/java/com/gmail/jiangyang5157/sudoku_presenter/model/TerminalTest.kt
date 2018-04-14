@@ -14,9 +14,9 @@ class TerminalTest {
     @Test
     fun test_toString() {
         val terminal = Terminal(2)
-        terminal.c[1] = Cell(1, 2)
+        terminal.C[1] = Cell(1, 2)
 
-        Assert.assertEquals("#2*2\nnull, #1@2:2, \nnull, null, \n", terminal.toString())
+        Assert.assertEquals("{\"C\":[null,{\"B\":1,\"D\":2},null,null],\"E\":2}", terminal.toString())
     }
 
     @Test
@@ -36,10 +36,10 @@ class TerminalTest {
         Assert.assertTrue(t2 == t7)
         Assert.assertTrue(t1 != t2)
 
-        t3.c[1] = Cell(1, 1)
-        t4.c[1] = Cell(1, 2)
-        t5.c[1] = Cell(1, 2)
-        t6.c[0] = Cell(0, 0)
+        t3.C[1] = Cell(1, 1)
+        t4.C[1] = Cell(1, 2)
+        t5.C[1] = Cell(1, 2)
+        t6.C[0] = Cell(0, 0)
 
         Assert.assertTrue(t2 != t3)
         Assert.assertTrue(t2 != t4)
@@ -56,8 +56,8 @@ class TerminalTest {
 
         Assert.assertTrue(t5 != t6)
         Assert.assertTrue(t5 != t7)
-        t5.c[0] = Cell(0, 0)
-        t6.c[1] = Cell(1, 2)
+        t5.C[0] = Cell(0, 0)
+        t6.C[1] = Cell(1, 2)
         Assert.assertTrue(t5 == t6)
         Assert.assertTrue(t5 == t7)
     }
@@ -82,30 +82,19 @@ class TerminalTest {
         Assert.assertTrue(t21 == t41)
         Assert.assertTrue(t22 != t2)
 
-        t21.c[1] = Cell(1, 1)
-        t22.c[1] = Cell(1, 1)
+        t21.C[1] = Cell(1, 1)
+        t22.C[1] = Cell(1, 1)
 
         Assert.assertTrue(t22 != t2)
         Assert.assertTrue(t21 != t41)
 
-        t41.c[1] = Cell(1, 2)
+        t41.C[1] = Cell(1, 2)
         Assert.assertTrue(t21 != t41)
 
-        t41.c[1] = Cell(1, 1)
+        t41.C[1] = Cell(1, 1)
         Assert.assertTrue(t21 == t41)
 
         Assert.assertTrue(t21.copy() == t41.copy())
     }
-
-//    @Test
-//    fun test_fromJson() {
-//        val t1 = Terminal(1)
-//        val t2 = Terminal(8)
-//        val t3 = Terminal(9)
-//
-//        Assert.assertFalse(t1.fromJson(""))
-//        Assert.assertFalse(t2.fromJson(SolverTest.TestData.terminalJson_9x9_2))
-//        Assert.assertTrue(t3.fromJson(SolverTest.TestData.terminalJson_9x9_2))
-//    }
 
 }
