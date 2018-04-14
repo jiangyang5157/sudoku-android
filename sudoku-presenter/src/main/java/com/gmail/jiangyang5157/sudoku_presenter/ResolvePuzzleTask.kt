@@ -26,6 +26,10 @@ class ResolvePuzzleTask(puzzleResolution: SudokuContract.PuzzleResolution) : Asy
         return Gson().fromJson(s, Terminal::class.java)
     }
 
+    override fun onPostExecute(result: Terminal?) {
+        mPuzzleResolution.onPostPuzzleResolution(result)
+    }
+
     override fun onCancelled(result: Terminal?) {
         mPuzzleResolution.onPostPuzzleResolution(result)
     }

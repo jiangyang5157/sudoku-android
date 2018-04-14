@@ -27,13 +27,11 @@ class TerminalTest {
         val t4 = Terminal(2)
         val t5 = Terminal(2)
         val t6 = Terminal(2)
-        val t7 = t6
 
         Assert.assertTrue(t2 == t3)
         Assert.assertTrue(t2 == t4)
         Assert.assertTrue(t2 == t5)
         Assert.assertTrue(t2 == t6)
-        Assert.assertTrue(t2 == t7)
         Assert.assertTrue(t1 != t2)
 
         t3.C[1] = Cell(1, 1)
@@ -45,7 +43,6 @@ class TerminalTest {
         Assert.assertTrue(t2 != t4)
         Assert.assertTrue(t2 != t5)
         Assert.assertTrue(t2 != t6)
-        Assert.assertTrue(t2 != t7)
 
         Assert.assertTrue(t3 != t4)
         Assert.assertTrue(t3 != t5)
@@ -55,11 +52,9 @@ class TerminalTest {
         Assert.assertTrue(t4 != t6)
 
         Assert.assertTrue(t5 != t6)
-        Assert.assertTrue(t5 != t7)
         t5.C[0] = Cell(0, 0)
         t6.C[1] = Cell(1, 2)
         Assert.assertTrue(t5 == t6)
-        Assert.assertTrue(t5 == t7)
     }
 
     @Test

@@ -28,6 +28,10 @@ class GeneratePuzzleTask(puzzleGeneration: SudokuContract.PuzzleGeneration) : As
         return Gson().fromJson(s, Terminal::class.java)
     }
 
+    override fun onPostExecute(result: Terminal?) {
+        mPuzzleGeneration.onPostPuzzleGeneration(result)
+    }
+
     override fun onCancelled(result: Terminal?) {
         mPuzzleGeneration.onPostPuzzleGeneration(result)
     }
