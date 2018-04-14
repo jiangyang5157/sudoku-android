@@ -3,10 +3,8 @@ package com.gmail.jiangyang5157.sudoku.app
 import android.app.Application
 import android.content.res.Configuration
 import com.gmail.jiangyang5157.sudoku_presenter.SudokuPresenter
-import com.gmail.jiangyang5157.sudoku_presenter.module.SudokuModule
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
-import com.google.inject.Module
 
 /**
  * Created by Yang Jiang on April 14, 2018
@@ -38,10 +36,6 @@ class MainApplication : Application() {
                 bind(SudokuPresenter::class.java)
             }
         })
-    }
-
-    private fun buildMainModules(): Array<Module> {
-        return arrayOf(SudokuModule())
     }
 
     /**
