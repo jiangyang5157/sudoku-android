@@ -6,9 +6,9 @@ package com.gmail.jiangyang5157.sudoku.db
 class PuzzleTable {
 
     companion object {
-        val TABLE_NAME: String = "Puzzle"
+        const val TABLE_NAME: String = "Puzzle"
 
-        val SQL_TABLE_CREATION: String
+        const val SQL_TABLE_CREATION: String
                 = "create table " +
                 "$TABLE_NAME(${Column.KEY_ROWID} integer primary key autoincrement, " +
                 "${Column.KEY_CACHE} text, " +
@@ -19,12 +19,12 @@ class PuzzleTable {
     }
 
     object Column {
-        val KEY_ROWID: String = "_id"
+        const val KEY_ROWID: String = "_id"
 
-        val KEY_CACHE: String = "cache"
-        val KEY_DRAWABLE: String = "drawable"
-        val KEY_DATE: String = "date"
-        val KEY_TIMER: String = "timer"
-        val KEY_BEST_TIME: String = "best_time"
+        const val KEY_CACHE: String = "cache"
+        const val KEY_DRAWABLE: String = "drawable"
+        const val KEY_DATE: String = "date"
+        const val KEY_TIMER: String = "timer"
+        const val KEY_BEST_TIME: String = "best_time"
     }
 }

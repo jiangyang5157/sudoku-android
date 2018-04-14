@@ -2,9 +2,9 @@ package com.gmail.jiangyang5157.sudoku.ui
 
 import android.content.Context
 import android.util.Log
+import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import android.view.MotionEvent
 import com.gmail.jiangyang5157.kotlin_core.render.RenderThread
 
 /**
@@ -12,12 +12,12 @@ import com.gmail.jiangyang5157.kotlin_core.render.RenderThread
  */
 class TerminalView(ctx: Context) : SurfaceView(ctx), SurfaceHolder.Callback, RenderThread.OnRenderListener {
 
-    private var renderThread: RenderThread? = null
-
     init {
-        isClickable = true
         holder.addCallback(this)
+        isClickable = true
     }
+
+    private var renderThread: RenderThread? = null
 
     override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
         Log.d(TAG, "surfaceChanged $width x $height")
@@ -31,23 +31,27 @@ class TerminalView(ctx: Context) : SurfaceView(ctx), SurfaceHolder.Callback, Ren
 
     override fun surfaceCreated(holder: SurfaceHolder?) {
         Log.d(TAG, "surfaceCreated")
-        if (renderThread == null || renderThread!!.state === Thread.State.TERMINATED) {
-            renderThread = RenderThread(60, this)
+        if (renderThread == null || renderThread?.state === Thread.State.TERMINATED) {
+            renderThread = RenderThread(FPS_DEFAULT, this)
         }
-        renderThread!!.onStart()
-        renderThread!!.onPause()
+        renderThread?.onStart()
+        renderThread?.onPause()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> renderThread!!.onResume()
+            MotionEvent.ACTION_DOWN -> {
+                renderThread?.onResume()
+            }
             MotionEvent.ACTION_UP -> {
-                renderThread!!.onPause()
-                renderThread!!.onRefresh()
+                renderThread?.onPause()
+                renderThread?.onRefresh()
             }
             MotionEvent.ACTION_MOVE -> {
             }
-            MotionEvent.ACTION_CANCEL -> renderThread!!.onPause()
+            MotionEvent.ACTION_CANCEL -> {
+                renderThread?.onPause()
+            }
             else -> {
             }
         }
@@ -65,6 +69,9 @@ class TerminalView(ctx: Context) : SurfaceView(ctx), SurfaceHolder.Callback, Ren
     }
 
     companion object {
-        val TAG = "TerminalView"
+        const val TAG = "TerminalView"
+
+        const val FPS_DEFAULT = 60
     }
+
 }

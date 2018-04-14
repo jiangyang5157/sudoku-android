@@ -9,8 +9,8 @@ import com.gmail.jiangyang5157.kotlin_android_sql.BaseSqliteOpenHelper
 class AppSqliteOpenHelper(context: Context) : BaseSqliteOpenHelper(context, DB_FILE_NAME, null, DB_VERSION) {
 
     companion object {
-        private val DB_FILE_NAME: String = "sudoku_endless.db"
-        private val DB_VERSION: Int = 5
+        private const val DB_FILE_NAME: String = "sudoku_endless.db"
+        private const val DB_VERSION: Int = 5
     }
 
     override val sqlsTableOnCreate: Array<String>
