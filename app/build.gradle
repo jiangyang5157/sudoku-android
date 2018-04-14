@@ -40,7 +40,6 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation project(':go-sudoku')
     implementation project(':kotlin-core')
     implementation project(':kotlin-android-core')
     implementation project(':kotlin-android-sql')

@@ -1,4 +1,4 @@
-package com.gmail.jiangyang5157.sudoku.puzzle
+package com.gmail.jiangyang5157.sudoku_presenter.puzzle
 
 import android.support.test.runner.AndroidJUnit4
 import org.json.JSONObject
@@ -50,7 +50,7 @@ class SolverTest {
     }
 
     object data {
-        val terminalJson_9x9_0 = """
+        const val terminalJson_9x9_0 = """
     {
         "E":9,
         "C":[
@@ -156,7 +156,7 @@ class SolverTest {
 // 	".7..2..6." +
 // 	"..14.35.." +
 // 	"........." // 1 solutions puzzle
-        val terminalJson_9x9_1 = """
+        const val terminalJson_9x9_1 = """
     {
         "E":9,
         "C":[
@@ -262,7 +262,7 @@ class SolverTest {
 // 	"531642978" +
 // 	"642978531" +
 // 	"978531642" // 2 solutions puzzle
-        val terminalJson_9x9_2 = """
+        const val terminalJson_9x9_2 = """
     {
         "E":9,
         "C":[
