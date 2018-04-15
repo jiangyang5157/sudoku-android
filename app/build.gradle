@@ -43,7 +43,6 @@ dependencies {
     implementation "com.google.inject:guice:$guice_version"
 
     implementation project(':kotlin-core')
-    implementation project(':kotlin-injector')
 
     implementation project(':kotlin-android-core')
     implementation project(':kotlin-android-sql')

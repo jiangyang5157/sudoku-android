@@ -2,9 +2,6 @@ package com.gmail.jiangyang5157.sudoku.app
 
 import android.app.Application
 import android.content.res.Configuration
-import com.gmail.jiangyang5157.sudoku_presenter.SudokuPresenter
-import com.google.inject.AbstractModule
-import com.google.inject.Guice
 
 /**
  * Created by Yang Jiang on April 14, 2018
@@ -25,17 +22,6 @@ class MainApplication : Application() {
      */
     override fun onCreate() {
         super.onCreate()
-
-        // todo
-//        val modules: Array<Module> = arrayOf(SudokuModule())
-//        AppInjector.create(*modules)
-        // todo Remove
-        var injector = Guice.createInjector(object : AbstractModule() {
-
-            override fun configure() {
-                bind(SudokuPresenter::class.java)
-            }
-        })
     }
 
     /**

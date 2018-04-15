@@ -32,7 +32,7 @@ class SudokuPresenter : SudokuContract.Presenter {
         mGeneratePuzzleTask?.execute(edge, minSubGiven, minTotalGiven)
     }
 
-    override fun solvePuzzle() {
+    override fun resolvePuzzle() {
         if (mResolvePuzzleTask?.status != AsyncTask.Status.FINISHED) {
             mResolvePuzzleTask?.cancel(true)
         }

@@ -23,7 +23,7 @@ interface SudokuContract {
 
         fun generatePuzzle(edge: Int, minSubGiven: Int, minTotalGiven: Int)
 
-        fun solvePuzzle()
+        fun resolvePuzzle()
     }
 
     interface View : PuzzleGeneration, PuzzleResolution
