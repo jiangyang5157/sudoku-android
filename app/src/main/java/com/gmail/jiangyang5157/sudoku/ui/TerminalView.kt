@@ -1,77 +1,52 @@
 package com.gmail.jiangyang5157.sudoku.ui
 
 import android.content.Context
-import android.util.Log
+import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.SurfaceHolder
-import android.view.SurfaceView
-import com.gmail.jiangyang5157.kotlin_core.render.RenderThread
+import com.gmail.jiangyang5157.kotlin_android_view.RenderView
 
 /**
  * Created by Yang Jiang on July 18, 2017
  */
-class TerminalView(ctx: Context) : SurfaceView(ctx), SurfaceHolder.Callback, RenderThread.OnRenderListener {
+class TerminalView : RenderView {
 
-    init {
-        holder.addCallback(this)
-        isClickable = true
-    }
+    constructor(context: Context)
+            : super(context)
 
-    private var renderThread: RenderThread? = null
+    constructor(context: Context, attrs: AttributeSet)
+            : super(context, attrs)
 
-    override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-        Log.d(TAG, "surfaceChanged $width x $height")
-        renderThread?.onRefresh()
-    }
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
+            : super(context, attrs, defStyleAttr)
 
-    override fun surfaceDestroyed(holder: SurfaceHolder?) {
-        Log.d(TAG, "surfaceDestroyed")
-        renderThread?.onStop()
-    }
-
-    override fun surfaceCreated(holder: SurfaceHolder?) {
-        Log.d(TAG, "surfaceCreated")
-        if (renderThread == null || renderThread?.state === Thread.State.TERMINATED) {
-            renderThread = RenderThread(FPS_DEFAULT, this)
-        }
-        renderThread?.onStart()
-        renderThread?.onPause()
+    fun setOnRenderCallback(callback: RenderView.OnRenderListener) {
+        setRenderListener(callback)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                renderThread?.onResume()
+                renderResume()
             }
             MotionEvent.ACTION_UP -> {
-                renderThread?.onPause()
-                renderThread?.onRefresh()
+                renderPause()
+                renderRefresh()
+                performClick()
             }
             MotionEvent.ACTION_MOVE -> {
             }
             MotionEvent.ACTION_CANCEL -> {
-                renderThread?.onPause()
+                renderPause()
             }
             else -> {
             }
         }
-
         return super.onTouchEvent(event)
     }
 
-    override fun onRender() {
-        Log.d(TAG, "onRender")
-        if (holder.surface.isValid) {
-            val canvas = holder.lockCanvas(null)
-            // TODO
-            holder.unlockCanvasAndPost(canvas)
-        }
-    }
-
-    companion object {
-        const val TAG = "TerminalView"
-
-        const val FPS_DEFAULT = 60
+    override fun performClick(): Boolean {
+        super.performClick()
+        return true
     }
 
 }

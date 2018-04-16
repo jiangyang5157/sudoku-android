@@ -46,6 +46,7 @@ dependencies {
 
     implementation project(':kotlin-android-core')
     implementation project(':kotlin-android-sql')
+    implementation project(':kotlin-android-view')
 
     implementation project(':sudoku-presenter')
 }
