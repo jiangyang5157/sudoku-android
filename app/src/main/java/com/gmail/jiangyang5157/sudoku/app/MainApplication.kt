@@ -25,9 +25,9 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         AppInjector.create(
-                AppModule(),
+                AppModule(this),
                 SudokuModule(),
-                DbModule(this))
+                DbModule())
     }
 
     /**
