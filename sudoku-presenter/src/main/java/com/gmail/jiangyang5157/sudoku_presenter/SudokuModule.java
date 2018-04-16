@@ -1,7 +1,5 @@
-package com.gmail.jiangyang5157.sudoku_presenter.module;
+package com.gmail.jiangyang5157.sudoku_presenter;
 
-import com.gmail.jiangyang5157.sudoku_presenter.SudokuContract;
-import com.gmail.jiangyang5157.sudoku_presenter.SudokuPresenter;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
