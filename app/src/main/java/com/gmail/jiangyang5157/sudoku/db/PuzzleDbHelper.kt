@@ -6,7 +6,9 @@ import com.gmail.jiangyang5157.kotlin_android_sql.BaseSqliteOpenHelper
 /**
  * Created by Yang Jiang on July 02, 2017
  */
-class AppSqliteOpenHelper(context: Context) : BaseSqliteOpenHelper(context, DB_FILE_NAME, null, DB_VERSION) {
+class PuzzleDbHelper : BaseSqliteOpenHelper {
+
+    constructor(context: Context) : super(context, DB_FILE_NAME, null, DB_VERSION)
 
     companion object {
         private const val DB_FILE_NAME: String = "sudoku_endless.db"

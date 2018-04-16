@@ -2,7 +2,7 @@ package com.gmail.jiangyang5157.sudoku.app
 
 import android.app.Application
 import android.content.res.Configuration
-import com.gmail.jiangyang5157.sudoku.db.SqliteModule
+import com.gmail.jiangyang5157.sudoku.db.DbModule
 import com.gmail.jiangyang5157.sudoku_presenter.SudokuModule
 
 /**
@@ -27,7 +27,7 @@ class MainApplication : Application() {
         AppInjector.create(
                 AppModule(),
                 SudokuModule(),
-                SqliteModule())
+                DbModule(this))
     }
 
     /**

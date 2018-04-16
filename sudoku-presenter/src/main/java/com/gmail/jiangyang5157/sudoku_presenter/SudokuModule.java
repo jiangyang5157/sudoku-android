@@ -14,7 +14,7 @@ public class SudokuModule extends AbstractModule {
     }
 
     @Provides
-    SudokuPresenter SudokuPresenter() {
+    SudokuPresenter sudokuPresenterProvider() {
         return new SudokuPresenter();
     }
 

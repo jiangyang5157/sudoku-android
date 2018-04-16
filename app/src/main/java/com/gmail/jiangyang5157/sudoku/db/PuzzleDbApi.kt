@@ -3,20 +3,24 @@ package com.gmail.jiangyang5157.sudoku.db
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.util.Log
 import com.gmail.jiangyang5157.kotlin_android_sql.BaseSqliteApi
-import com.gmail.jiangyang5157.kotlin_android_sql.BaseSqliteOpenHelper
 
 /**
  * Created by Yang Jiang on July 02, 2017
  */
-class AppSqliteApi private constructor(sqliteOpenHelper: BaseSqliteOpenHelper) : BaseSqliteApi(sqliteOpenHelper) {
+class PuzzleDbApi : BaseSqliteApi {
+
+    private constructor(puzzleDbHelper: PuzzleDbHelper) : super(puzzleDbHelper) {
+        Log.d("####", "PuzzleDbApi::constructor()")
+    }
 
     companion object {
-        private var instance: AppSqliteApi? = null
+        private var instance: PuzzleDbApi? = null
 
-        fun getInstance(context: Context): AppSqliteApi {
+        fun getInstance(context: Context): PuzzleDbApi {
             if (instance == null) {
-                instance = AppSqliteApi(AppSqliteOpenHelper(context))
+                instance = PuzzleDbApi(PuzzleDbHelper(context))
             }
             return instance!!
         }
