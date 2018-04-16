@@ -10,8 +10,6 @@ import java.util.*
  */
 object AppInjector {
 
-    // todo hold feature injectors
-
     private var mInjector: Injector? = null
 
     fun getInjector() = mInjector
@@ -20,7 +18,7 @@ object AppInjector {
         mInjector = Guice.createInjector(Arrays.asList(*modules))
     }
 
-    fun destroy() {
+    fun close() {
         mInjector = null
     }
 

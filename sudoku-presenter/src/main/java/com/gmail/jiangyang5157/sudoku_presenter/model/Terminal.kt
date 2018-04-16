@@ -11,6 +11,22 @@ data class Terminal(
         val C: Array<Cell?> = arrayOfNulls(E * E)
 ) {
 
+    fun toSquareString(): String {
+        val LINE_SEPARATOR = System.getProperty("line.separator")
+        val SPACE = " "
+        val INT_FORMAT = 16
+        val buf = StringBuffer()
+        for (i in 0 until C.size) {
+            if (i % E == 0) {
+                buf.append(LINE_SEPARATOR)
+            } else {
+                buf.append(SPACE)
+            }
+            buf.append(C[i]?.D?.toString(INT_FORMAT))
+        }
+        return buf.toString()
+    }
+
     override fun toString(): String {
         return Gson().toJson(this)
     }

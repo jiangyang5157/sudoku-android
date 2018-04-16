@@ -2,6 +2,7 @@ package com.gmail.jiangyang5157.sudoku.app
 
 import android.app.Application
 import android.content.res.Configuration
+import com.gmail.jiangyang5157.sudoku_presenter.module.SudokuModule
 
 /**
  * Created by Yang Jiang on April 14, 2018
@@ -22,6 +23,7 @@ class MainApplication : Application() {
      */
     override fun onCreate() {
         super.onCreate()
+        AppInjector.create(SudokuModule())
     }
 
     /**

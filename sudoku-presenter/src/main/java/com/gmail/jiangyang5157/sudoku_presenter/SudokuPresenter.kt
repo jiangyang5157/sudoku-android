@@ -62,4 +62,12 @@ class SudokuPresenter : SudokuContract.Presenter {
         mView.onPostPuzzleResolution(result)
     }
 
+    override fun getPuzzle(): Terminal? {
+        return mPuzzle
+    }
+
+    override fun getProgress(): Terminal? {
+        return mProgress
+    }
+
 }

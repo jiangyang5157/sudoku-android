@@ -8,11 +8,13 @@ import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
 interface SudokuContract {
 
     interface PuzzleGeneration {
+
         fun onPrePuzzleGeneration()
         fun onPostPuzzleGeneration(result: Terminal?)
     }
 
     interface PuzzleResolution {
+
         fun onPrePuzzleResolution()
         fun onPostPuzzleResolution(result: Terminal?)
     }
@@ -22,8 +24,10 @@ interface SudokuContract {
         fun setView(view: View)
 
         fun generatePuzzle(edge: Int, minSubGiven: Int, minTotalGiven: Int)
-
         fun resolvePuzzle()
+
+        fun getPuzzle() : Terminal?
+        fun getProgress() : Terminal?
     }
 
     interface View : PuzzleGeneration, PuzzleResolution
