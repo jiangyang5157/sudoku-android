@@ -41,7 +41,7 @@ class AppSqliteApiTest {
 
         val before = AppSqliteApi.getInstance(appContext).queryPuzzles(BaseSqliteApi.OrderBy.asc(PuzzleTable.Column.KEY_DATE))
         (1..before.count).map {
-            val rowIdBefore = before.getLong(before.getColumnIndexOrThrow(PuzzleTable.Column.KEY_ROWID))
+            val rowIdBefore = before.getLong(before.getColumnIndexOrThrow(PuzzleTable.Column.KEY_ID))
             val timerBefore = before.getString(before.getColumnIndexOrThrow(PuzzleTable.Column.KEY_TIMER))
             val bestTimeBefore = before.getString(before.getColumnIndexOrThrow(PuzzleTable.Column.KEY_BEST_TIME))
             println("test_updatePuzzle before [$rowIdBefore : $timerBefore $bestTimeBefore]")
@@ -49,13 +49,13 @@ class AppSqliteApiTest {
         }
 
         val cursor = AppSqliteApi.getInstance(appContext).queryPuzzle(PuzzleTable.Column.KEY_BEST_TIME, "22", BaseSqliteApi.OrderBy.asc(PuzzleTable.Column.KEY_DATE))
-        val rowId = cursor.getLong(cursor.getColumnIndexOrThrow(PuzzleTable.Column.KEY_ROWID))
+        val rowId = cursor.getLong(cursor.getColumnIndexOrThrow(PuzzleTable.Column.KEY_ID))
         val updateResult = AppSqliteApi.getInstance(appContext).updatePuzzle(rowId.toString(), "", "", "", "modified", "modified")
         assertTrue(updateResult > 0)
 
         val after = AppSqliteApi.getInstance(appContext).queryPuzzles(BaseSqliteApi.OrderBy.asc(PuzzleTable.Column.KEY_DATE))
         (1..after.count).map {
-            val rowIdAfter = after.getLong(after.getColumnIndexOrThrow(PuzzleTable.Column.KEY_ROWID))
+            val rowIdAfter = after.getLong(after.getColumnIndexOrThrow(PuzzleTable.Column.KEY_ID))
             val timerAfter = after.getString(after.getColumnIndexOrThrow(PuzzleTable.Column.KEY_TIMER))
             val bestTimeAfter = after.getString(after.getColumnIndexOrThrow(PuzzleTable.Column.KEY_BEST_TIME))
             println("test_updatePuzzle After [$rowIdAfter : $timerAfter $bestTimeAfter]")

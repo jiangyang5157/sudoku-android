@@ -43,7 +43,7 @@ class AppSqliteApi private constructor(sqliteOpenHelper: BaseSqliteOpenHelper) :
         open()
         try {
             return update(PuzzleTable.TABLE_NAME,
-                    PuzzleTable.Column.KEY_ROWID, rowId,
+                    PuzzleTable.Column.KEY_ID, rowId,
                     ContentValues().apply {
                         put(PuzzleTable.Column.KEY_CACHE, cache)
                         put(PuzzleTable.Column.KEY_DRAWABLE, drawable)
@@ -60,7 +60,7 @@ class AppSqliteApi private constructor(sqliteOpenHelper: BaseSqliteOpenHelper) :
         open()
         try {
             return queryValue(PuzzleTable.TABLE_NAME,
-                    arrayOf(PuzzleTable.Column.KEY_ROWID,
+                    arrayOf(PuzzleTable.Column.KEY_ID,
                             PuzzleTable.Column.KEY_CACHE,
                             PuzzleTable.Column.KEY_DRAWABLE,
                             PuzzleTable.Column.KEY_DATE,
@@ -76,7 +76,7 @@ class AppSqliteApi private constructor(sqliteOpenHelper: BaseSqliteOpenHelper) :
         open()
         try {
             return query(PuzzleTable.TABLE_NAME,
-                    arrayOf(PuzzleTable.Column.KEY_ROWID,
+                    arrayOf(PuzzleTable.Column.KEY_ID,
                             PuzzleTable.Column.KEY_CACHE,
                             PuzzleTable.Column.KEY_DRAWABLE,
                             PuzzleTable.Column.KEY_DATE,
@@ -92,7 +92,7 @@ class AppSqliteApi private constructor(sqliteOpenHelper: BaseSqliteOpenHelper) :
         open()
         try {
             return queryLike(PuzzleTable.TABLE_NAME,
-                    arrayOf(PuzzleTable.Column.KEY_ROWID,
+                    arrayOf(PuzzleTable.Column.KEY_ID,
                             PuzzleTable.Column.KEY_CACHE,
                             PuzzleTable.Column.KEY_DRAWABLE,
                             PuzzleTable.Column.KEY_DATE,

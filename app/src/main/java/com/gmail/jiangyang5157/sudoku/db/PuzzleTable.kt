@@ -10,7 +10,7 @@ class PuzzleTable {
 
         const val SQL_TABLE_CREATION: String
                 = "create table " +
-                "$TABLE_NAME(${Column.KEY_ROWID} integer primary key autoincrement, " +
+                "$TABLE_NAME(${Column.KEY_ID} integer primary key autoincrement, " +
                 "${Column.KEY_CACHE} text, " +
                 "${Column.KEY_DRAWABLE} text, " +
                 "${Column.KEY_DATE} text, " +
@@ -19,7 +19,7 @@ class PuzzleTable {
     }
 
     object Column {
-        const val KEY_ROWID: String = "_id"
+        const val KEY_ID: String = "_id"
 
         const val KEY_CACHE: String = "cache"
         const val KEY_DRAWABLE: String = "drawable"
