@@ -17,5 +17,4 @@ interface SudokuRepoSpec {
             get() = 1
     }
 
-
 }
