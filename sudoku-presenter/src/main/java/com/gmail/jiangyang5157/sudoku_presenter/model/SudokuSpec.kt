@@ -5,10 +5,19 @@ package com.gmail.jiangyang5157.sudoku_presenter.model
  */
 interface SudokuSpec {
 
-    val PUZZLE_INDEX: Int
-        get() = 0
-    val PROGRESS_INDEX: Int
-        get() = 1
+    companion object {
+
+        val CAPACITY: Int
+            get() = 2
+
+        val INDEX_PUZZLE: Int
+            get() = 0
+
+        val INDEX_PROGRESS: Int
+            get() = 1
+    }
+
+
 
 
 }

@@ -7,15 +7,10 @@ import com.gmail.jiangyang5157.kotlin_core.model.Repository
  */
 class SudokuRepository : Repository<Terminal, SudokuSpec> {
 
-    /**
-     * Size of 2 [Terminal] array hold original puzzle [Terminal] and progress [Terminal]
-     */
-    private var mSudoku = arrayOfNulls<Terminal>(2)
+    private var mSudoku = arrayOfNulls<Terminal>(SudokuSpec.CAPACITY)
 
     override fun add(item: Terminal): Boolean {
-        mSudoku[0] = item
-        mSudoku[1] = item.copy()
-        return true
+        return false
     }
 
     override fun add(items: Iterable<Terminal>): Boolean {
@@ -31,6 +26,8 @@ class SudokuRepository : Repository<Terminal, SudokuSpec> {
     }
 
     override fun update(spec: SudokuSpec): Boolean {
+//        mSudoku[SudokuSpec.INDEX_PUZZLE] = item
+//        mSudoku[SudokuSpec.INDEX_PROGRESS] = item.copy()
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
