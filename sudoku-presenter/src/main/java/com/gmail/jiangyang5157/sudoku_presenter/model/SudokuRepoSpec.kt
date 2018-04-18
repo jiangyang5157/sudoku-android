@@ -3,7 +3,7 @@ package com.gmail.jiangyang5157.sudoku_presenter.model
 /**
  * Created by Yang Jiang on April 19, 2018
  */
-interface SudokuSpec {
+interface SudokuRepoSpec {
 
     companion object {
 
@@ -16,8 +16,6 @@ interface SudokuSpec {
         val INDEX_PROGRESS: Int
             get() = 1
     }
-
-
 
 
 }

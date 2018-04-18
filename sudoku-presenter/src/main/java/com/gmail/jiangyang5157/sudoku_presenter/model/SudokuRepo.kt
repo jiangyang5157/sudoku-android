@@ -5,9 +5,9 @@ import com.gmail.jiangyang5157.kotlin_core.model.Repository
 /**
  * Created by Yang Jiang on April 19, 2018
  */
-class SudokuRepository : Repository<Terminal, SudokuSpec> {
+class SudokuRepo : Repository<Terminal, SudokuRepoSpec> {
 
-    private var mSudoku = arrayOfNulls<Terminal>(SudokuSpec.CAPACITY)
+    private var repo = arrayOfNulls<Terminal>(SudokuRepoSpec.CAPACITY)
 
     override fun add(item: Terminal): Boolean {
         return false
@@ -17,17 +17,15 @@ class SudokuRepository : Repository<Terminal, SudokuSpec> {
         return false
     }
 
-    override fun find(spec: SudokuSpec): List<Terminal> {
+    override fun find(spec: SudokuRepoSpec): List<Terminal> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun remove(spec: SudokuSpec): Boolean {
+    override fun remove(spec: SudokuRepoSpec): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun update(spec: SudokuSpec): Boolean {
-//        mSudoku[SudokuSpec.INDEX_PUZZLE] = item
-//        mSudoku[SudokuSpec.INDEX_PROGRESS] = item.copy()
+    override fun update(item: Terminal, spec: SudokuRepoSpec): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
