@@ -4,12 +4,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.util.Log
-import com.gmail.jiangyang5157.kotlin_android_sql.BaseSqliteApi
+import com.gmail.jiangyang5157.kotlin_android_core.db.BaseDb
 
 /**
  * Created by Yang Jiang on July 02, 2017
  */
-class PuzzleDbApi : BaseSqliteApi {
+class PuzzleDbApi : BaseDb {
 
     private constructor(puzzleDbHelper: PuzzleDbHelper) : super(puzzleDbHelper) {
         Log.d("####", "PuzzleDbApi::constructor()")
@@ -125,4 +125,5 @@ class PuzzleDbApi : BaseSqliteApi {
             close()
         }
     }
+
 }

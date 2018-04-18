@@ -1,5 +1,6 @@
 package com.gmail.jiangyang5157.sudoku_presenter.model
 
+import com.gmail.jiangyang5157.kotlin_core.utils.IoUtils
 import com.google.gson.Gson
 import java.util.*
 
@@ -12,7 +13,7 @@ data class Terminal(
 ) {
 
     fun toSquareString(): String {
-        val LINE_SEPARATOR = System.getProperty("line.separator")
+        val LINE_SEPARATOR = IoUtils.lineSeparator()
         val SPACE = " "
         val INT_FORMAT = 16
         val buf = StringBuffer()

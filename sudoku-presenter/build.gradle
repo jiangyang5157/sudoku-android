@@ -33,9 +33,9 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation "com.google.inject:guice:$guice_version"
-
     implementation "com.google.code.gson:gson:$gson_version"
+
+    implementation project(':kotlin-core')
 
     implementation project(':go-sudoku')
 }

@@ -1,19 +1,13 @@
 package com.gmail.jiangyang5157.sudoku.ui
 
-import android.app.Fragment
-import android.content.Context
-import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import com.gmail.jiangyang5157.sudoku.R
-import com.gmail.jiangyang5157.sudoku.app.AppInjector
-import com.gmail.jiangyang5157.sudoku.app.MainApplication
-import com.gmail.jiangyang5157.sudoku.db.PuzzleDbHelper
 import com.gmail.jiangyang5157.sudoku_presenter.SudokuContract
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
 
@@ -28,21 +22,9 @@ class MainFragment : Fragment(), SudokuContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mSudokuPresenter = AppInjector.getInjector()?.getInstance(SudokuContract.Presenter::class.java)
-        mSudokuPresenter?.setView(this)
-
-        var t1 = AppInjector.getInjector()?.getInstance(MainApplication::class.java)
-        Log.d("####", "MainApplication!=null " + (t1 != null))
-
-        var t2 = AppInjector.getInjector()?.getInstance(Context::class.java)
-        Log.d("####", "Context!=null " + (t2 != null))
-
-        var t3 = AppInjector.getInjector()?.getInstance(Resources::class.java)
-        Log.d("####", "Resources!=null " + (t3 != null))
-
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
@@ -77,10 +59,6 @@ class MainFragment : Fragment(), SudokuContract.View {
 
     override fun onPostPuzzleResolution(result: Terminal?) {
         tvNotification?.text = result?.toSquareString()
-    }
-
-    companion object {
-        const val TAG = "MainFragment"
     }
 
 }

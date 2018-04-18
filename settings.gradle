@@ -1,7 +1,5 @@
 include ':app',
-        ':go-sudoku',
         ':kotlin-core',
         ':kotlin-android-core',
-        ':kotlin-android-sql',
-        ':kotlin-android-view',
+        ':go-sudoku',
         ':sudoku-presenter'

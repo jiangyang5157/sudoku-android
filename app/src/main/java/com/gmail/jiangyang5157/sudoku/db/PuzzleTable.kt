@@ -27,4 +27,5 @@ class PuzzleTable {
         const val KEY_TIMER: String = "timer"
         const val KEY_BEST_TIME: String = "best_time"
     }
+
 }
