@@ -11,9 +11,14 @@ import sudoku.Sudoku
  * Execute Int arguments: edge, minSubGiven, minTotalGiven
  * Result Terminal puzzle
  */
-class GeneratePuzzleTask(puzzleGeneration: SudokuContract.PuzzleGeneration) : AsyncTask<Int, Void, Terminal>() {
+class GeneratePuzzleTask(puzzleGeneration: PuzzleGeneration) : AsyncTask<Int, Void, Terminal>() {
 
-    private val mPuzzleGeneration: SudokuContract.PuzzleGeneration = puzzleGeneration
+    interface PuzzleGeneration {
+        fun onPrePuzzleGeneration()
+        fun onPostPuzzleGeneration(result: Terminal?)
+    }
+
+    private val mPuzzleGeneration: PuzzleGeneration = puzzleGeneration
 
     override fun onPreExecute() {
         mPuzzleGeneration.onPrePuzzleGeneration()

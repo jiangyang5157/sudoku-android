@@ -11,9 +11,14 @@ import sudoku.Sudoku
  * Execute Terminal arguments: puzzle to be resolved
  * Result Terminal puzzle resolution
  */
-class ResolvePuzzleTask(puzzleResolution: SudokuContract.PuzzleResolution) : AsyncTask<Terminal, Void, Terminal>() {
+class ResolvePuzzleTask(puzzleResolution: PuzzleResolution) : AsyncTask<Terminal, Void, Terminal>() {
 
-    private val mPuzzleResolution: SudokuContract.PuzzleResolution = puzzleResolution
+    interface PuzzleResolution {
+        fun onPrePuzzleResolution()
+        fun onPostPuzzleResolution(result: Terminal?)
+    }
+
+    private val mPuzzleResolution: PuzzleResolution = puzzleResolution
 
     override fun onPreExecute() {
         mPuzzleResolution.onPrePuzzleResolution()
