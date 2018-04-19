@@ -5,6 +5,8 @@ package com.gmail.jiangyang5157.sudoku_presenter
  */
 class SudokuPresenter : SudokuContract.Presenter {
 
+
+
     override fun start() {
         // TODO
     }
