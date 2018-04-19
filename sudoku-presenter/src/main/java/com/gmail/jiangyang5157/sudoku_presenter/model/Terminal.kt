@@ -50,4 +50,10 @@ data class Terminal(
         return result
     }
 
+    fun copy(): Terminal {
+        val copy = Terminal(E = E)
+        C.forEachIndexed { index, cell -> copy.C[index] = cell?.copy() }
+        return copy
+    }
+
 }

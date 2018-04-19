@@ -55,38 +55,48 @@ class TerminalTest {
     }
 
     @Test
-    fun test_copy() {
+    fun test_copy_value() {
         val t1 = Terminal(1)
         val t2 = Terminal(2)
         val t3 = Terminal(2)
-        val t4 = Terminal(2)
 
         val t11 = t1.copy()
         val t21 = t2.copy()
         val t22 = t2.copy(3)
-        val t41 = t4.copy()
+        val t31 = t3.copy()
 
         Assert.assertTrue(t11 == t1)
         Assert.assertTrue(t21 == t2)
         Assert.assertTrue(t21 == t2)
         Assert.assertTrue(t21 == t3)
-        Assert.assertTrue(t21 == t4)
-        Assert.assertTrue(t21 == t41)
+        Assert.assertTrue(t21 == t31)
         Assert.assertTrue(t22 != t2)
 
         t21.C[1] = Cell(1, 1)
         t22.C[1] = Cell(1, 1)
 
         Assert.assertTrue(t22 != t2)
-        Assert.assertTrue(t21 != t41)
+        Assert.assertTrue(t21 != t31)
 
-        t41.C[1] = Cell(1, 2)
-        Assert.assertTrue(t21 != t41)
+        t31.C[1] = Cell(1, 2)
+        Assert.assertTrue(t21 != t31)
 
-        t41.C[1] = Cell(1, 1)
-        Assert.assertTrue(t21 == t41)
+        t31.C[1] = Cell(1, 1)
+        Assert.assertTrue(t21 == t31)
 
-        Assert.assertTrue(t21.copy() == t41.copy())
+        Assert.assertTrue(t21.copy() == t31.copy())
+    }
+
+    @Test
+    fun test_copy_deep() {
+        val t1 = Terminal(2)
+        t1.C[1] = Cell(1, 1)
+
+        val t2 = t1.copy()
+        Assert.assertTrue(t2 == t1)
+
+        t1.C[1]!!.D = 10
+        Assert.assertFalse(t2.C[1]!!.D == 10)
     }
 
 }
