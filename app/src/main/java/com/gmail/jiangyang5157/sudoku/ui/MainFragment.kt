@@ -12,15 +12,15 @@ import com.gmail.jiangyang5157.sudoku_presenter.SudokuContract
 /**s
  * Created by Yang Jiang on July 16, 2017
  */
-class MainFragment : Fragment(), SudokuContract.View {
+class MainFragment : Fragment() {
 
     private lateinit var mSudokuPresenter: SudokuContract.Presenter
 
     private var tvNotification: TextView? = null
 
-    override fun setPresenter(presenter: SudokuContract.Presenter) {
-        mSudokuPresenter = presenter
-    }
+//    override fun setPresenter(presenter: SudokuContract.Presenter) {
+//        mSudokuPresenter = presenter
+//    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)

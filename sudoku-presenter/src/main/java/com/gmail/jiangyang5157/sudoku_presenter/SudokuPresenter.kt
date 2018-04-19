@@ -6,7 +6,11 @@ package com.gmail.jiangyang5157.sudoku_presenter
 class SudokuPresenter : SudokuContract.Presenter {
 
     override fun start() {
-        //TODO
+        // TODO
+    }
+
+    override fun generateSudoku(edge: Int, minSubGiven: Int, minTotalGiven: Int) {
+        // TODO
     }
 
 //    private lateinit var mView: SudokuContract.View
