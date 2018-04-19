@@ -23,8 +23,8 @@ class ResolvePuzzleTaskTest {
         var t1: Terminal? = null
         val t2: Terminal = Gson().fromJson(SudokuSolverTest.TestData.terminalJson_9x9_2, Terminal::class.java)
 
-        ResolvePuzzleTask(object : ResolvePuzzleTask.Callback {
-            override fun onResolved(result: Terminal?) {
+        ResolvePuzzleTask(object : PuzzleTask.Callback {
+            override fun onResult(result: Terminal?) {
                 t1 = result
                 signal.countDown()
             }
@@ -43,8 +43,8 @@ class ResolvePuzzleTaskTest {
         val signal = CountDownLatch(1)
         var t1: Terminal? = null
 
-        ResolvePuzzleTask(object : ResolvePuzzleTask.Callback {
-            override fun onResolved(result: Terminal?) {
+        ResolvePuzzleTask(object : PuzzleTask.Callback {
+            override fun onResult(result: Terminal?) {
                 t1 = result
                 signal.countDown()
             }
@@ -59,8 +59,8 @@ class ResolvePuzzleTaskTest {
         val signal = CountDownLatch(1)
         var t1: Terminal? = null
 
-        ResolvePuzzleTask(object : ResolvePuzzleTask.Callback {
-            override fun onResolved(result: Terminal?) {
+        ResolvePuzzleTask(object : PuzzleTask.Callback {
+            override fun onResult(result: Terminal?) {
                 t1 = result
                 signal.countDown()
             }

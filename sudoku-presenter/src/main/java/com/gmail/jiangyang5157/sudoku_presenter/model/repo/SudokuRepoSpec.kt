@@ -8,13 +8,16 @@ interface SudokuRepoSpec {
     companion object {
 
         val CAPACITY: Int
-            get() = 2
+            get() = 3
 
-        val INDEX_PUZZLE: Int
+        val INDEX_TERMINAL: Int
             get() = 0
 
-        val INDEX_PROGRESS: Int
+        val INDEX_PUZZLE: Int
             get() = 1
+
+        val INDEX_PROGRESS: Int
+            get() = 2
     }
 
     fun filter(): Array<Int>

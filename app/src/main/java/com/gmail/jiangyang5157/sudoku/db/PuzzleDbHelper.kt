@@ -6,9 +6,7 @@ import com.gmail.jiangyang5157.kotlin_android_kit.db.BaseDbOpenHelper
 /**
  * Created by Yang Jiang on July 02, 2017
  */
-class PuzzleDbHelper : BaseDbOpenHelper {
-
-    constructor(context: Context) : super(context, DB_FILE_NAME, null, DB_VERSION)
+class PuzzleDbHelper(context: Context) : BaseDbOpenHelper(context, DB_FILE_NAME, null, DB_VERSION) {
 
     companion object {
         private const val DB_FILE_NAME: String = "sudoku_endless.db"

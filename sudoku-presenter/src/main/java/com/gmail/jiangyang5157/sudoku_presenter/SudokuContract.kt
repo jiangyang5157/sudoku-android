@@ -11,13 +11,25 @@ interface SudokuContract {
 
     interface Presenter : BasePresenter {
 
-        fun generateSudoku(edge: Int, minSubGiven: Int, minTotalGiven: Int)
+        fun getPuzzle(edge: Int, minSubGiven: Int, minTotalGiven: Int)
+
+        fun getTerminal()
+
+        fun updateProgress(index: Int, d: Int)
+
+        fun resolveProgress()
 
     }
 
     interface View : BaseView<Presenter> {
 
-        fun showPuzzle(result: Terminal)
+        fun showPuzzle(t: Terminal)
+
+        fun showTerminal(t: Terminal)
+
+        fun showUpdatedProgress(t: Terminal)
+
+        fun showResolvedProgress(t: Terminal)
 
     }
 

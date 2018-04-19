@@ -2,6 +2,7 @@ package com.gmail.jiangyang5157.sudoku.db
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
+import com.gmail.jiangyang5157.kotlin_android_kit.db.BaseDb
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -47,7 +48,7 @@ class PuzzleDbApiTest {
             before.moveToNext()
         }
 
-        val cursor = PuzzleDbApi.getInstance(appContext).queryPuzzle(PuzzleTable.Column.KEY_BEST_TIME, "22", BaseSqliteApi.OrderBy.asc(PuzzleTable.Column.KEY_DATE))
+        val cursor = PuzzleDbApi.getInstance(appContext).queryPuzzle(PuzzleTable.Column.KEY_BEST_TIME, "22", BaseDb.OrderBy.asc(PuzzleTable.Column.KEY_DATE))
         val rowId = cursor.getLong(cursor.getColumnIndexOrThrow(PuzzleTable.Column.KEY_ID))
         val updateResult = PuzzleDbApi.getInstance(appContext).updatePuzzle(rowId.toString(), "", "", "", "modified", "modified")
         assertTrue(updateResult > 0)
@@ -65,14 +66,14 @@ class PuzzleDbApiTest {
     @Test
     fun test_queryPuzzle() {
         val appContext = InstrumentationRegistry.getTargetContext()
-        val cursor = PuzzleDbApi.getInstance(appContext).queryPuzzle(PuzzleTable.Column.KEY_BEST_TIME, "22", BaseSqliteApi.OrderBy.asc(PuzzleTable.Column.KEY_DATE))
+        val cursor = PuzzleDbApi.getInstance(appContext).queryPuzzle(PuzzleTable.Column.KEY_BEST_TIME, "22", BaseDb.OrderBy.asc(PuzzleTable.Column.KEY_DATE))
         assertEquals(1, cursor.count)
     }
 
     @Test
     fun test_queryLikePuzzles() {
         val appContext = InstrumentationRegistry.getTargetContext()
-        val cursor = PuzzleDbApi.getInstance(appContext).queryLikePuzzles(PuzzleTable.Column.KEY_BEST_TIME, "22", BaseSqliteApi.OrderBy.asc(PuzzleTable.Column.KEY_DATE))
+        val cursor = PuzzleDbApi.getInstance(appContext).queryLikePuzzles(PuzzleTable.Column.KEY_BEST_TIME, "22", BaseDb.OrderBy.asc(PuzzleTable.Column.KEY_DATE))
         assertEquals(3, cursor.count)
     }
 

@@ -1,6 +1,5 @@
 package com.gmail.jiangyang5157.sudoku_presenter
 
-import android.os.AsyncTask
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
 import com.google.gson.Gson
 import sudoku.Sudoku
@@ -8,16 +7,14 @@ import sudoku.Sudoku
 /**
  * Created by Yang Jiang on April 14, 2018
  */
-class ResolvePuzzleTask(callback: Callback) : AsyncTask<Terminal?, Void, Terminal?>() {
+class ResolvePuzzleTask(callback: Callback? = null) : PuzzleTask<Terminal?, Void, Terminal?>() {
 
-    interface Callback {
-        fun onResolved(result: Terminal?)
+    init {
+        mCallback = callback
     }
 
-    private val mCallback: Callback = callback
-
     override fun doInBackground(vararg params: Terminal?): Terminal? {
-        if (params.size < 1) {
+        if (params.isEmpty()) {
             return null
         }
         val s =
@@ -29,11 +26,11 @@ class ResolvePuzzleTask(callback: Callback) : AsyncTask<Terminal?, Void, Termina
     }
 
     override fun onPostExecute(result: Terminal?) {
-        mCallback.onResolved(result)
+        mCallback?.onResult(result)
     }
 
     override fun onCancelled() {
-        mCallback.onResolved(null)
+        mCallback?.onResult(null)
     }
 
 }

@@ -20,8 +20,8 @@ class GeneratePuzzleTaskTest {
         var t: Terminal? = null
         val signal = CountDownLatch(1)
 
-        GeneratePuzzleTask(object : GeneratePuzzleTask.Callback {
-            override fun onGenerated(result: Terminal?) {
+        GeneratePuzzleTask(object : PuzzleTask.Callback {
+            override fun onResult(result: Terminal?) {
                 t = result
                 signal.countDown()
             }
@@ -36,8 +36,8 @@ class GeneratePuzzleTaskTest {
         var t: Terminal? = null
         val signal = CountDownLatch(1)
 
-        GeneratePuzzleTask(object : GeneratePuzzleTask.Callback {
-            override fun onGenerated(result: Terminal?) {
+        GeneratePuzzleTask(object : PuzzleTask.Callback {
+            override fun onResult(result: Terminal?) {
                 t = result
                 signal.countDown()
             }
@@ -52,8 +52,8 @@ class GeneratePuzzleTaskTest {
         var t: Terminal? = null
         val signal = CountDownLatch(1)
 
-        GeneratePuzzleTask(object : GeneratePuzzleTask.Callback {
-            override fun onGenerated(result: Terminal?) {
+        GeneratePuzzleTask(object : PuzzleTask.Callback {
+            override fun onResult(result: Terminal?) {
                 t = result
                 signal.countDown()
             }

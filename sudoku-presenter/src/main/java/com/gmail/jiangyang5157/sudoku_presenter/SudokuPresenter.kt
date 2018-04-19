@@ -1,80 +1,108 @@
 package com.gmail.jiangyang5157.sudoku_presenter
 
+import android.os.AsyncTask
+import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
+import com.gmail.jiangyang5157.sudoku_presenter.model.repo.*
+
 /**
  * Created by Yang Jiang on April 13, 2018
  */
-class SudokuPresenter : SudokuContract.Presenter {
+class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
 
+    private val mView = view
 
+    private val mRepo = SudokuRepo()
+
+    private var mGenerator: GeneratePuzzleTask? = null
+
+    private var mResolver: ResolvePuzzleTask? = null
+
+    private fun runGenerator(edge: Int, minSubGiven: Int, minTotalGiven: Int, callback: PuzzleTask.Callback) {
+        if (mGenerator?.status != AsyncTask.Status.FINISHED) {
+            mGenerator?.cancel(true)
+        }
+        mGenerator?.mCallback = null
+        mGenerator = GeneratePuzzleTask(callback)
+        mGenerator?.execute(edge, minSubGiven, minTotalGiven)
+    }
+
+    private fun runResolver(t: Terminal, callback: PuzzleTask.Callback) {
+        if (mResolver?.status != AsyncTask.Status.FINISHED) {
+            mResolver?.cancel(true)
+        }
+        mResolver?.mCallback = null
+        mResolver = ResolvePuzzleTask(callback)
+        mResolver?.execute(t)
+    }
 
     override fun start() {
-        // TODO
+        mView.setPresenter(this)
     }
 
-    override fun generateSudoku(edge: Int, minSubGiven: Int, minTotalGiven: Int) {
-        // TODO
+    override fun getPuzzle(edge: Int, minSubGiven: Int, minTotalGiven: Int) {
+        runGenerator(edge, minSubGiven, minTotalGiven, object : PuzzleTask.Callback {
+            override fun onResult(result: Terminal?) {
+                if (result == null) {
+                    return
+                }
+                mRepo.update(result, SudokuFilter())
+                mRepo.remove(TerminalFilter())
+                mView.showPuzzle(result)
+            }
+        })
     }
 
-//    private lateinit var mView: SudokuContract.View
-//
-//    private var mPuzzle: Terminal? = null
-//    private var mProgress: Terminal? = null
-//
-//    private var mGeneratePuzzleTask: GeneratePuzzleTask? = null
-//    private var mResolvePuzzleTask: ResolvePuzzleTask? = null
-//
-//
-//    override fun setView(view: SudokuContract.View) {
-//        mView = view
-//    }
-//
-//    override fun generatePuzzle(edge: Int, minSubGiven: Int, minTotalGiven: Int) {
-//        if (mGeneratePuzzleTask?.status != AsyncTask.Status.FINISHED) {
-//            mGeneratePuzzleTask?.cancel(true)
-//        }
-//        if (edge <= 0 || minSubGiven < 0 || minTotalGiven < 0) {
-//            return
-//        }
-//        mGeneratePuzzleTask = GeneratePuzzleTask(this)
-//        mGeneratePuzzleTask?.execute(edge, minSubGiven, minTotalGiven)
-//    }
-//
-//    override fun resolvePuzzle() {
-//        if (mResolvePuzzleTask?.status != AsyncTask.Status.FINISHED) {
-//            mResolvePuzzleTask?.cancel(true)
-//        }
-//        if (mPuzzle == null) {
-//            return
-//        }
-//        mResolvePuzzleTask = ResolvePuzzleTask(this)
-//        mResolvePuzzleTask?.execute(mPuzzle)
-//    }
-//
-//    override fun onPrePuzzleGeneration() {
-//        mView.onPrePuzzleGeneration()
-//    }
-//
-//    override fun onResolved(result: Terminal?) {
-//        mPuzzle = result
-//        mProgress = mPuzzle?.copy()
-//        mView.onResolved(mPuzzle)
-//    }
-//
-//    override fun onPrePuzzleResolution() {
-//        mView.onPrePuzzleResolution()
-//    }
-//
-//    override fun onResolved(result: Terminal?) {
-//        mProgress = result
-//        mView.onResolved(result)
-//    }
-//
-//    override fun getPuzzle(): Terminal? {
-//        return mPuzzle
-//    }
-//
-//    override fun getProgress(): Terminal? {
-//        return mProgress
-//    }
+    override fun getTerminal() {
+        val terminals = mRepo.find(TerminalFilter())
+        if (terminals.isNotEmpty()) {
+            val t = terminals[0]
+            mView.showTerminal(t)
+        } else {
+            val puzzles = mRepo.find(PuzzleFilter())
+            if (puzzles.isNotEmpty()) {
+                val p = puzzles[0]
+                runResolver(p, object : PuzzleTask.Callback {
+                    override fun onResult(result: Terminal?) {
+                        if (result == null) {
+                            return
+                        }
+                        mRepo.update(result, TerminalFilter())
+                        mView.showTerminal(result)
+                    }
+                })
+            }
+        }
+    }
+
+    override fun updateProgress(index: Int, d: Int) {
+        val progresses = mRepo.find(ProgressFilter())
+        if (progresses.isEmpty()) {
+            return
+        }
+        val p = progresses[0]
+        if (index < 0 || index >= p.C.size) {
+            return
+        }
+        p.C[index]?.D = d
+        mRepo.update(p, ProgressFilter())
+        mView.showUpdatedProgress(p)
+    }
+
+    override fun resolveProgress() {
+        val progresses = mRepo.find(ProgressFilter())
+        if (progresses.isEmpty()) {
+            return
+        }
+        val p = progresses[0]
+        runResolver(p, object : PuzzleTask.Callback {
+            override fun onResult(result: Terminal?) {
+                if (result == null) {
+                    return
+                }
+                mRepo.update(result, ProgressFilter())
+                mView.showResolvedProgress(result)
+            }
+        })
+    }
 
 }

@@ -40,18 +40,32 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn_gen_puzzle"
+                android:id="@+id/btn_get_puzzle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="gen_puzzle" />
+                android:text="get_puzzle" />
 
             <Button
-                android:id="@+id/btn_resolve_puzzle"
+                android:id="@+id/btn_get_terminal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="resolve_puzzle" />
+                android:text="get_terminal" />
+
+            <Button
+                android:id="@+id/btn_update_progress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="update_progress" />
+
+            <Button
+                android:id="@+id/btn_resolve_progress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="resolve_progress" />
         </LinearLayout>
 
     </LinearLayout>
