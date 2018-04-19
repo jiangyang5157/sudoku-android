@@ -54,19 +54,19 @@ class SudokuPresenter : SudokuContract.Presenter {
 //        mView.onPrePuzzleGeneration()
 //    }
 //
-//    override fun onPostPuzzleGeneration(result: Terminal?) {
+//    override fun onResolved(result: Terminal?) {
 //        mPuzzle = result
 //        mProgress = mPuzzle?.copy()
-//        mView.onPostPuzzleGeneration(mPuzzle)
+//        mView.onResolved(mPuzzle)
 //    }
 //
 //    override fun onPrePuzzleResolution() {
 //        mView.onPrePuzzleResolution()
 //    }
 //
-//    override fun onPostPuzzleResolution(result: Terminal?) {
+//    override fun onResolved(result: Terminal?) {
 //        mProgress = result
-//        mView.onPostPuzzleResolution(result)
+//        mView.onResolved(result)
 //    }
 //
 //    override fun getPuzzle(): Terminal? {

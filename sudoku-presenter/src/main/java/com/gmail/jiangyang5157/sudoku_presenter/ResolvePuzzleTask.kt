@@ -7,36 +7,33 @@ import sudoku.Sudoku
 
 /**
  * Created by Yang Jiang on April 14, 2018
- *
- * Execute Terminal arguments: puzzle to be resolved
- * Result Terminal puzzle resolution
  */
-class ResolvePuzzleTask(puzzleResolution: PuzzleResolution) : AsyncTask<Terminal, Void, Terminal>() {
+class ResolvePuzzleTask(callback: Callback) : AsyncTask<Terminal?, Void, Terminal?>() {
 
-    interface PuzzleResolution {
-        fun onPrePuzzleResolution()
-        fun onPostPuzzleResolution(result: Terminal?)
+    interface Callback {
+        fun onResolved(result: Terminal?)
     }
 
-    private val mPuzzleResolution: PuzzleResolution = puzzleResolution
+    private val mCallback: Callback = callback
 
-    override fun onPreExecute() {
-        mPuzzleResolution.onPrePuzzleResolution()
-    }
+    override fun doInBackground(vararg params: Terminal?): Terminal? {
+        if (params.size < 1) {
+            return null
+        }
+        val s =
+                params[0]?.toString()?.let { puzzle ->
+                    Sudoku.solveString(puzzle)
+                }
 
-    override fun doInBackground(vararg params: Terminal?): Terminal {
-        val t = params[0]!!
-
-        val s = Sudoku.solveString(t.toString())
         return Gson().fromJson(s, Terminal::class.java)
     }
 
     override fun onPostExecute(result: Terminal?) {
-        mPuzzleResolution.onPostPuzzleResolution(result)
+        mCallback.onResolved(result)
     }
 
-    override fun onCancelled(result: Terminal?) {
-        mPuzzleResolution.onPostPuzzleResolution(result)
+    override fun onCancelled() {
+        mCallback.onResolved(null)
     }
 
 }

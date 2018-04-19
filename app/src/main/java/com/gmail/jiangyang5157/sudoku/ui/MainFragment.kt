@@ -55,7 +55,7 @@ class MainFragment : Fragment() {
 //        tvNotification?.text = "onPrePuzzleGeneration"
 //    }
 //
-//    override fun onPostPuzzleResolution(result: Terminal?) {
+//    override fun onResult(result: Terminal?) {
 //        tvNotification?.text = result?.toSquareString()
 //    }
 

@@ -7,38 +7,36 @@ import sudoku.Sudoku
 
 /**
  * Created by Yang Jiang on April 14, 2018
- *
- * Execute Int arguments: edge, minSubGiven, minTotalGiven
- * Result Terminal puzzle
  */
-class GeneratePuzzleTask(puzzleGeneration: PuzzleGeneration) : AsyncTask<Int, Void, Terminal>() {
+class GeneratePuzzleTask(callback: Callback) : AsyncTask<Int?, Void, Terminal?>() {
 
-    interface PuzzleGeneration {
-        fun onPrePuzzleGeneration()
-        fun onPostPuzzleGeneration(result: Terminal?)
+    interface Callback {
+        fun onGenerated(result: Terminal?)
     }
 
-    private val mPuzzleGeneration: PuzzleGeneration = puzzleGeneration
+    private val mCallback: Callback = callback
 
-    override fun onPreExecute() {
-        mPuzzleGeneration.onPrePuzzleGeneration()
-    }
-
-    override fun doInBackground(vararg params: Int?): Terminal {
-        val edge = params[0]!!
-        val minSubGiven = params[1]!!
-        val minTotalGiven = params[2]!!
-
-        val s = Sudoku.genString(0, edge.toLong(), minSubGiven.toLong(), minTotalGiven.toLong())
+    override fun doInBackground(vararg params: Int?): Terminal? {
+        if (params.size < 3) {
+            return null
+        }
+        val s =
+                params[0]?.toLong()?.let { edge ->
+                    params[1]?.toLong()?.let { minSubGiven ->
+                        params[2]?.toLong()?.let { minTotalGiven ->
+                            Sudoku.genString(0, edge, minSubGiven, minTotalGiven)
+                        }
+                    }
+                }
         return Gson().fromJson(s, Terminal::class.java)
     }
 
     override fun onPostExecute(result: Terminal?) {
-        mPuzzleGeneration.onPostPuzzleGeneration(result)
+        mCallback.onGenerated(result)
     }
 
-    override fun onCancelled(result: Terminal?) {
-        mPuzzleGeneration.onPostPuzzleGeneration(result)
+    override fun onCancelled() {
+        mCallback.onGenerated(null)
     }
 
 }

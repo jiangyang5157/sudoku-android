@@ -19,31 +19,55 @@ class ResolvePuzzleTaskTest {
 
     @Test
     fun test_execute() {
-        val signal = CountDownLatch(2)
-        val t1 : Terminal = Gson().fromJson(SudokuSolverTest.TestData.terminalJson_9x9_2, Terminal::class.java)
-        var t2: Terminal? = null
+        val signal = CountDownLatch(1)
+        var t1: Terminal? = null
+        val t2: Terminal = Gson().fromJson(SudokuSolverTest.TestData.terminalJson_9x9_2, Terminal::class.java)
 
-        ResolvePuzzleTask(object : ResolvePuzzleTask.PuzzleResolution {
-
-            override fun onPrePuzzleResolution() {
+        ResolvePuzzleTask(object : ResolvePuzzleTask.Callback {
+            override fun onResolved(result: Terminal?) {
+                t1 = result
                 signal.countDown()
             }
+        }).execute(t2)
+        signal.await(10, TimeUnit.SECONDS)
+        val t3 = Gson().fromJson(Sudoku.solveString(t2.toString()), Terminal::class.java)
 
-            override fun onPostPuzzleResolution(result: Terminal?) {
-                t2 = result
+        Assert.assertNotNull(t1)
+        Assert.assertNotNull(t3)
+        Assert.assertTrue(t1 == t3)
+        Assert.assertTrue(t1?.E == 9)
+    }
+
+    @Test
+    fun test_nullArgument() {
+        val signal = CountDownLatch(1)
+        var t1: Terminal? = null
+
+        ResolvePuzzleTask(object : ResolvePuzzleTask.Callback {
+            override fun onResolved(result: Terminal?) {
+                t1 = result
                 signal.countDown()
             }
-        }).execute(t1)
-
+        }).execute(null)
         signal.await(10, TimeUnit.SECONDS)
 
-        val t3 = Gson().fromJson(Sudoku.solveString(t1.toString()), Terminal::class.java)
+        Assert.assertNull(t1)
+    }
 
-        Assert.assertNotNull(t2)
-        Assert.assertNotNull(t3)
+    @Test
+    fun test_illegalArgumentSize() {
+        val signal = CountDownLatch(1)
+        var t1: Terminal? = null
 
-        Assert.assertTrue(t2 == t3)
-        Assert.assertTrue(t2?.E == 9)
+        ResolvePuzzleTask(object : ResolvePuzzleTask.Callback {
+            override fun onResolved(result: Terminal?) {
+                t1 = result
+                signal.countDown()
+            }
+        }).execute()
+        signal.await(10, TimeUnit.SECONDS)
+
+        Assert.assertNull(t1)
     }
 
 }
