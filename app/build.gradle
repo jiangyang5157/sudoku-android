@@ -40,9 +40,9 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation project(':kotlin-core')
+    implementation project(':kotlin-kit')
 
-    implementation project(':kotlin-android-core')
+    implementation project(':kotlin-android-kit')
 
     implementation project(':sudoku-presenter')
 }

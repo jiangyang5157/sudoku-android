@@ -1,6 +1,6 @@
 package com.gmail.jiangyang5157.sudoku_presenter.model.repo
 
-import com.gmail.jiangyang5157.kotlin_core.model.Repository
+import com.gmail.jiangyang5157.kotlin_kit.model.Repository
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
 
 /**

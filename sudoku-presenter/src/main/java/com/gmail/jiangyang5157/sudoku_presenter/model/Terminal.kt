@@ -1,6 +1,6 @@
 package com.gmail.jiangyang5157.sudoku_presenter.model
 
-import com.gmail.jiangyang5157.kotlin_core.utils.IoUtils
+import com.gmail.jiangyang5157.kotlin_kit.utils.IoUtils
 import com.google.gson.Gson
 import java.util.*
 

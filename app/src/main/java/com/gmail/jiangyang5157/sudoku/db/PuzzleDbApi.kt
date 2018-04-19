@@ -4,7 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.util.Log
-import com.gmail.jiangyang5157.kotlin_android_core.db.BaseDb
+import com.gmail.jiangyang5157.kotlin_android_kit.db.BaseDb
 
 /**
  * Created by Yang Jiang on July 02, 2017

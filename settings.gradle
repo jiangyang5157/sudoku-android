@@ -1,5 +1,5 @@
 include ':app',
-        ':kotlin-core',
-        ':kotlin-android-core',
+        ':kotlin-kit',
+        ':kotlin-android-kit',
         ':go-sudoku',
         ':sudoku-presenter'

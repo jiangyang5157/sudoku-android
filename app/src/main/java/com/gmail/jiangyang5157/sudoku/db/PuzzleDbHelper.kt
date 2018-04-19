@@ -1,7 +1,7 @@
 package com.gmail.jiangyang5157.sudoku.db
 
 import android.content.Context
-import com.gmail.jiangyang5157.kotlin_android_core.db.BaseDbOpenHelper
+import com.gmail.jiangyang5157.kotlin_android_kit.db.BaseDbOpenHelper
 
 /**
  * Created by Yang Jiang on July 02, 2017
