@@ -20,7 +20,7 @@ class GeneratePuzzleTaskTest {
         val signal = CountDownLatch(2)
         var t : Terminal? = null
 
-        GeneratePuzzleTask(object : SudokuContract.PuzzleGeneration {
+        GeneratePuzzleTask(object : GeneratePuzzleTask.PuzzleGeneration {
 
             override fun onPrePuzzleGeneration() {
                 signal.countDown()

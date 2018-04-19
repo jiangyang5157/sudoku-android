@@ -10,7 +10,7 @@ import sudoku.Sudoku
  * Created by Yang Jiang on July 02, 2017
  */
 @RunWith(AndroidJUnit4::class)
-class GeneratorTest {
+class SudokuGeneratorTest {
 
     @Test
     fun test_generator() {

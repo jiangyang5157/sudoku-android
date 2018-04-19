@@ -1,14 +1,11 @@
 package com.gmail.jiangyang5157.sudoku_presenter.model
 
-import android.support.test.runner.AndroidJUnit4
 import org.junit.Assert
 import org.junit.Test
-import org.junit.runner.RunWith
 
 /**
  * Created by Yang Jiang on July 09, 2017'
  */
-@RunWith(AndroidJUnit4::class)
 class TerminalTest {
 
     @Test
@@ -16,7 +13,7 @@ class TerminalTest {
         val terminal = Terminal(2)
         terminal.C[1] = Cell(1, 2)
 
-        Assert.assertEquals("{\"C\":[null,{\"B\":1,\"D\":2},null,null],\"E\":2}", terminal.toString())
+        Assert.assertEquals("{\"E\":2,\"C\":[null,{\"B\":1,\"D\":2},null,null]}", terminal.toString())
     }
 
     @Test

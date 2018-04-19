@@ -1,14 +1,11 @@
 package com.gmail.jiangyang5157.sudoku_presenter.model
 
-import android.support.test.runner.AndroidJUnit4
 import org.junit.Assert
 import org.junit.Test
-import org.junit.runner.RunWith
 
 /**
  * Created by Yang Jiang on July 13, 2017
  */
-@RunWith(AndroidJUnit4::class)
 class CellTest {
 
     @Test
@@ -35,7 +32,7 @@ class CellTest {
         val c3 = Cell(B = 1, D = 3)
 
         val c11 = c1.copy()
-        val c12 = c1.copy(1,3)
+        val c12 = c1.copy(1, 3)
         val c21 = c2.copy()
         val c31 = c3.copy()
 

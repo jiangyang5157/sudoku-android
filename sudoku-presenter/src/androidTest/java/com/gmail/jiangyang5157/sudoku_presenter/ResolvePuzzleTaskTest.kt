@@ -2,7 +2,7 @@ package com.gmail.jiangyang5157.sudoku_presenter
 
 import android.support.test.runner.AndroidJUnit4
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
-import com.gmail.jiangyang5157.sudoku_presenter.puzzle.SolverTest
+import com.gmail.jiangyang5157.sudoku_presenter.puzzle.SudokuSolverTest
 import com.google.gson.Gson
 import org.junit.Assert
 import org.junit.Test
@@ -20,10 +20,10 @@ class ResolvePuzzleTaskTest {
     @Test
     fun test_execute() {
         val signal = CountDownLatch(2)
-        val t1 : Terminal = Gson().fromJson(SolverTest.TestData.terminalJson_9x9_2, Terminal::class.java)
+        val t1 : Terminal = Gson().fromJson(SudokuSolverTest.TestData.terminalJson_9x9_2, Terminal::class.java)
         var t2: Terminal? = null
 
-        ResolvePuzzleTask(object : SudokuContract.PuzzleResolution {
+        ResolvePuzzleTask(object : ResolvePuzzleTask.PuzzleResolution {
 
             override fun onPrePuzzleResolution() {
                 signal.countDown()
