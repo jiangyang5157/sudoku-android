@@ -1,4 +1,4 @@
-package com.gmail.jiangyang5157.sudoku_presenter.model
+package com.gmail.jiangyang5157.sudoku_presenter.model.repo
 
 /**
  * Created by Yang Jiang on April 19, 2018
@@ -16,5 +16,7 @@ interface SudokuRepoSpec {
         val INDEX_PROGRESS: Int
             get() = 1
     }
+
+    fun filter(): Array<Int>
 
 }

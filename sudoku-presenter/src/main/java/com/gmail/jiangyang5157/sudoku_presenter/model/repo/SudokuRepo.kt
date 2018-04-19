@@ -1,6 +1,7 @@
-package com.gmail.jiangyang5157.sudoku_presenter.model
+package com.gmail.jiangyang5157.sudoku_presenter.model.repo
 
 import com.gmail.jiangyang5157.kotlin_core.model.Repository
+import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
 
 /**
  * Created by Yang Jiang on April 19, 2018
@@ -18,15 +19,19 @@ class SudokuRepo : Repository<Terminal, SudokuRepoSpec> {
     }
 
     override fun find(spec: SudokuRepoSpec): List<Terminal> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val ret = arrayListOf<Terminal>()
+        spec.filter().forEach { repo[it]?.let { t -> ret.add(t) } }
+        return ret
     }
 
     override fun remove(spec: SudokuRepoSpec): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        spec.filter().forEach { repo[it] = null }
+        return true
     }
 
     override fun update(item: Terminal, spec: SudokuRepoSpec): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        spec.filter().forEach { repo[it] = item.copy() }
+        return true
     }
 
 }
