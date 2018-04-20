@@ -6,6 +6,10 @@ import sudoku.Sudoku
 
 /**
  * Created by Yang Jiang on April 14, 2018
+ *
+ * [Sudoku.solveString]
+ * https://github.com/jiangyang5157/go-sudoku/blob/master/sudoku/solver.go
+ * https://github.com/jiangyang5157/go-dlx/blob/master/dlx/dlx.go
  */
 class ResolvePuzzleTask(callback: Callback? = null) : PuzzleTask<Terminal?, Void, Terminal?>() {
 

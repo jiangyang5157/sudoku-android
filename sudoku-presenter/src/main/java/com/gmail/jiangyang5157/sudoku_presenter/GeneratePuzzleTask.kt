@@ -6,6 +6,10 @@ import sudoku.Sudoku
 
 /**
  * Created by Yang Jiang on April 14, 2018
+ *
+ * [Sudoku.genString]
+ * https://github.com/jiangyang5157/go-sudoku/blob/master/sudoku/generator.go
+ * https://github.com/jiangyang5157/go-dlx/blob/master/dlx/dlx.go
  */
 class GeneratePuzzleTask(callback: Callback? = null) : PuzzleTask<Int?, Void, Terminal?>() {
 
