@@ -8,7 +8,7 @@ import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
  */
 class SudokuRepo : Repository<Terminal, SudokuRepoSpec> {
 
-    private var repo = arrayOfNulls<Terminal>(SudokuRepoSpec.CAPACITY)
+    private val repo: Array<Terminal?> = arrayOfNulls(SudokuRepoSpec.CAPACITY)
 
     override fun add(item: Terminal): Boolean {
         return false
@@ -20,17 +20,17 @@ class SudokuRepo : Repository<Terminal, SudokuRepoSpec> {
 
     override fun find(spec: SudokuRepoSpec): List<Terminal> {
         val ret = arrayListOf<Terminal>()
-        spec.filter().forEach { repo[it]?.let { t -> ret.add(t) } }
+        spec.indexes().forEach { repo[it]?.let { it2 -> ret.add(it2) } }
         return ret
     }
 
     override fun remove(spec: SudokuRepoSpec): Boolean {
-        spec.filter().forEach { repo[it] = null }
+        spec.indexes().forEach { repo[it] = null }
         return true
     }
 
     override fun update(item: Terminal, spec: SudokuRepoSpec): Boolean {
-        spec.filter().forEach { repo[it] = item.copy() }
+        spec.indexes().forEach { repo[it] = item.copy() }
         return true
     }
 

@@ -3,23 +3,17 @@ package com.gmail.jiangyang5157.sudoku_presenter.model.repo
 /**
  * Created by Yang Jiang on April 19, 2018
  */
-interface SudokuRepoSpec {
+class SudokuRepoSpec(override var mIndexes: Array<Int>) : IndexRepoSpec {
 
     companion object {
 
-        val CAPACITY: Int
-            get() = 3
+        const val CAPACITY = 3
 
-        val INDEX_TERMINAL: Int
-            get() = 0
+        const val INDEX_TERMINAL = 0
 
-        val INDEX_PUZZLE: Int
-            get() = 1
+        const val INDEX_PUZZLE = 1
 
-        val INDEX_PROGRESS: Int
-            get() = 2
+        const val INDEX_PROGRESS = 2
     }
-
-    fun filter(): Array<Int>
 
 }
