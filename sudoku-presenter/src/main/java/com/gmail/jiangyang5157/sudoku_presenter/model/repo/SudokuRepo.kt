@@ -20,7 +20,7 @@ class SudokuRepo : Repository<Terminal, SudokuRepoSpec> {
 
     override fun find(spec: SudokuRepoSpec): List<Terminal> {
         val ret = arrayListOf<Terminal>()
-        spec.indexes().forEach { repo[it]?.let { it2 -> ret.add(it2) } }
+        spec.indexes().forEach { repo[it]?.let { it2 -> ret.add(it2.copy()) } }
         return ret
     }
 

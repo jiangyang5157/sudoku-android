@@ -19,7 +19,7 @@ class PossibilityRepo(edge: Int) : Repository<IntArray, PossibilityRepoSpec> {
 
     override fun find(spec: PossibilityRepoSpec): List<IntArray> {
         val ret = arrayListOf<IntArray>()
-        spec.indexes().forEach { repo[it].let { it2 -> ret.add(it2) } }
+        spec.indexes().forEach { repo[it].let { it2 -> ret.add(it2.clone()) } }
         return ret
     }
 

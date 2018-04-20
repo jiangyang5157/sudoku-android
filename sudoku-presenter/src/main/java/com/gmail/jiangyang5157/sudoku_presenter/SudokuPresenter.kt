@@ -50,7 +50,7 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
         mView.setPresenter(this)
     }
 
-    override fun getPuzzle(edge: Int, minSubGiven: Int, minTotalGiven: Int) {
+    override fun generatePuzzle(edge: Int, minSubGiven: Int, minTotalGiven: Int) {
         runGenerator(mBlockMode, edge, minSubGiven, minTotalGiven, object : PuzzleTask.Callback {
             override fun onResult(result: Terminal?) {
                 if (result == null) {
@@ -59,16 +59,16 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
                 mSudokuRepo.update(result, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PUZZLE, SudokuRepoSpec.INDEX_PROGRESS)))
                 mSudokuRepo.remove(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
                 mPossibilityRepo = PossibilityRepo(edge)
-                mView.showPuzzle(result)
+                mView.puzzleGenerated(result)
             }
         })
     }
 
-    override fun getTerminal() {
+    override fun revealTerminal() {
         val terminals = mSudokuRepo.find(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
         if (terminals.isNotEmpty()) {
             val t = terminals[0]
-            mView.showTerminal(t)
+            mView.terminalRevealed(t)
         } else {
             val puzzles = mSudokuRepo.find(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PUZZLE)))
             if (puzzles.isNotEmpty()) {
@@ -79,7 +79,7 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
                             return
                         }
                         mSudokuRepo.update(result, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
-                        mView.showTerminal(result)
+                        mView.terminalRevealed(result)
                     }
                 })
             }
@@ -97,7 +97,7 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
         }
         p.C[index]?.D = d
         mSudokuRepo.update(p, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
-        mView.showUpdatedProgress(index, d)
+        mView.progressUpdated(index, d)
     }
 
     override fun resolveProgress() {
@@ -112,7 +112,7 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
                     return
                 }
                 mSudokuRepo.update(result, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
-                mView.showResolvedProgress(result)
+                mView.progressResolved(result)
             }
         })
     }
@@ -133,7 +133,7 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
             }
         }
         mPossibilityRepo?.update(p, PossibilityRepoSpec(intArrayOf(index)))
-        mView.showUpdatedPossibility(index, p)
+        mView.possibilityUpdated(index, p)
     }
 
     override fun clearPossibility(index: Int) {
@@ -144,12 +144,12 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
             return
         }
         val p = possibilities[0]
-        mView.showUpdatedPossibility(index, p)
+        mView.possibilityUpdated(index, p)
     }
 
     override fun selectCell(index: Int) {
         val ret: MutableSet<Int> = mutableSetOf()
-        mView.showSelectedCell(index, ret.toIntArray())
+        mView.cellSelected(index, ret.toIntArray())
     }
 
 }

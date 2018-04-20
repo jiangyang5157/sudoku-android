@@ -39,14 +39,14 @@ class MainFragment : Fragment(), SudokuContract.View {
 
         mSudokuPresenter.start()
         view.findViewById(R.id.btn_get_puzzle)?.setOnClickListener {
-            mSudokuPresenter.getPuzzle(
+            mSudokuPresenter.generatePuzzle(
                     (view.findViewById(R.id.et_edge) as EditText).text.toString().toInt(),
                     (view.findViewById(R.id.et_min_sub_given) as EditText).text.toString().toInt(),
                     (view.findViewById(R.id.et_min_total_given) as EditText).text.toString().toInt()
             )
         }
         view.findViewById(R.id.btn_get_terminal)?.setOnClickListener {
-            mSudokuPresenter.getTerminal()
+            mSudokuPresenter.revealTerminal()
         }
         view.findViewById(R.id.btn_update_progress)?.setOnClickListener {
             mSudokuPresenter.updateProgress(0, 1)
@@ -65,28 +65,28 @@ class MainFragment : Fragment(), SudokuContract.View {
         }
     }
 
-    override fun showPuzzle(t: Terminal) {
-        tvNotification?.text = t.toSquareString() + "\n^----------------^ showPuzzle\n"
+    override fun puzzleGenerated(t: Terminal) {
+        tvNotification?.text = t.toSquareString() + "\n^----------------^ puzzleGenerated\n"
     }
 
-    override fun showTerminal(t: Terminal) {
-        tvNotification?.text = t.toSquareString() + "\n^----------------^ showTerminal\n"
+    override fun terminalRevealed(t: Terminal) {
+        tvNotification?.text = t.toSquareString() + "\n^----------------^ terminalRevealed\n"
     }
 
-    override fun showUpdatedProgress(index: Int, d: Int) {
-        tvNotification?.text = "index=" + index + "\nd=" + d + "\n^----------------^ showUpdatedProgress\n"
+    override fun progressUpdated(index: Int, d: Int) {
+        tvNotification?.text = "index=" + index + "\nd=" + d + "\n^----------------^ progressUpdated\n"
     }
 
-    override fun showResolvedProgress(t: Terminal) {
-        tvNotification?.text = t.toSquareString() + "\n^----------------^ showResolvedProgress\n"
+    override fun progressResolved(t: Terminal) {
+        tvNotification?.text = t.toSquareString() + "\n^----------------^ progressResolved\n"
     }
 
-    override fun showUpdatedPossibility(index: Int, possibility: IntArray) {
-        tvNotification?.text = "index=" + index + "\npossibility=" + Arrays.toString(possibility) + "\n^----------------^ showUpdatedPossibility\n"
+    override fun possibilityUpdated(index: Int, possibility: IntArray) {
+        tvNotification?.text = "index=" + index + "\npossibility=" + Arrays.toString(possibility) + "\n^----------------^ possibilityUpdated\n"
     }
 
-    override fun showSelectedCell(index: Int, relevant: IntArray) {
-        tvNotification?.text = "index=" + index + "\nrelevant=" + Arrays.toString(relevant) + "\n^----------------^ showSelectedCell\n"
+    override fun cellSelected(index: Int, relevant: IntArray) {
+        tvNotification?.text = "index=" + index + "\nrelevant=" + Arrays.toString(relevant) + "\n^----------------^ cellSelected\n"
     }
 
     override fun setPresenter(presenter: SudokuContract.Presenter) {
