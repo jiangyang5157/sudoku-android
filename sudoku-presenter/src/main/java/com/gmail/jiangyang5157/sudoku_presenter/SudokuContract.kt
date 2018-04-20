@@ -21,6 +21,8 @@ interface SudokuContract {
 
         fun updatePossibility(index: Int, d: Int)
 
+        fun selectCell(index: Int)
+
     }
 
     interface View : BaseView<Presenter> {
@@ -33,7 +35,9 @@ interface SudokuContract {
 
         fun showResolvedProgress(t: Terminal)
 
-        fun showUpdatedPossibility(index: Int, possibility: Array<Int?>)
+        fun showUpdatedPossibility(index: Int, possibility: IntArray)
+
+        fun showSelectedCell(index: Int, relevant: IntArray)
 
     }
 

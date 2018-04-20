@@ -5,9 +5,9 @@ package com.gmail.jiangyang5157.sudoku_presenter.model.repo
  */
 interface IndexRepoSpec {
 
-    var mIndexes: Array<Int>
+    var mIndexes: IntArray
 
-    fun indexes(): Array<Int> {
+    fun indexes(): IntArray {
         return mIndexes
     }
 

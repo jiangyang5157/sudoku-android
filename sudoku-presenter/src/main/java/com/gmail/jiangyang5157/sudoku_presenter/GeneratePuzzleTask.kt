@@ -14,14 +14,16 @@ class GeneratePuzzleTask(callback: Callback? = null) : PuzzleTask<Int?, Void, Te
     }
 
     override fun doInBackground(vararg params: Int?): Terminal? {
-        if (params.isEmpty() || params.size < 3) {
+        if (params.isEmpty() || params.size < 4) {
             return null
         }
         val s =
-                params[0]?.toLong()?.let { edge ->
-                    params[1]?.toLong()?.let { minSubGiven ->
-                        params[2]?.toLong()?.let { minTotalGiven ->
-                            Sudoku.genString(0, edge, minSubGiven, minTotalGiven)
+                params[0]?.toLong()?.let { blockMode ->
+                    params[1]?.toLong()?.let { edge ->
+                        params[2]?.toLong()?.let { minSubGiven ->
+                            params[3]?.toLong()?.let { minTotalGiven ->
+                                Sudoku.genString(blockMode, edge, minSubGiven, minTotalGiven)
+                            }
                         }
                     }
                 }

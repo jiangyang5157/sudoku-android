@@ -22,6 +22,8 @@ class MainFragment : Fragment(), SudokuContract.View {
 
     private var tvNotification: TextView? = null
 
+    private var testSelectCell = 0
+
     init {
         mSudokuPresenter = SudokuPresenter(this)
     }
@@ -55,26 +57,33 @@ class MainFragment : Fragment(), SudokuContract.View {
         view.findViewById(R.id.btn_update_possibility)?.setOnClickListener {
             mSudokuPresenter.updatePossibility(0, (Math.random() * (view.findViewById(R.id.et_edge) as EditText).text.toString().toInt()).toInt())
         }
+        view.findViewById(R.id.btn_select_cell)?.setOnClickListener {
+            mSudokuPresenter.selectCell(testSelectCell++)
+        }
     }
 
     override fun showPuzzle(t: Terminal) {
-        tvNotification?.text = t.toSquareString() + "\n^----------------^showPuzzle\n"
+        tvNotification?.text = t.toSquareString() + "\n^----------------^ showPuzzle\n"
     }
 
     override fun showTerminal(t: Terminal) {
-        tvNotification?.text = t.toSquareString() + "\n^----------------^showTerminal\n"
+        tvNotification?.text = t.toSquareString() + "\n^----------------^ showTerminal\n"
     }
 
     override fun showUpdatedProgress(index: Int, d: Int) {
-        tvNotification?.text = "index=" + index + "\nd=" + d + "\n^----------------^showUpdatedProgress\n"
+        tvNotification?.text = "index=" + index + "\nd=" + d + "\n^----------------^ showUpdatedProgress\n"
     }
 
     override fun showResolvedProgress(t: Terminal) {
-        tvNotification?.text = t.toSquareString() + "\n^----------------^showResolvedProgress\n"
+        tvNotification?.text = t.toSquareString() + "\n^----------------^ showResolvedProgress\n"
     }
 
-    override fun showUpdatedPossibility(index: Int, possibility: Array<Int?>) {
-        tvNotification?.text = "index=" + index + "\npossibility=" + Arrays.toString(possibility) + "\n^----------------^showUpdatedProgress\n"
+    override fun showUpdatedPossibility(index: Int, possibility: IntArray) {
+        tvNotification?.text = "index=" + index + "\npossibility=" + Arrays.toString(possibility) + "\n^----------------^ showUpdatedPossibility\n"
+    }
+
+    override fun showSelectedCell(index: Int, relevant: IntArray) {
+        tvNotification?.text = "index=" + index + "\nrelevant=" + Arrays.toString(relevant) + "\n^----------------^ showSelectedCell\n"
     }
 
     override fun setPresenter(presenter: SudokuContract.Presenter) {

@@ -73,6 +73,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="update_possibility" />
+
+            <Button
+                android:id="@+id/btn_select_cell"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="select_cell" />
         </LinearLayout>
 
     </LinearLayout>

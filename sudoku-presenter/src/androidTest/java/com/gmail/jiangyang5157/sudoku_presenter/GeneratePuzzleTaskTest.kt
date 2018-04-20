@@ -25,7 +25,7 @@ class GeneratePuzzleTaskTest {
                 t = result
                 signal.countDown()
             }
-        }).execute(9, 4, 55)
+        }).execute(0, 9, 4, 55)
         signal.await(10, TimeUnit.SECONDS)
 
         Assert.assertNotNull(t)
@@ -41,7 +41,7 @@ class GeneratePuzzleTaskTest {
                 t = result
                 signal.countDown()
             }
-        }).execute(9, 4, null)
+        }).execute(0, 9, 4, null)
         signal.await(10, TimeUnit.SECONDS)
 
         Assert.assertNull(t)
@@ -57,7 +57,7 @@ class GeneratePuzzleTaskTest {
                 t = result
                 signal.countDown()
             }
-        }).execute(9, 4)
+        }).execute(0, 9, 4)
         signal.await(10, TimeUnit.SECONDS)
 
         Assert.assertNull(t)

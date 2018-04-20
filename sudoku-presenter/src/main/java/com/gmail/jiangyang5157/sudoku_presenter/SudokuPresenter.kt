@@ -12,6 +12,10 @@ import com.gmail.jiangyang5157.sudoku_presenter.model.repo.SudokuRepoSpec
  */
 class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
 
+    companion object {
+        const val BLOCK_MODE = 0
+    }
+
     private val mView = view
 
     private val mSudokuRepo = SudokuRepo()
@@ -22,13 +26,15 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
 
     private var mResolver: ResolvePuzzleTask? = null
 
-    private fun runGenerator(edge: Int, minSubGiven: Int, minTotalGiven: Int, callback: PuzzleTask.Callback) {
+    private var mBlockMode = BLOCK_MODE
+
+    private fun runGenerator(blockMode: Int, edge: Int, minSubGiven: Int, minTotalGiven: Int, callback: PuzzleTask.Callback) {
         if (mGenerator?.status != AsyncTask.Status.FINISHED) {
             mGenerator?.cancel(true)
         }
         mGenerator?.mCallback = null
         mGenerator = GeneratePuzzleTask(callback)
-        mGenerator?.execute(edge, minSubGiven, minTotalGiven)
+        mGenerator?.execute(blockMode, edge, minSubGiven, minTotalGiven)
     }
 
     private fun runResolver(t: Terminal, callback: PuzzleTask.Callback) {
@@ -45,13 +51,13 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
     }
 
     override fun getPuzzle(edge: Int, minSubGiven: Int, minTotalGiven: Int) {
-        runGenerator(edge, minSubGiven, minTotalGiven, object : PuzzleTask.Callback {
+        runGenerator(mBlockMode, edge, minSubGiven, minTotalGiven, object : PuzzleTask.Callback {
             override fun onResult(result: Terminal?) {
                 if (result == null) {
                     return
                 }
-                mSudokuRepo.update(result, SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PUZZLE, SudokuRepoSpec.INDEX_PROGRESS)))
-                mSudokuRepo.remove(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
+                mSudokuRepo.update(result, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PUZZLE, SudokuRepoSpec.INDEX_PROGRESS)))
+                mSudokuRepo.remove(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
                 mPossibilityRepo = PossibilityRepo(edge)
                 mView.showPuzzle(result)
             }
@@ -59,12 +65,12 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
     }
 
     override fun getTerminal() {
-        val terminals = mSudokuRepo.find(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
+        val terminals = mSudokuRepo.find(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
         if (terminals.isNotEmpty()) {
             val t = terminals[0]
             mView.showTerminal(t)
         } else {
-            val puzzles = mSudokuRepo.find(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PUZZLE)))
+            val puzzles = mSudokuRepo.find(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PUZZLE)))
             if (puzzles.isNotEmpty()) {
                 val p = puzzles[0]
                 runResolver(p, object : PuzzleTask.Callback {
@@ -72,7 +78,7 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
                         if (result == null) {
                             return
                         }
-                        mSudokuRepo.update(result, SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
+                        mSudokuRepo.update(result, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
                         mView.showTerminal(result)
                     }
                 })
@@ -81,7 +87,7 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
     }
 
     override fun updateProgress(index: Int, d: Int) {
-        val progresses = mSudokuRepo.find(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
+        val progresses = mSudokuRepo.find(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
         if (progresses.isEmpty()) {
             return
         }
@@ -90,12 +96,12 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
             return
         }
         p.C[index]?.D = d
-        mSudokuRepo.update(p, SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
+        mSudokuRepo.update(p, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
         mView.showUpdatedProgress(index, d)
     }
 
     override fun resolveProgress() {
-        val progresses = mSudokuRepo.find(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
+        val progresses = mSudokuRepo.find(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
         if (progresses.isEmpty()) {
             return
         }
@@ -105,31 +111,34 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
                 if (result == null) {
                     return
                 }
-                mSudokuRepo.update(result, SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
+                mSudokuRepo.update(result, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
                 mView.showResolvedProgress(result)
             }
         })
     }
 
     override fun updatePossibility(index: Int, d: Int) {
-        val possibilities = mPossibilityRepo?.find(PossibilityRepoSpec(arrayOf(index)))
+        val possibilities = mPossibilityRepo?.find(PossibilityRepoSpec(intArrayOf(index)))
         if (possibilities == null || possibilities.isEmpty()) {
             return
         }
         val p = possibilities[0]
-        val found = p.indexOf(d)
-        if (found == -1) {
-            for (i in 0 until p.size) {
-                if (p[i] == null) {
-                    p[i] = d
-                    break
-                }
-            }
+        val found = p.indexOfFirst { it == d }
+        if (found >= 0) {
+            p[found] = 0
         } else {
-            p[found] = null
+            val i = p.indexOfFirst { it == 0 }
+            if (i >= 0) {
+                p[i] = d
+            }
         }
-        mPossibilityRepo?.update(p, PossibilityRepoSpec(arrayOf(index)))
+        mPossibilityRepo?.update(p, PossibilityRepoSpec(intArrayOf(index)))
         mView.showUpdatedPossibility(index, p)
+    }
+
+    override fun selectCell(index: Int) {
+        val ret: MutableSet<Int> = mutableSetOf()
+        mView.showSelectedCell(index, ret.toIntArray())
     }
 
 }
