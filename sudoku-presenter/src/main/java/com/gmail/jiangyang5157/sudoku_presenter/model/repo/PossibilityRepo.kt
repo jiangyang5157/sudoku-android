@@ -24,7 +24,7 @@ class PossibilityRepo(edge: Int) : Repository<IntArray, PossibilityRepoSpec> {
     }
 
     override fun remove(spec: PossibilityRepoSpec): Boolean {
-        spec.indexes().forEach { repo[it].map { 0 } }
+        spec.indexes().forEach { repo[it] = IntArray(repo[it].size) }
         return true
     }
 

@@ -21,6 +21,8 @@ interface SudokuContract {
 
         fun updatePossibility(index: Int, d: Int)
 
+        fun clearPossibility(index: Int)
+
         fun selectCell(index: Int)
 
     }

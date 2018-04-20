@@ -136,6 +136,17 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
         mView.showUpdatedPossibility(index, p)
     }
 
+    override fun clearPossibility(index: Int) {
+        mPossibilityRepo?.remove(PossibilityRepoSpec(intArrayOf(index)))
+
+        val possibilities = mPossibilityRepo?.find(PossibilityRepoSpec(intArrayOf(index)))
+        if (possibilities == null || possibilities.isEmpty()) {
+            return
+        }
+        val p = possibilities[0]
+        mView.showUpdatedPossibility(index, p)
+    }
+
     override fun selectCell(index: Int) {
         val ret: MutableSet<Int> = mutableSetOf()
         mView.showSelectedCell(index, ret.toIntArray())

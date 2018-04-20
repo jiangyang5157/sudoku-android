@@ -57,6 +57,9 @@ class MainFragment : Fragment(), SudokuContract.View {
         view.findViewById(R.id.btn_update_possibility)?.setOnClickListener {
             mSudokuPresenter.updatePossibility(0, (Math.random() * (view.findViewById(R.id.et_edge) as EditText).text.toString().toInt()).toInt())
         }
+        view.findViewById(R.id.btn_clear_possibility)?.setOnClickListener {
+            mSudokuPresenter.clearPossibility(0)
+        }
         view.findViewById(R.id.btn_select_cell)?.setOnClickListener {
             mSudokuPresenter.selectCell(testSelectCell++)
         }
