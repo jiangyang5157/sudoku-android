@@ -2,6 +2,8 @@ package com.gmail.jiangyang5157.sudoku_presenter
 
 import android.os.AsyncTask
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
+import com.gmail.jiangyang5157.sudoku_presenter.model.repo.PossibilityRepo
+import com.gmail.jiangyang5157.sudoku_presenter.model.repo.PossibilityRepoSpec
 import com.gmail.jiangyang5157.sudoku_presenter.model.repo.SudokuRepo
 import com.gmail.jiangyang5157.sudoku_presenter.model.repo.SudokuRepoSpec
 
@@ -12,7 +14,9 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
 
     private val mView = view
 
-    private val mRepo = SudokuRepo()
+    private val mSudokuRepo = SudokuRepo()
+
+    private var mPossibilityRepo: PossibilityRepo? = null
 
     private var mGenerator: GeneratePuzzleTask? = null
 
@@ -46,20 +50,21 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
                 if (result == null) {
                     return
                 }
-                mRepo.update(result, SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PUZZLE, SudokuRepoSpec.INDEX_PROGRESS)))
-                mRepo.remove(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
+                mSudokuRepo.update(result, SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PUZZLE, SudokuRepoSpec.INDEX_PROGRESS)))
+                mSudokuRepo.remove(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
+                mPossibilityRepo = PossibilityRepo(edge)
                 mView.showPuzzle(result)
             }
         })
     }
 
     override fun getTerminal() {
-        val terminals = mRepo.find(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
+        val terminals = mSudokuRepo.find(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
         if (terminals.isNotEmpty()) {
             val t = terminals[0]
             mView.showTerminal(t)
         } else {
-            val puzzles = mRepo.find(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PUZZLE)))
+            val puzzles = mSudokuRepo.find(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PUZZLE)))
             if (puzzles.isNotEmpty()) {
                 val p = puzzles[0]
                 runResolver(p, object : PuzzleTask.Callback {
@@ -67,7 +72,7 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
                         if (result == null) {
                             return
                         }
-                        mRepo.update(result, SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
+                        mSudokuRepo.update(result, SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
                         mView.showTerminal(result)
                     }
                 })
@@ -76,7 +81,7 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
     }
 
     override fun updateProgress(index: Int, d: Int) {
-        val progresses = mRepo.find(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
+        val progresses = mSudokuRepo.find(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
         if (progresses.isEmpty()) {
             return
         }
@@ -85,12 +90,12 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
             return
         }
         p.C[index]?.D = d
-        mRepo.update(p, SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
-        mView.showUpdatedProgress(p)
+        mSudokuRepo.update(p, SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
+        mView.showUpdatedProgress(index, d)
     }
 
     override fun resolveProgress() {
-        val progresses = mRepo.find(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
+        val progresses = mSudokuRepo.find(SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
         if (progresses.isEmpty()) {
             return
         }
@@ -100,10 +105,31 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
                 if (result == null) {
                     return
                 }
-                mRepo.update(result, SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
+                mSudokuRepo.update(result, SudokuRepoSpec(arrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
                 mView.showResolvedProgress(result)
             }
         })
+    }
+
+    override fun updatePossibility(index: Int, d: Int) {
+        val possibilities = mPossibilityRepo?.find(PossibilityRepoSpec(arrayOf(index)))
+        if (possibilities == null || possibilities.isEmpty()) {
+            return
+        }
+        val p = possibilities[0]
+        val found = p.indexOf(d)
+        if (found == -1) {
+            for (i in 0 until p.size) {
+                if (p[i] == null) {
+                    p[i] = d
+                    break
+                }
+            }
+        } else {
+            p[found] = null
+        }
+        mPossibilityRepo?.update(p, PossibilityRepoSpec(arrayOf(index)))
+        mView.showUpdatedPossibility(index, p)
     }
 
 }

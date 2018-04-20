@@ -19,6 +19,8 @@ interface SudokuContract {
 
         fun resolveProgress()
 
+        fun updatePossibility(index: Int, d: Int)
+
     }
 
     interface View : BaseView<Presenter> {
@@ -27,9 +29,11 @@ interface SudokuContract {
 
         fun showTerminal(t: Terminal)
 
-        fun showUpdatedProgress(t: Terminal)
+        fun showUpdatedProgress(index: Int, d: Int)
 
         fun showResolvedProgress(t: Terminal)
+
+        fun showUpdatedPossibility(index: Int, possibility: Array<Int?>)
 
     }
 

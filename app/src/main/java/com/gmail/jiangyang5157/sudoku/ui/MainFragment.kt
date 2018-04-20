@@ -61,12 +61,16 @@ class MainFragment : Fragment(), SudokuContract.View {
         tvNotification?.text = t.toSquareString() + "\n^----------------^showTerminal\n"
     }
 
-    override fun showUpdatedProgress(t: Terminal) {
-        tvNotification?.text = t.toSquareString() + "\n^----------------^showUpdatedProgress\n"
+    override fun showUpdatedProgress(index: Int, d: Int) {
+        tvNotification?.text = "index=" + index + "\nd=" + d + "\n^----------------^showUpdatedProgress\n"
     }
 
     override fun showResolvedProgress(t: Terminal) {
         tvNotification?.text = t.toSquareString() + "\n^----------------^showResolvedProgress\n"
+    }
+
+    override fun showUpdatedPossibility(index: Int, possibility: Array<Int?>) {
+        tvNotification?.text = "index=" + index + "\npossibility=" + possibility + "\n^----------------^showUpdatedProgress\n"
     }
 
     override fun setPresenter(presenter: SudokuContract.Presenter) {

@@ -14,6 +14,7 @@ class SudokuRepoSpec(override var mIndexes: Array<Int>) : IndexRepoSpec {
         const val INDEX_PUZZLE = 1
 
         const val INDEX_PROGRESS = 2
+
     }
 
 }
