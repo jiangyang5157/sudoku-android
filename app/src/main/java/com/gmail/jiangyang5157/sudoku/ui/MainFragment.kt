@@ -11,13 +11,14 @@ import com.gmail.jiangyang5157.sudoku.R
 import com.gmail.jiangyang5157.sudoku_presenter.SudokuContract
 import com.gmail.jiangyang5157.sudoku_presenter.SudokuPresenter
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
+import java.util.*
 
 /**s
  * Created by Yang Jiang on July 16, 2017
  */
 class MainFragment : Fragment(), SudokuContract.View {
 
-    private lateinit var mSudokuPresenter: SudokuContract.Presenter
+    private var mSudokuPresenter: SudokuContract.Presenter
 
     private var tvNotification: TextView? = null
 
@@ -51,6 +52,9 @@ class MainFragment : Fragment(), SudokuContract.View {
         view.findViewById(R.id.btn_resolve_progress)?.setOnClickListener {
             mSudokuPresenter.resolveProgress()
         }
+        view.findViewById(R.id.btn_update_possibility)?.setOnClickListener {
+            mSudokuPresenter.updatePossibility(0, (Math.random() * (view.findViewById(R.id.et_edge) as EditText).text.toString().toInt()).toInt())
+        }
     }
 
     override fun showPuzzle(t: Terminal) {
@@ -70,7 +74,7 @@ class MainFragment : Fragment(), SudokuContract.View {
     }
 
     override fun showUpdatedPossibility(index: Int, possibility: Array<Int?>) {
-        tvNotification?.text = "index=" + index + "\npossibility=" + possibility + "\n^----------------^showUpdatedProgress\n"
+        tvNotification?.text = "index=" + index + "\npossibility=" + Arrays.toString(possibility) + "\n^----------------^showUpdatedProgress\n"
     }
 
     override fun setPresenter(presenter: SudokuContract.Presenter) {
