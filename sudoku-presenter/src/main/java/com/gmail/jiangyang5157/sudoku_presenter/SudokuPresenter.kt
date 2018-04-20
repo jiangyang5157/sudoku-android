@@ -149,6 +149,18 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
 
     override fun selectCell(index: Int) {
         val ret: MutableSet<Int> = mutableSetOf()
+        val puzzles = mSudokuRepo.find(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PUZZLE)))
+        if (puzzles.isNotEmpty()) {
+            val p = puzzles[0]
+            val b = p.C[index]?.B
+            val row = Terminal.row(p.E, index)
+            val col = Terminal.col(p.E, index)
+            p.C.forEachIndexed { index2, cell ->
+                if (cell?.B == b || Terminal.row(p.E, index2) == row || Terminal.col(p.E, index2) == col) {
+                    ret.add(index2)
+                }
+            }
+        }
         mView.cellSelected(index, ret.toIntArray())
     }
 

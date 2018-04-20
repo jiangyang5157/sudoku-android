@@ -56,4 +56,14 @@ data class Terminal(
         return newTerminal
     }
 
+    companion object {
+
+        fun row(e: Int, index: Int) = index / e
+
+        fun col(e: Int, index: Int) = index % e
+
+        fun index(e: Int, row: Int, col: Int) = row * e + col
+
+    }
+
 }

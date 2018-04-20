@@ -9,6 +9,33 @@ import org.junit.Test
 class TerminalTest {
 
     @Test
+    fun test_row() {
+        Assert.assertEquals(0, Terminal.row(9, 0))
+        Assert.assertEquals(0, Terminal.row(9, 8))
+        Assert.assertEquals(1, Terminal.row(9, 9))
+        Assert.assertEquals(1, Terminal.row(9, 17))
+        Assert.assertEquals(2, Terminal.row(9, 18))
+    }
+
+    @Test
+    fun test_col() {
+        Assert.assertEquals(0, Terminal.col(9, 0))
+        Assert.assertEquals(8, Terminal.col(9, 8))
+        Assert.assertEquals(0, Terminal.col(9, 9))
+        Assert.assertEquals(8, Terminal.col(9, 17))
+        Assert.assertEquals(0, Terminal.col(9, 18))
+    }
+
+    @Test
+    fun test_index() {
+        Assert.assertEquals(0, Terminal.index(9, 0, 0))
+        Assert.assertEquals(80, Terminal.index(9, 8, 8))
+        Assert.assertEquals(9, Terminal.index(9, 1, 0))
+        Assert.assertEquals(17, Terminal.index(9, 1, 8))
+        Assert.assertEquals(19, Terminal.index(9, 2, 1))
+    }
+
+    @Test
     fun test_toString() {
         val terminal = Terminal(2)
         terminal.C[1] = Cell(1, 2)
