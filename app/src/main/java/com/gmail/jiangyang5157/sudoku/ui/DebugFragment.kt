@@ -16,7 +16,7 @@ import java.util.*
 /**s
  * Created by Yang Jiang on July 16, 2017
  */
-class MainFragment : Fragment(), SudokuContract.View {
+class DebugFragment : Fragment(), SudokuContract.View {
 
     private var mSudokuPresenter: SudokuContract.Presenter
 
@@ -29,7 +29,7 @@ class MainFragment : Fragment(), SudokuContract.View {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        return inflater.inflate(R.layout.fragment_debug, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {

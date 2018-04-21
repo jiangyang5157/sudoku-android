@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.container_activity)
 
         if (savedInstanceState == null) {
-            replaceFragmentInActivity(R.id.activity_container, instance<MainFragment>())
+            replaceFragmentInActivity(R.id.activity_container, instance<DebugFragment>())
         }
     }
 
