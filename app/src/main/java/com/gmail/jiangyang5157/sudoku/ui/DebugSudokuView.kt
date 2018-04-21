@@ -16,20 +16,16 @@ import java.util.*
 /**s
  * Created by Yang Jiang on July 16, 2017
  */
-class DebugFragment : Fragment(), SudokuContract.View {
+class DebugSudokuView : Fragment(), SudokuContract.View {
 
-    private var mSudokuPresenter: SudokuContract.Presenter
+    private var mSudokuPresenter: SudokuContract.Presenter = SudokuPresenter(this)
 
     private var tvNotification: TextView? = null
 
     private var testSelectCell = 0
 
-    init {
-        mSudokuPresenter = SudokuPresenter(this)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_debug, container, false)
+        return inflater.inflate(R.layout.fragment_debug_sudoku_view, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
