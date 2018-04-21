@@ -1,4 +1,4 @@
-package com.gmail.jiangyang5157.sudoku.ui
+package com.gmail.jiangyang5157.sudoku.widget
 
 import android.content.Context
 import android.util.AttributeSet
