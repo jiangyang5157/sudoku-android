@@ -23,12 +23,15 @@ class SquareFrameLayout : FrameLayout {
             : super(context, attrs, defStyleAttr, defStyleRes)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, widthMeasureSpec)
-
         val width = View.MeasureSpec.getSize(widthMeasureSpec)
         val height = View.MeasureSpec.getSize(heightMeasureSpec)
-        val size = if (height > width) width else height
-        setMeasuredDimension(size, size)
+        if (height > width) {
+            super.onMeasure(widthMeasureSpec, widthMeasureSpec)
+            setMeasuredDimension(width, width)
+        } else {
+            super.onMeasure(heightMeasureSpec, heightMeasureSpec)
+            setMeasuredDimension(height, height)
+        }
     }
 
 }
