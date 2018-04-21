@@ -11,9 +11,7 @@ import com.gmail.jiangyang5157.sudoku_presenter.model.repo.SudokuRepoSpec
 /**
  * Created by Yang Jiang on April 13, 2018
  */
-class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
-
-    private val mView = view
+class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.Presenter {
 
     init {
         mView.setPresenter(this)
@@ -39,6 +37,8 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
     private var mResolver: ResolvePuzzleTask? = null
 
     private var mBlockMode = 0
+
+    private var isPossibilityEnterEnable = false
 
     /**
      * Run Sudoku generator in [GeneratePuzzleTask].
@@ -218,6 +218,40 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
                 }
             }
             mView.cellSelected(index, ret.toIntArray())
+        }
+    }
+
+    override fun enablePossibilityEnter() {
+        isPossibilityEnterEnable = true
+        mView.possibilityEnterEnabled()
+    }
+
+    override fun disablePossibilityEnter() {
+        isPossibilityEnterEnable = false
+        mView.possibilityEnterDisabled()
+    }
+
+    override fun invertPossibilityEnterStatus() {
+        if (isPossibilityEnterEnable) {
+            disablePossibilityEnter()
+        } else {
+            enablePossibilityEnter()
+        }
+    }
+
+    override fun enterClear() {
+        if (isPossibilityEnterEnable) {
+            mView.possibilityCleard()
+        } else {
+            mView.digitCleard()
+        }
+    }
+
+    override fun enterDigit(digit: Int) {
+        if (isPossibilityEnterEnable) {
+            mView.possibilityEnterd(digit)
+        } else {
+            mView.digitEnterd(digit)
         }
     }
 

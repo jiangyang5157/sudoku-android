@@ -58,6 +58,15 @@ class DebugSudokuView : Fragment(), SudokuContract.View {
         view.findViewById(R.id.btn_select_cell)?.setOnClickListener {
             mSudokuPresenter.selectCell(testSelectCell++)
         }
+        view.findViewById(R.id.btn_enter_digit)?.setOnClickListener {
+            mSudokuPresenter.enterDigit((Math.random() * (view.findViewById(R.id.et_edge) as EditText).text.toString().toInt()).toInt())
+        }
+        view.findViewById(R.id.btn_enter_clear)?.setOnClickListener {
+            mSudokuPresenter.enterClear()
+        }
+        view.findViewById(R.id.btn_invert_possibility_enter_status)?.setOnClickListener {
+            mSudokuPresenter.invertPossibilityEnterStatus()
+        }
     }
 
     override fun puzzleGenerated(t: Terminal?) {
@@ -82,6 +91,30 @@ class DebugSudokuView : Fragment(), SudokuContract.View {
 
     override fun cellSelected(index: Int, relevant: IntArray) {
         tvNotification?.text = "index=" + index + "\nrelevant=" + Arrays.toString(relevant) + "\n^----------------^ cellSelected\n"
+    }
+
+    override fun possibilityEnterEnabled() {
+        tvNotification?.text = "\n^----------------^ possibilityEnterEnabled\n"
+    }
+
+    override fun possibilityEnterDisabled() {
+        tvNotification?.text = "\n^----------------^ possibilityEnterDisabled\n"
+    }
+
+    override fun digitCleard() {
+        tvNotification?.text = "\n^----------------^ digitCleard\n"
+    }
+
+    override fun possibilityCleard() {
+        tvNotification?.text = "\n^----------------^ possibilityCleard\n"
+    }
+
+    override fun digitEnterd(digit: Int) {
+        tvNotification?.text = "digit+=" + digit + "\n^----------------^ digitEnterd\n"
+    }
+
+    override fun possibilityEnterd(digit: Int) {
+        tvNotification?.text = "possibility+=" + digit + "\n^----------------^ possibilityEnterd\n"
     }
 
     override fun setPresenter(presenter: SudokuContract.Presenter) {

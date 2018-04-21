@@ -11,6 +11,8 @@ interface SudokuContract {
 
     interface Presenter : BasePresenter {
 
+        val mView: View
+
         fun generatePuzzle(edge: Int, minSubGiven: Int, minTotalGiven: Int)
 
         fun revealTerminal()
@@ -24,6 +26,16 @@ interface SudokuContract {
         fun clearPossibility(index: Int)
 
         fun selectCell(index: Int)
+
+        fun enablePossibilityEnter()
+
+        fun disablePossibilityEnter()
+
+        fun invertPossibilityEnterStatus()
+
+        fun enterClear()
+
+        fun enterDigit(digit: Int)
 
     }
 
@@ -41,35 +53,17 @@ interface SudokuContract {
 
         fun cellSelected(index: Int, relevant: IntArray)
 
-    }
+        fun possibilityEnterEnabled()
 
-    interface EditorPresenter : BasePresenter {
-
-        fun enablePossibility()
-
-        fun disablePossibility()
-
-        fun triggerPossibilityEnablement()
-
-        fun clear()
-
-        fun input(digit: Int)
-
-    }
-
-    interface EditorView : BaseView<EditorPresenter> {
-
-        fun possibilityEnabled()
-
-        fun possibilityDisabled()
+        fun possibilityEnterDisabled()
 
         fun digitCleard()
 
         fun possibilityCleard()
 
-        fun digitInputd(digit: Int)
+        fun digitEnterd(digit: Int)
 
-        fun possibilityInputd(digit: Int)
+        fun possibilityEnterd(digit: Int)
 
     }
 

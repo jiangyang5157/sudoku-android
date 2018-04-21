@@ -89,6 +89,33 @@
                 android:text="select_cell" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_enter_digit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="enter_digit" />
+
+            <Button
+                android:id="@+id/btn_enter_clear"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="enter_clear" />
+
+            <Button
+                android:id="@+id/btn_invert_possibility_enter_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="invert_possibility_enter_status" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <FrameLayout
