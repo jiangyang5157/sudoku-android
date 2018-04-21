@@ -11,6 +11,7 @@ import com.gmail.jiangyang5157.kotlin_android_kit.db.BaseDb
 class PuzzleDbApi private constructor(puzzleDbHelper: PuzzleDbHelper) : BaseDb(puzzleDbHelper) {
 
     companion object {
+
         private var INSTANCE: PuzzleDbApi? = null
 
         fun getInstance(context: Context): PuzzleDbApi {
@@ -21,34 +22,27 @@ class PuzzleDbApi private constructor(puzzleDbHelper: PuzzleDbHelper) : BaseDb(p
         }
     }
 
-    fun insertPuzzle(cache: String, drawable: String, date: String, timer: String, best_time: String): Long {
+    fun insertPuzzle(cache: String, date: String): Long {
         open()
         try {
             return insert(PuzzleTable.TABLE_NAME,
                     ContentValues().apply {
-                        put(PuzzleTable.Column.KEY_CACHE, cache)
-                        put(PuzzleTable.Column.KEY_CACHE, cache)
-                        put(PuzzleTable.Column.KEY_DRAWABLE, drawable)
-                        put(PuzzleTable.Column.KEY_DATE, date)
-                        put(PuzzleTable.Column.KEY_TIMER, timer)
-                        put(PuzzleTable.Column.KEY_BEST_TIME, best_time)
+                        put(PuzzleTable.Column.KEY_TERMINAL_DATA, cache)
+                        put(PuzzleTable.Column.KEY_LAST_MODIFIED_DATE, date)
                     })
         } finally {
             close()
         }
     }
 
-    fun updatePuzzle(rowId: String, cache: String, drawable: String, date: String, timer: String, best_time: String): Int {
+    fun updatePuzzle(rowId: String, cache: String, date: String): Int {
         open()
         try {
             return update(PuzzleTable.TABLE_NAME,
                     PuzzleTable.Column.KEY_ID, rowId,
                     ContentValues().apply {
-                        put(PuzzleTable.Column.KEY_CACHE, cache)
-                        put(PuzzleTable.Column.KEY_DRAWABLE, drawable)
-                        put(PuzzleTable.Column.KEY_DATE, date)
-                        put(PuzzleTable.Column.KEY_TIMER, timer)
-                        put(PuzzleTable.Column.KEY_BEST_TIME, best_time)
+                        put(PuzzleTable.Column.KEY_TERMINAL_DATA, cache)
+                        put(PuzzleTable.Column.KEY_LAST_MODIFIED_DATE, date)
                     })
         } finally {
             close()
@@ -60,11 +54,8 @@ class PuzzleDbApi private constructor(puzzleDbHelper: PuzzleDbHelper) : BaseDb(p
         try {
             return queryValue(PuzzleTable.TABLE_NAME,
                     arrayOf(PuzzleTable.Column.KEY_ID,
-                            PuzzleTable.Column.KEY_CACHE,
-                            PuzzleTable.Column.KEY_DRAWABLE,
-                            PuzzleTable.Column.KEY_DATE,
-                            PuzzleTable.Column.KEY_TIMER,
-                            PuzzleTable.Column.KEY_BEST_TIME),
+                            PuzzleTable.Column.KEY_TERMINAL_DATA,
+                            PuzzleTable.Column.KEY_LAST_MODIFIED_DATE),
                     key, value, orderBy)
         } finally {
             close()
@@ -76,11 +67,8 @@ class PuzzleDbApi private constructor(puzzleDbHelper: PuzzleDbHelper) : BaseDb(p
         try {
             return query(PuzzleTable.TABLE_NAME,
                     arrayOf(PuzzleTable.Column.KEY_ID,
-                            PuzzleTable.Column.KEY_CACHE,
-                            PuzzleTable.Column.KEY_DRAWABLE,
-                            PuzzleTable.Column.KEY_DATE,
-                            PuzzleTable.Column.KEY_TIMER,
-                            PuzzleTable.Column.KEY_BEST_TIME),
+                            PuzzleTable.Column.KEY_TERMINAL_DATA,
+                            PuzzleTable.Column.KEY_LAST_MODIFIED_DATE),
                     orderBy)
         } finally {
             close()
@@ -92,11 +80,8 @@ class PuzzleDbApi private constructor(puzzleDbHelper: PuzzleDbHelper) : BaseDb(p
         try {
             return queryLike(PuzzleTable.TABLE_NAME,
                     arrayOf(PuzzleTable.Column.KEY_ID,
-                            PuzzleTable.Column.KEY_CACHE,
-                            PuzzleTable.Column.KEY_DRAWABLE,
-                            PuzzleTable.Column.KEY_DATE,
-                            PuzzleTable.Column.KEY_TIMER,
-                            PuzzleTable.Column.KEY_BEST_TIME),
+                            PuzzleTable.Column.KEY_TERMINAL_DATA,
+                            PuzzleTable.Column.KEY_LAST_MODIFIED_DATE),
                     key, like, orderBy)
         } finally {
             close()

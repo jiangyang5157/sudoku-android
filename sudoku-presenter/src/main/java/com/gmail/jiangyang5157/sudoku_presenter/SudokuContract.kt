@@ -36,7 +36,6 @@ interface SudokuContract {
         fun enterClear()
 
         fun enterDigit(digit: Int)
-
     }
 
     interface View : BaseView<Presenter> {
@@ -64,7 +63,6 @@ interface SudokuContract {
         fun digitEnterd(digit: Int)
 
         fun possibilityEnterd(digit: Int)
-
     }
 
 }
