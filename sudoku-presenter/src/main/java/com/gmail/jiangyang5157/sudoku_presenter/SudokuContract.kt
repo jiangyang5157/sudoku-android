@@ -29,13 +29,13 @@ interface SudokuContract {
 
     interface View : BaseView<Presenter> {
 
-        fun puzzleGenerated(t: Terminal)
+        fun puzzleGenerated(t: Terminal?)
 
-        fun terminalRevealed(t: Terminal)
+        fun terminalRevealed(t: Terminal?)
 
         fun progressUpdated(index: Int, d: Int)
 
-        fun progressResolved(t: Terminal)
+        fun progressResolved(t: Terminal?)
 
         fun possibilityUpdated(index: Int, possibility: IntArray)
 

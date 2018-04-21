@@ -1,2 +1,3 @@
 configurations.maybeCreate("default")
+// https://github.com/jiangyang5157/kotlin-android/tree/master/kotlin-android-kit
 artifacts.add("default", file('kotlin-android-kit-debug.aar'))

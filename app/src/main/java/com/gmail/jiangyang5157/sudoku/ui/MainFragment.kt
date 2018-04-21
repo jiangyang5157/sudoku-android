@@ -37,7 +37,6 @@ class MainFragment : Fragment(), SudokuContract.View {
 
         tvNotification = view?.findViewById(R.id.tv_notification) as TextView
 
-        mSudokuPresenter.start()
         view.findViewById(R.id.btn_get_puzzle)?.setOnClickListener {
             mSudokuPresenter.generatePuzzle(
                     (view.findViewById(R.id.et_edge) as EditText).text.toString().toInt(),

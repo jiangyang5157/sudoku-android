@@ -34,7 +34,6 @@ dependencies {
     implementation "com.google.code.gson:gson:$gson_version"
 
     implementation project(':kotlin-kit')
-    implementation project(':kotlin-android-kit')
     implementation project(':go-sudoku')
 }
 

@@ -21,22 +21,18 @@ class SudokuPresenterTest {
         val signal = CountDownLatch(1)
 
         val view = object : SudokuContract.View {
-            var mPresenter: SudokuContract.Presenter
+            lateinit var mPresenter: SudokuContract.Presenter
 
-            init {
-                mPresenter = SudokuPresenter(this)
-            }
-
-            override fun puzzleGenerated(t: Terminal) {
+            override fun puzzleGenerated(t: Terminal?) {
                 puzzle = t
                 signal.countDown()
             }
 
-            override fun terminalRevealed(t: Terminal) {}
+            override fun terminalRevealed(t: Terminal?) {}
 
             override fun progressUpdated(index: Int, d: Int) {}
 
-            override fun progressResolved(t: Terminal) {}
+            override fun progressResolved(t: Terminal?) {}
 
             override fun possibilityUpdated(index: Int, possibility: IntArray) {}
 
@@ -47,8 +43,8 @@ class SudokuPresenterTest {
             }
 
         }
-        view.mPresenter.start()
-        view.mPresenter.generatePuzzle(9, 4, 55)
+        val presenter = SudokuPresenter(view)
+        presenter.generatePuzzle(9, 4, 55)
         signal.await(10, TimeUnit.SECONDS)
 
         Assert.assertNotNull(puzzle)
@@ -61,25 +57,21 @@ class SudokuPresenterTest {
         val signal = CountDownLatch(1)
 
         val view = object : SudokuContract.View {
-            var mPresenter: SudokuContract.Presenter
+            lateinit var mPresenter: SudokuContract.Presenter
 
-            init {
-                mPresenter = SudokuPresenter(this)
-            }
-
-            override fun puzzleGenerated(t: Terminal) {
+            override fun puzzleGenerated(t: Terminal?) {
                 puzzle = t
                 mPresenter.revealTerminal()
             }
 
-            override fun terminalRevealed(t: Terminal) {
+            override fun terminalRevealed(t: Terminal?) {
                 terminal = t
                 signal.countDown()
             }
 
             override fun progressUpdated(index: Int, d: Int) {}
 
-            override fun progressResolved(t: Terminal) {}
+            override fun progressResolved(t: Terminal?) {}
 
             override fun possibilityUpdated(index: Int, possibility: IntArray) {}
 
@@ -90,8 +82,8 @@ class SudokuPresenterTest {
             }
 
         }
-        view.mPresenter.start()
-        view.mPresenter.generatePuzzle(9, 4, 55)
+        val presenter = SudokuPresenter(view)
+        presenter.generatePuzzle(9, 4, 55)
         signal.await(20, TimeUnit.SECONDS)
 
         Assert.assertNotNull(puzzle)
@@ -106,22 +98,18 @@ class SudokuPresenterTest {
         val signal = CountDownLatch(1)
 
         val view = object : SudokuContract.View {
-            var mPresenter: SudokuContract.Presenter
+            lateinit var mPresenter: SudokuContract.Presenter
 
-            init {
-                mPresenter = SudokuPresenter(this)
-            }
-
-            override fun puzzleGenerated(t: Terminal) {
+            override fun puzzleGenerated(t: Terminal?) {
                 puzzle = t
                 mPresenter.resolveProgress()
             }
 
-            override fun terminalRevealed(t: Terminal) {}
+            override fun terminalRevealed(t: Terminal?) {}
 
             override fun progressUpdated(index: Int, d: Int) {}
 
-            override fun progressResolved(t: Terminal) {
+            override fun progressResolved(t: Terminal?) {
                 resolved = t
                 signal.countDown()
             }
@@ -135,8 +123,8 @@ class SudokuPresenterTest {
             }
 
         }
-        view.mPresenter.start()
-        view.mPresenter.generatePuzzle(9, 4, 55)
+        val presenter = SudokuPresenter(view)
+        presenter.generatePuzzle(9, 4, 55)
         signal.await(20, TimeUnit.SECONDS)
 
         Assert.assertNotNull(puzzle)
@@ -152,18 +140,14 @@ class SudokuPresenterTest {
         val signal = CountDownLatch(1)
 
         val view = object : SudokuContract.View {
-            var mPresenter: SudokuContract.Presenter
+            lateinit var mPresenter: SudokuContract.Presenter
 
-            init {
-                mPresenter = SudokuPresenter(this)
-            }
-
-            override fun puzzleGenerated(t: Terminal) {
+            override fun puzzleGenerated(t: Terminal?) {
                 puzzle = t
                 mPresenter.updateProgress(1, 2)
             }
 
-            override fun terminalRevealed(t: Terminal) {}
+            override fun terminalRevealed(t: Terminal?) {}
 
             override fun progressUpdated(index: Int, d: Int) {
                 indexResult = index
@@ -171,7 +155,7 @@ class SudokuPresenterTest {
                 signal.countDown()
             }
 
-            override fun progressResolved(t: Terminal) {}
+            override fun progressResolved(t: Terminal?) {}
 
             override fun possibilityUpdated(index: Int, possibility: IntArray) {}
 
@@ -182,8 +166,8 @@ class SudokuPresenterTest {
             }
 
         }
-        view.mPresenter.start()
-        view.mPresenter.generatePuzzle(9, 4, 55)
+        val presenter = SudokuPresenter(view)
+        presenter.generatePuzzle(9, 4, 55)
         signal.await(10, TimeUnit.SECONDS)
 
         Assert.assertNotNull(puzzle)
@@ -199,13 +183,9 @@ class SudokuPresenterTest {
         val signal = CountDownLatch(7)
 
         val view = object : SudokuContract.View {
-            var mPresenter: SudokuContract.Presenter
+            lateinit var mPresenter: SudokuContract.Presenter
 
-            init {
-                mPresenter = SudokuPresenter(this)
-            }
-
-            override fun puzzleGenerated(t: Terminal) {
+            override fun puzzleGenerated(t: Terminal?) {
                 puzzle = t
                 mPresenter.updatePossibility(1, 2)
                 mPresenter.updatePossibility(1, 3)
@@ -216,11 +196,11 @@ class SudokuPresenterTest {
                 mPresenter.updatePossibility(1, 4)
             }
 
-            override fun terminalRevealed(t: Terminal) {}
+            override fun terminalRevealed(t: Terminal?) {}
 
             override fun progressUpdated(index: Int, d: Int) {}
 
-            override fun progressResolved(t: Terminal) {}
+            override fun progressResolved(t: Terminal?) {}
 
             override fun possibilityUpdated(index: Int, possibility: IntArray) {
                 indexResult = index
@@ -235,8 +215,8 @@ class SudokuPresenterTest {
             }
 
         }
-        view.mPresenter.start()
-        view.mPresenter.generatePuzzle(9, 4, 55)
+        val presenter = SudokuPresenter(view)
+        presenter.generatePuzzle(9, 4, 55)
         signal.await(10, TimeUnit.SECONDS)
 
         Assert.assertNotNull(puzzle)
@@ -252,13 +232,9 @@ class SudokuPresenterTest {
         val signal = CountDownLatch(7)
 
         val view = object : SudokuContract.View {
-            var mPresenter: SudokuContract.Presenter
+            lateinit var mPresenter: SudokuContract.Presenter
 
-            init {
-                mPresenter = SudokuPresenter(this)
-            }
-
-            override fun puzzleGenerated(t: Terminal) {
+            override fun puzzleGenerated(t: Terminal?) {
                 puzzle = t
 
                 mPresenter.updatePossibility(1, 2)
@@ -270,11 +246,11 @@ class SudokuPresenterTest {
                 mPresenter.clearPossibility(1)
             }
 
-            override fun terminalRevealed(t: Terminal) {}
+            override fun terminalRevealed(t: Terminal?) {}
 
             override fun progressUpdated(index: Int, d: Int) {}
 
-            override fun progressResolved(t: Terminal) {}
+            override fun progressResolved(t: Terminal?) {}
 
             override fun possibilityUpdated(index: Int, possibility: IntArray) {
                 indexResult = index
@@ -289,8 +265,8 @@ class SudokuPresenterTest {
             }
 
         }
-        view.mPresenter.start()
-        view.mPresenter.generatePuzzle(9, 4, 55)
+        val presenter = SudokuPresenter(view)
+        presenter.generatePuzzle(9, 4, 55)
         signal.await(10, TimeUnit.SECONDS)
 
         Assert.assertNotNull(puzzle)
@@ -307,22 +283,18 @@ class SudokuPresenterTest {
         val signal = CountDownLatch(1)
 
         val view = object : SudokuContract.View {
-            var mPresenter: SudokuContract.Presenter
+            lateinit var mPresenter: SudokuContract.Presenter
 
-            init {
-                mPresenter = SudokuPresenter(this)
-            }
-
-            override fun puzzleGenerated(t: Terminal) {
+            override fun puzzleGenerated(t: Terminal?) {
                 puzzle = t
                 mPresenter.selectCell(41)
             }
 
-            override fun terminalRevealed(t: Terminal) {}
+            override fun terminalRevealed(t: Terminal?) {}
 
             override fun progressUpdated(index: Int, d: Int) {}
 
-            override fun progressResolved(t: Terminal) {}
+            override fun progressResolved(t: Terminal?) {}
 
             override fun possibilityUpdated(index: Int, possibility: IntArray) {}
 
@@ -337,8 +309,8 @@ class SudokuPresenterTest {
             }
 
         }
-        view.mPresenter.start()
-        view.mPresenter.generatePuzzle(9, 4, 55)
+        val presenter = SudokuPresenter(view)
+        presenter.generatePuzzle(9, 4, 55)
         signal.await(10, TimeUnit.SECONDS)
 
         Assert.assertNotNull(puzzle)
