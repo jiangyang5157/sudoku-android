@@ -3,7 +3,7 @@ package com.gmail.jiangyang5157.sudoku.widget
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
-import com.gmail.jiangyang5157.kotlin_android_kit.view.RenderView
+import com.gmail.jiangyang5157.kotlin_android_kit.widget.RenderView
 
 /**
  * Created by Yang Jiang on July 18, 2017
