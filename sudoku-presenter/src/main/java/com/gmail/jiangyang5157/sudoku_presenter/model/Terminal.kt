@@ -82,7 +82,7 @@ data class Terminal(
     fun cell(row: Int, col: Int) = C[index(row, col)]
 
     /**
-     * Get `up` index at current [index], returns -1 if not found.
+     * Get `up` index at current [index], returns -1 if not found
      */
     fun up(index: Int): Int {
         val ret = index - E
@@ -93,18 +93,18 @@ data class Terminal(
     }
 
     /**
-     * Get `down` index at current [index], returns -1 if not found.
+     * Get `down` index at current [index], returns -1 if not found
      */
     fun down(index: Int): Int {
         val ret = index + E
-        if (ret > E - 1) {
+        if (ret > C.size - 1) {
             return -1
         }
         return ret
     }
 
     /**
-     * Get `left` index at current [index], returns -1 if not found.
+     * Get `left` index at current [index], returns -1 if not found
      */
     fun left(index: Int): Int {
         val ret = index - 1
@@ -115,20 +115,14 @@ data class Terminal(
     }
 
     /**
-     * Get `right` index at current [index], returns -1 if not found.
+     * Get `right` index at current [index], returns -1 if not found
      */
     fun right(index: Int): Int {
         val ret = index + 1
-        if (ret > E - 1 || row(ret) != row(index)) {
+        if (ret > C.size - 1 || row(ret) != row(index)) {
             return -1
         }
         return ret
     }
 
-    /**
-     * Get `neighbour` indexes at current [index].
-     */
-    fun neighbours(index: Int): List<Int> {
-        return intArrayOf(up(index), down(index), left(index), left(index)).filter { it != -1 }
-    }
 }

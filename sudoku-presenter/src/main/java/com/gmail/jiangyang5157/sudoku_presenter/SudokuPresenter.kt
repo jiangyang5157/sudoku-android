@@ -77,12 +77,12 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
             override fun onResult(result: Terminal?) {
                 if (result == null) {
                     mView.puzzleGenerated(null)
-                    return
+                } else {
+                    mSudokuRepo.update(result, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PUZZLE, SudokuRepoSpec.INDEX_PROGRESS)))
+                    mSudokuRepo.remove(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
+                    mPossibilityRepo = PossibilityRepo(edge)
+                    mView.puzzleGenerated(result)
                 }
-                mSudokuRepo.update(result, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PUZZLE, SudokuRepoSpec.INDEX_PROGRESS)))
-                mSudokuRepo.remove(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
-                mPossibilityRepo = PossibilityRepo(edge)
-                mView.puzzleGenerated(result)
             }
         })
     }
@@ -93,24 +93,24 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
      */
     override fun revealTerminal() {
         val terminals = mSudokuRepo.find(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
-        if (terminals.isNotEmpty()) {
-            val t = terminals[0]
-            mView.terminalRevealed(t)
-        } else {
+        if (terminals.isEmpty()) {
             val puzzles = mSudokuRepo.find(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PUZZLE)))
-            if (puzzles.isNotEmpty()) {
-                val p = puzzles[0]
-                runResolver(p, object : PuzzleTask.Callback {
+            if (puzzles.isEmpty()) {
+                mView.terminalRevealed(null)
+            } else {
+                runResolver(puzzles[0], object : PuzzleTask.Callback {
                     override fun onResult(result: Terminal?) {
                         if (result == null) {
                             mView.terminalRevealed(null)
-                            return
+                        } else {
+                            mSudokuRepo.update(result, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
+                            mView.terminalRevealed(result)
                         }
-                        mSudokuRepo.update(result, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
-                        mView.terminalRevealed(result)
                     }
                 })
             }
+        } else {
+            mView.terminalRevealed(terminals[0])
         }
     }
 
@@ -125,10 +125,12 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
         if (progresses.isEmpty()) {
             throw IllegalStateException("`progress` not found")
         }
+
         val p = progresses[0]
         if (index < 0 || index >= p.C.size) {
             throw IllegalArgumentException("[index] out of range")
         }
+
         p.C[index]?.D = d
         mSudokuRepo.update(p, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
         mView.progressUpdated(index, d)
@@ -141,19 +143,19 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
         val progresses = mSudokuRepo.find(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
         if (progresses.isEmpty()) {
             mView.progressResolved(null)
-            return
-        }
-        val p = progresses[0]
-        runResolver(p, object : PuzzleTask.Callback {
-            override fun onResult(result: Terminal?) {
-                if (result == null) {
-                    mView.progressResolved(null)
-                    return
+        } else {
+            runResolver(progresses[0], object : PuzzleTask.Callback {
+                override fun onResult(result: Terminal?) {
+                    if (result == null) {
+                        mView.progressResolved(null)
+                    } else {
+                        mSudokuRepo.update(result, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
+                        mView.progressResolved(result)
+                    }
                 }
-                mSudokuRepo.update(result, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PROGRESS)))
-                mView.progressResolved(result)
-            }
-        })
+            })
+        }
+
     }
 
     /**
@@ -169,6 +171,7 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
         if (possibilities == null || possibilities.isEmpty()) {
             throw IllegalStateException("`possibility` not found")
         }
+
         val p = possibilities[0]
         val found = p.indexOfFirst { it == d }
         if (found >= 0) {
@@ -188,33 +191,34 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
      */
     override fun clearPossibility(index: Int) {
         mPossibilityRepo?.remove(PossibilityRepoSpec(intArrayOf(index)))
-
         val possibilities = mPossibilityRepo?.find(PossibilityRepoSpec(intArrayOf(index)))
         if (possibilities == null || possibilities.isEmpty()) {
             throw IllegalStateException("`possibility` not found")
         }
-        val p = possibilities[0]
-        mView.possibilityUpdated(index, p)
+
+        mView.possibilityUpdated(index, possibilities[0])
     }
 
     /**
      * Select [Cell] at [index], then call [SudokuContract.View.cellSelected] with a [IntArray] of relevant [Cell] indexes
      */
     override fun selectCell(index: Int) {
-        val ret: MutableSet<Int> = mutableSetOf()
         val puzzles = mSudokuRepo.find(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PUZZLE)))
-        if (puzzles.isNotEmpty()) {
+        if (puzzles.isEmpty()) {
+            mView.cellSelected(index, IntArray(0))
+        } else {
             val p = puzzles[0]
             val b = p.C[index]?.B
             val row = p.row(index)
             val col = p.col(index)
+            val ret: MutableSet<Int> = mutableSetOf()
             p.C.forEachIndexed { index2, cell ->
                 if (cell?.B == b || p.row(index2) == row || p.col(index2) == col) {
                     ret.add(index2)
                 }
             }
+            mView.cellSelected(index, ret.toIntArray())
         }
-        mView.cellSelected(index, ret.toIntArray())
     }
 
 }
