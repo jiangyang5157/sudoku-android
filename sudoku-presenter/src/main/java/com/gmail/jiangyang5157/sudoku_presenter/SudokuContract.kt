@@ -31,7 +31,7 @@ interface SudokuContract {
 
         fun puzzleGenerated(t: Terminal?)
 
-        fun terminalRevealed(t: Terminal?)
+        fun terminalReveald(t: Terminal?)
 
         fun progressUpdated(index: Int, d: Int)
 
@@ -40,6 +40,36 @@ interface SudokuContract {
         fun possibilityUpdated(index: Int, possibility: IntArray)
 
         fun cellSelected(index: Int, relevant: IntArray)
+
+    }
+
+    interface EditorPresenter : BasePresenter {
+
+        fun enablePossibility()
+
+        fun disablePossibility()
+
+        fun triggerPossibilityEnablement()
+
+        fun clear()
+
+        fun input(digit: Int)
+
+    }
+
+    interface EditorView : BaseView<EditorPresenter> {
+
+        fun possibilityEnabled()
+
+        fun possibilityDisabled()
+
+        fun digitCleard()
+
+        fun possibilityCleard()
+
+        fun digitInputd(digit: Int)
+
+        fun possibilityInputd(digit: Int)
 
     }
 

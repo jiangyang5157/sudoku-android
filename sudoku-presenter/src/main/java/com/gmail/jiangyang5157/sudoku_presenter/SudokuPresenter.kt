@@ -88,7 +88,7 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
     }
 
     /**
-     * Peek solution 'terminal' of current `puzzle`, then call [SudokuContract.View.terminalRevealed].
+     * Peek solution 'terminal' of current `puzzle`, then call [SudokuContract.View.terminalReveald].
      * Create solution 'terminal' based on 'puzzle' data if the `terminal` doesn't exist.
      */
     override fun revealTerminal() {
@@ -96,21 +96,21 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
         if (terminals.isEmpty()) {
             val puzzles = mSudokuRepo.find(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PUZZLE)))
             if (puzzles.isEmpty()) {
-                mView.terminalRevealed(null)
+                mView.terminalReveald(null)
             } else {
                 runResolver(puzzles[0], object : PuzzleTask.Callback {
                     override fun onResult(result: Terminal?) {
                         if (result == null) {
-                            mView.terminalRevealed(null)
+                            mView.terminalReveald(null)
                         } else {
                             mSudokuRepo.update(result, SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_TERMINAL)))
-                            mView.terminalRevealed(result)
+                            mView.terminalReveald(result)
                         }
                     }
                 })
             }
         } else {
-            mView.terminalRevealed(terminals[0])
+            mView.terminalReveald(terminals[0])
         }
     }
 

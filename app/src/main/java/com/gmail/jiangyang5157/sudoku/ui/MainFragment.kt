@@ -68,8 +68,8 @@ class MainFragment : Fragment(), SudokuContract.View {
         tvNotification?.text = t?.toSquareString() + "\n^----------------^ puzzleGenerated\n"
     }
 
-    override fun terminalRevealed(t: Terminal?) {
-        tvNotification?.text = t?.toSquareString() + "\n^----------------^ terminalRevealed\n"
+    override fun terminalReveald(t: Terminal?) {
+        tvNotification?.text = t?.toSquareString() + "\n^----------------^ terminalReveald\n"
     }
 
     override fun progressUpdated(index: Int, d: Int) {

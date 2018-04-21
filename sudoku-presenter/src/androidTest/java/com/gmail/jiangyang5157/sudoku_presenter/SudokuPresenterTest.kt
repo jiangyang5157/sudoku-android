@@ -28,7 +28,7 @@ class SudokuPresenterTest {
                 signal.countDown()
             }
 
-            override fun terminalRevealed(t: Terminal?) {}
+            override fun terminalReveald(t: Terminal?) {}
 
             override fun progressUpdated(index: Int, d: Int) {}
 
@@ -64,7 +64,7 @@ class SudokuPresenterTest {
                 mPresenter.revealTerminal()
             }
 
-            override fun terminalRevealed(t: Terminal?) {
+            override fun terminalReveald(t: Terminal?) {
                 terminal = t
                 signal.countDown()
             }
@@ -105,7 +105,7 @@ class SudokuPresenterTest {
                 mPresenter.resolveProgress()
             }
 
-            override fun terminalRevealed(t: Terminal?) {}
+            override fun terminalReveald(t: Terminal?) {}
 
             override fun progressUpdated(index: Int, d: Int) {}
 
@@ -147,7 +147,7 @@ class SudokuPresenterTest {
                 mPresenter.updateProgress(1, 2)
             }
 
-            override fun terminalRevealed(t: Terminal?) {}
+            override fun terminalReveald(t: Terminal?) {}
 
             override fun progressUpdated(index: Int, d: Int) {
                 indexResult = index
@@ -196,7 +196,7 @@ class SudokuPresenterTest {
                 mPresenter.updatePossibility(1, 4)
             }
 
-            override fun terminalRevealed(t: Terminal?) {}
+            override fun terminalReveald(t: Terminal?) {}
 
             override fun progressUpdated(index: Int, d: Int) {}
 
@@ -246,7 +246,7 @@ class SudokuPresenterTest {
                 mPresenter.clearPossibility(1)
             }
 
-            override fun terminalRevealed(t: Terminal?) {}
+            override fun terminalReveald(t: Terminal?) {}
 
             override fun progressUpdated(index: Int, d: Int) {}
 
@@ -290,7 +290,7 @@ class SudokuPresenterTest {
                 mPresenter.selectCell(41)
             }
 
-            override fun terminalRevealed(t: Terminal?) {}
+            override fun terminalReveald(t: Terminal?) {}
 
             override fun progressUpdated(index: Int, d: Int) {}
 
