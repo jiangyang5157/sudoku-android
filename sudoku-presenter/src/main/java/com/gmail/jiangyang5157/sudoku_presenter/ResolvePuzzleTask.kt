@@ -6,6 +6,10 @@ import sudoku.Sudoku
 
 /**
  * Created by Yang Jiang on April 14, 2018
+ *
+ * Async task to handle puzzle resolution.
+ *
+ * @param puzzle
  */
 class ResolvePuzzleTask(callback: Callback? = null) : PuzzleTask<Terminal?, Void, Terminal?>() {
 

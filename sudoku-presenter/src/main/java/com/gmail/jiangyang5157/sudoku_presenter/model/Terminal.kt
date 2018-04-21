@@ -8,10 +8,21 @@ import java.util.*
  * Created by Yang Jiang on July 09, 2017
  */
 data class Terminal(
+
+        /**
+         * Edge length of the [Terminal]
+         */
         val E: Int,
+
+        /**
+         * Order-sensitive [Array] of [Cell]: left-to-right(columns) && up-to-down(rows)
+         */
         val C: Array<Cell?> = arrayOfNulls(E * E)
 ) {
 
+    /**
+     * To human readable [String]
+     */
     fun toSquareString(): String {
         val LINE_SEPARATOR = IoUtils.lineSeparator()
         val SPACE = " "
@@ -28,6 +39,9 @@ data class Terminal(
         return buf.toString()
     }
 
+    /**
+     * To JSON [String]
+     */
     override fun toString(): String {
         return Gson().toJson(this)
     }
@@ -50,20 +64,71 @@ data class Terminal(
         return result
     }
 
+    /**
+     * Deep copy
+     */
     fun copy(): Terminal {
         val newTerminal = Terminal(E = E)
         C.forEachIndexed { index, cell -> newTerminal.C[index] = cell?.copy() }
         return newTerminal
     }
 
-    companion object {
+    fun row(index: Int) = index / E
 
-        fun row(e: Int, index: Int) = index / e
+    fun col(index: Int) = index % E
 
-        fun col(e: Int, index: Int) = index % e
+    fun index(row: Int, col: Int) = row * E + col
 
-        fun index(e: Int, row: Int, col: Int) = row * e + col
+    fun cell(row: Int, col: Int) = C[index(row, col)]
 
+    /**
+     * Get `up` index at current [index], returns -1 if not found.
+     */
+    fun up(index: Int): Int {
+        val ret = index - E
+        if (ret < 0) {
+            return -1
+        }
+        return ret
     }
 
+    /**
+     * Get `down` index at current [index], returns -1 if not found.
+     */
+    fun down(index: Int): Int {
+        val ret = index + E
+        if (ret > E - 1) {
+            return -1
+        }
+        return ret
+    }
+
+    /**
+     * Get `left` index at current [index], returns -1 if not found.
+     */
+    fun left(index: Int): Int {
+        val ret = index - 1
+        if (ret < 0 || row(ret) != row(index)) {
+            return -1
+        }
+        return ret
+    }
+
+    /**
+     * Get `right` index at current [index], returns -1 if not found.
+     */
+    fun right(index: Int): Int {
+        val ret = index + 1
+        if (ret > E - 1 || row(ret) != row(index)) {
+            return -1
+        }
+        return ret
+    }
+
+    /**
+     * Get `neighbour` indexes at current [index].
+     */
+    fun neighbours(index: Int): List<Int> {
+        return intArrayOf(up(index), down(index), left(index), left(index)).filter { it != -1 }
+    }
 }

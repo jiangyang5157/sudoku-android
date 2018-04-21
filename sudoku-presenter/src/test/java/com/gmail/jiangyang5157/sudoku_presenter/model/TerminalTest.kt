@@ -10,29 +10,35 @@ class TerminalTest {
 
     @Test
     fun test_row() {
-        Assert.assertEquals(0, Terminal.row(9, 0))
-        Assert.assertEquals(0, Terminal.row(9, 8))
-        Assert.assertEquals(1, Terminal.row(9, 9))
-        Assert.assertEquals(1, Terminal.row(9, 17))
-        Assert.assertEquals(2, Terminal.row(9, 18))
+        val t = Terminal(9)
+
+        Assert.assertEquals(0, t.row(0))
+        Assert.assertEquals(0, t.row(8))
+        Assert.assertEquals(1, t.row(9))
+        Assert.assertEquals(1, t.row(17))
+        Assert.assertEquals(2, t.row(18))
     }
 
     @Test
     fun test_col() {
-        Assert.assertEquals(0, Terminal.col(9, 0))
-        Assert.assertEquals(8, Terminal.col(9, 8))
-        Assert.assertEquals(0, Terminal.col(9, 9))
-        Assert.assertEquals(8, Terminal.col(9, 17))
-        Assert.assertEquals(0, Terminal.col(9, 18))
+        val t = Terminal(9)
+
+        Assert.assertEquals(0, t.col(0))
+        Assert.assertEquals(8, t.col(8))
+        Assert.assertEquals(0, t.col(9))
+        Assert.assertEquals(8, t.col(17))
+        Assert.assertEquals(0, t.col(18))
     }
 
     @Test
     fun test_index() {
-        Assert.assertEquals(0, Terminal.index(9, 0, 0))
-        Assert.assertEquals(80, Terminal.index(9, 8, 8))
-        Assert.assertEquals(9, Terminal.index(9, 1, 0))
-        Assert.assertEquals(17, Terminal.index(9, 1, 8))
-        Assert.assertEquals(19, Terminal.index(9, 2, 1))
+        val t = Terminal(9)
+
+        Assert.assertEquals(0, t.index( 0, 0))
+        Assert.assertEquals(80, t.index( 8, 8))
+        Assert.assertEquals(9, t.index( 1, 0))
+        Assert.assertEquals(17, t.index( 1, 8))
+        Assert.assertEquals(19, t.index( 2, 1))
     }
 
     @Test

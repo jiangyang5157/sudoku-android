@@ -6,7 +6,15 @@ import com.google.gson.Gson
  * Created by Yang Jiang on July 13, 2017
  */
 data class Cell(
+
+        /**
+         * Block
+         */
         val B: Int,
+
+        /**
+         *
+         */
         var D: Int = 0
 ) {
 

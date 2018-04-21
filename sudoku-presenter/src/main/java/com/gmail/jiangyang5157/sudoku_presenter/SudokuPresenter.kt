@@ -41,7 +41,7 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
     private var mBlockMode = 0
 
     /**
-     * Run Sudoku generator in async task.
+     * Run Sudoku generator in [GeneratePuzzleTask].
      */
     private fun runGenerator(blockMode: Int, edge: Int, minSubGiven: Int, minTotalGiven: Int, callback: PuzzleTask.Callback) {
         if (mGenerator?.status != AsyncTask.Status.FINISHED) {
@@ -53,7 +53,7 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
     }
 
     /**
-     * Run Sudoku resolver in async task.
+     * Run Sudoku resolver in [ResolvePuzzleTask].
      */
     private fun runResolver(t: Terminal, callback: PuzzleTask.Callback) {
         if (mResolver?.status != AsyncTask.Status.FINISHED) {
@@ -206,10 +206,10 @@ class SudokuPresenter(view: SudokuContract.View) : SudokuContract.Presenter {
         if (puzzles.isNotEmpty()) {
             val p = puzzles[0]
             val b = p.C[index]?.B
-            val row = Terminal.row(p.E, index)
-            val col = Terminal.col(p.E, index)
+            val row = p.row(index)
+            val col = p.col(index)
             p.C.forEachIndexed { index2, cell ->
-                if (cell?.B == b || Terminal.row(p.E, index2) == row || Terminal.col(p.E, index2) == col) {
+                if (cell?.B == b || p.row(index2) == row || p.col(index2) == col) {
                     ret.add(index2)
                 }
             }
