@@ -64,20 +64,20 @@ class MainFragment : Fragment(), SudokuContract.View {
         }
     }
 
-    override fun puzzleGenerated(t: Terminal) {
-        tvNotification?.text = t.toSquareString() + "\n^----------------^ puzzleGenerated\n"
+    override fun puzzleGenerated(t: Terminal?) {
+        tvNotification?.text = t?.toSquareString() + "\n^----------------^ puzzleGenerated\n"
     }
 
-    override fun terminalRevealed(t: Terminal) {
-        tvNotification?.text = t.toSquareString() + "\n^----------------^ terminalRevealed\n"
+    override fun terminalRevealed(t: Terminal?) {
+        tvNotification?.text = t?.toSquareString() + "\n^----------------^ terminalRevealed\n"
     }
 
     override fun progressUpdated(index: Int, d: Int) {
         tvNotification?.text = "index=" + index + "\nd=" + d + "\n^----------------^ progressUpdated\n"
     }
 
-    override fun progressResolved(t: Terminal) {
-        tvNotification?.text = t.toSquareString() + "\n^----------------^ progressResolved\n"
+    override fun progressResolved(t: Terminal?) {
+        tvNotification?.text = t?.toSquareString() + "\n^----------------^ progressResolved\n"
     }
 
     override fun possibilityUpdated(index: Int, possibility: IntArray) {
