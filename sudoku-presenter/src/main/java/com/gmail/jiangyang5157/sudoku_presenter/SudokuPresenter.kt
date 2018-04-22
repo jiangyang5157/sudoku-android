@@ -53,7 +53,7 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
         runGenerator(mBlockMode, edge, minSubGiven, minTotalGiven, object : PuzzleTask.Callback {
             override fun onResult(result: Terminal?) {
                 result?.apply {
-                    mSudoku = Sudoku(puzzle = this)
+                    mSudoku = Sudoku(this)
                     mView.puzzleGenerated(this)
                 }
             }
@@ -72,32 +72,42 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
         }
     }
 
-    override fun updateProgress(index: Int, d: Int) {
-        if (index < 0 || d < 0) {
+    override fun updateProgress(index: Int, digit: Int) {
+        if (index < 0 || digit < 0) {
             throw IllegalArgumentException()
         }
 
         mSudoku?.progress?.T?.apply {
             C[index]?.apply {
-                C[index] = Cell(B, d)
-                mView.progressUpdated(index, d)
+                C[index] = Cell(B, digit)
+                mView.progressUpdated(index, digit)
             }
         }
     }
 
-    override fun updatePossibility(index: Int, d: Int) {
-        if (index < 0 || d < 0) {
+    override fun clearProgress() {
+        mSudoku?.apply {
+            mView.progressCleard(
+                    Sudoku(puzzle).apply {
+                        mSudoku = this
+                    }.progress.T
+            )
+        }
+    }
+
+    override fun updatePossibility(index: Int, digit: Int) {
+        if (index < 0 || digit < 0) {
             throw IllegalArgumentException()
         }
 
         mSudoku?.progress?.apply {
-            val found = P[index].indexOfFirst { it == d }
+            val found = P[index].indexOfFirst { it == digit }
             if (found >= 0) {
                 P[index][found] = null
             } else {
                 val i = P[index].indexOfFirst { it == null }
                 if (i >= 0) {
-                    P[index][i] = d
+                    P[index][i] = digit
                 }
             }
             mView.possibilityUpdated(index, P[index])

@@ -17,9 +17,11 @@ interface SudokuContract {
 
         fun revealTerminal()
 
-        fun updateProgress(index: Int, d: Int)
+        fun updateProgress(index: Int, digit: Int)
 
-        fun updatePossibility(index: Int, d: Int)
+        fun clearProgress()
+
+        fun updatePossibility(index: Int, digit: Int)
 
         fun clearPossibility(index: Int)
 
@@ -32,13 +34,13 @@ interface SudokuContract {
 
     interface View : BaseView<Presenter> {
 
-        fun puzzleGenerated(t: Terminal?)
+        fun puzzleGenerated(puzzle: Terminal?)
 
-        fun terminalReveald(t: Terminal?)
+        fun terminalReveald(terminal: Terminal?)
 
-        fun progressUpdated(index: Int, d: Int)
+        fun progressUpdated(index: Int, digit: Int)
 
-        fun progressResolved(t: Terminal?)
+        fun progressCleard(progress: Terminal)
 
         fun possibilityUpdated(index: Int, possibility: Array<Int?>)
 

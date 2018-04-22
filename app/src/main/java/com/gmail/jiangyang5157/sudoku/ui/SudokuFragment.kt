@@ -76,20 +76,20 @@ class SudokuFragment : Fragment(), SudokuContract.View {
         }
     }
 
-    override fun puzzleGenerated(t: Terminal?) {
-        Log.d(TAG, "puzzleGenerated: $t")
+    override fun puzzleGenerated(puzzle: Terminal?) {
+        Log.d(TAG, "puzzleGenerated: $puzzle")
     }
 
-    override fun terminalReveald(t: Terminal?) {
-        Log.d(TAG, "terminalReveald: $t")
+    override fun terminalReveald(terminal: Terminal?) {
+        Log.d(TAG, "terminalReveald: $terminal")
     }
 
-    override fun progressUpdated(index: Int, d: Int) {
-        Log.d(TAG, "progressUpdated: $index, $d")
+    override fun progressUpdated(index: Int, digit: Int) {
+        Log.d(TAG, "progressUpdated: $index, $digit")
     }
 
-    override fun progressResolved(t: Terminal?) {
-        Log.d(TAG, "progressResolved: $t")
+    override fun progressCleard(progress: Terminal) {
+        Log.d(TAG, "progressCleard: $progress")
     }
 
     override fun possibilityUpdated(index: Int, possibility: Array<Int?>) {
