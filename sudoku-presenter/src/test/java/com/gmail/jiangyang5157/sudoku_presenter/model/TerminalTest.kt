@@ -96,7 +96,7 @@ class TerminalTest {
         val t2 = t1.copy()
         Assert.assertTrue(t2 == t1)
 
-        t1.C[1]!!.D = 10
+        t1.C[1] = Cell(t1.C[1]!!.B,10)
         Assert.assertTrue(t2.C[1]!!.D != 10)
         Assert.assertEquals(4, t1.C.size)
         Assert.assertEquals(4, t2.C.size)

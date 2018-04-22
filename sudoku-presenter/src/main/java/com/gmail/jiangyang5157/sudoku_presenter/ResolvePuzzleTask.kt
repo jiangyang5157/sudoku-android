@@ -8,8 +8,6 @@ import sudoku.Sudoku
  * Created by Yang Jiang on April 14, 2018
  *
  * Async task to handle puzzle resolution.
- *
- * @param puzzle
  */
 class ResolvePuzzleTask(callback: Callback? = null) : PuzzleTask<Terminal?, Void, Terminal?>() {
 
@@ -17,6 +15,9 @@ class ResolvePuzzleTask(callback: Callback? = null) : PuzzleTask<Terminal?, Void
         mCallback = callback
     }
 
+    /**
+     * @param params[0] `puzzle` to be resolved
+     */
     override fun doInBackground(vararg params: Terminal?): Terminal? {
         if (params.isEmpty()) {
             return null

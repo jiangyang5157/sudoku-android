@@ -1,8 +1,8 @@
 package com.gmail.jiangyang5157.sudoku_presenter
 
 import android.support.test.runner.AndroidJUnit4
+import com.gmail.jiangyang5157.sudoku_presenter.libs.SudokuSolverTest
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
-import com.gmail.jiangyang5157.sudoku_presenter.puzzle.SudokuSolverTest
 import com.google.gson.Gson
 import org.junit.Assert
 import org.junit.Test

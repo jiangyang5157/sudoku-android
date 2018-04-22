@@ -15,7 +15,7 @@ data class Cell(
         /**
          * Digit
          */
-        var D: Int = 0
+        val D: Int = 0
 ) {
 
     override fun toString(): String {

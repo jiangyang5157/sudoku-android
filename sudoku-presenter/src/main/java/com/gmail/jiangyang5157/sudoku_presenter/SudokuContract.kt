@@ -19,17 +19,9 @@ interface SudokuContract {
 
         fun updateProgress(index: Int, d: Int)
 
-        fun resolveProgress()
-
         fun updatePossibility(index: Int, d: Int)
 
         fun clearPossibility(index: Int)
-
-        fun selectCell(index: Int)
-
-        fun enablePossibilityEnter()
-
-        fun disablePossibilityEnter()
 
         fun invertPossibilityEnterStatus()
 
@@ -48,9 +40,7 @@ interface SudokuContract {
 
         fun progressResolved(t: Terminal?)
 
-        fun possibilityUpdated(index: Int, possibility: IntArray)
-
-        fun cellSelected(index: Int, relevant: List<Int>)
+        fun possibilityUpdated(index: Int, possibility: Array<Int?>)
 
         fun possibilityEnterEnabled()
 

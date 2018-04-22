@@ -1,4 +1,4 @@
-package com.gmail.jiangyang5157.sudoku_presenter.puzzle
+package com.gmail.jiangyang5157.sudoku_presenter.libs
 
 import android.support.test.runner.AndroidJUnit4
 import org.junit.Assert

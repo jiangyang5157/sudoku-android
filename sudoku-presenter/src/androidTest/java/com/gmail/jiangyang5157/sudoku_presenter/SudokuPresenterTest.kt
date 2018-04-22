@@ -21,6 +21,7 @@ class SudokuPresenterTest {
         val signal = CountDownLatch(1)
 
         val view = object : SudokuContract.View {
+
             lateinit var mPresenter: SudokuContract.Presenter
 
             override fun puzzleGenerated(t: Terminal?) {
@@ -34,9 +35,7 @@ class SudokuPresenterTest {
 
             override fun progressResolved(t: Terminal?) {}
 
-            override fun possibilityUpdated(index: Int, possibility: IntArray) {}
-
-            override fun cellSelected(index: Int, relevant: List<Int>) {}
+            override fun possibilityUpdated(index: Int, possibility: Array<Int?>) {}
 
             override fun possibilityEnterEnabled() {}
 
@@ -85,9 +84,7 @@ class SudokuPresenterTest {
 
             override fun progressResolved(t: Terminal?) {}
 
-            override fun possibilityUpdated(index: Int, possibility: IntArray) {}
-
-            override fun cellSelected(index: Int, relevant: List<Int>) {}
+            override fun possibilityUpdated(index: Int, possibility: Array<Int?>) {}
 
             override fun possibilityEnterEnabled() {}
 
@@ -116,59 +113,6 @@ class SudokuPresenterTest {
     }
 
     @Test
-    fun test_runResolver() {
-        var puzzle: Terminal? = null
-        var resolved: Terminal? = null
-        val signal = CountDownLatch(1)
-
-        val view = object : SudokuContract.View {
-            lateinit var mPresenter: SudokuContract.Presenter
-
-            override fun puzzleGenerated(t: Terminal?) {
-                puzzle = t
-                mPresenter.resolveProgress()
-            }
-
-            override fun terminalReveald(t: Terminal?) {}
-
-            override fun progressUpdated(index: Int, d: Int) {}
-
-            override fun progressResolved(t: Terminal?) {
-                resolved = t
-                signal.countDown()
-            }
-
-            override fun possibilityUpdated(index: Int, possibility: IntArray) {}
-
-            override fun cellSelected(index: Int, relevant: List<Int>) {}
-
-            override fun possibilityEnterEnabled() {}
-
-            override fun possibilityEnterDisabled() {}
-
-            override fun digitCleard() {}
-
-            override fun possibilityCleard() {}
-
-            override fun digitEnterd(digit: Int) {}
-
-            override fun possibilityEnterd(digit: Int) {}
-
-            override fun setPresenter(presenter: SudokuContract.Presenter) {
-                mPresenter = presenter
-            }
-
-        }
-        val presenter = SudokuPresenter(view)
-        presenter.generatePuzzle(9, 4, 55)
-        signal.await(20, TimeUnit.SECONDS)
-
-        Assert.assertNotNull(puzzle)
-        Assert.assertNotNull(resolved)
-        Assert.assertTrue(puzzle != resolved)
-    }
-
-    @Test
     fun test_updateProgress() {
         var puzzle: Terminal? = null
         var indexResult = 0
@@ -194,9 +138,7 @@ class SudokuPresenterTest {
 
             override fun progressResolved(t: Terminal?) {}
 
-            override fun possibilityUpdated(index: Int, possibility: IntArray) {}
-
-            override fun cellSelected(index: Int, relevant: List<Int>) {}
+            override fun possibilityUpdated(index: Int, possibility: Array<Int?>) {}
 
             override fun possibilityEnterEnabled() {}
 
@@ -228,7 +170,7 @@ class SudokuPresenterTest {
     fun test_updatePossibility() {
         var puzzle: Terminal? = null
         var indexResult = 0
-        var possibilityResult = IntArray(9)
+        var possibilityResult = arrayOfNulls<Int>(9)
         val signal = CountDownLatch(7)
 
         val view = object : SudokuContract.View {
@@ -251,13 +193,11 @@ class SudokuPresenterTest {
 
             override fun progressResolved(t: Terminal?) {}
 
-            override fun possibilityUpdated(index: Int, possibility: IntArray) {
+            override fun possibilityUpdated(index: Int, possibility: Array<Int?>) {
                 indexResult = index
                 possibilityResult = possibility
                 signal.countDown()
             }
-
-            override fun cellSelected(index: Int, relevant: List<Int>) {}
 
             override fun possibilityEnterEnabled() {}
 
@@ -282,14 +222,15 @@ class SudokuPresenterTest {
 
         Assert.assertNotNull(puzzle)
         Assert.assertEquals(1, indexResult)
-        Assert.assertTrue("Updates: 2,3,4,5,3,4,4 Actual:" + Arrays.toString(possibilityResult), intArrayOf(2, 4, 0, 5, 0, 0, 0, 0, 0).contentEquals(possibilityResult))
+        Assert.assertTrue("Updates: 2,3,4,5,3,4,4 Actual:" + Arrays.toString(possibilityResult),
+                arrayOf(2, 4, null, 5, null, null, null, null, null).contentEquals(possibilityResult))
     }
 
     @Test
     fun test_clearPossibility() {
         var puzzle: Terminal? = null
         var indexResult = 0
-        var possibilityResult = IntArray(9)
+        var possibilityResult = arrayOfNulls<Int>(9)
         val signal = CountDownLatch(7)
 
         val view = object : SudokuContract.View {
@@ -313,13 +254,11 @@ class SudokuPresenterTest {
 
             override fun progressResolved(t: Terminal?) {}
 
-            override fun possibilityUpdated(index: Int, possibility: IntArray) {
+            override fun possibilityUpdated(index: Int, possibility: Array<Int?>) {
                 indexResult = index
                 possibilityResult = possibility
                 signal.countDown()
             }
-
-            override fun cellSelected(index: Int, relevant: List<Int>) {}
 
             override fun possibilityEnterEnabled() {}
 
@@ -345,82 +284,7 @@ class SudokuPresenterTest {
         Assert.assertNotNull(puzzle)
         Assert.assertEquals(1, indexResult)
         Assert.assertTrue("Actual:" + Arrays.toString(possibilityResult),
-                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0).contentEquals(possibilityResult))
-    }
-
-    @Test
-    fun test_selectCell() {
-        var puzzle: Terminal? = null
-        var indexResult = 0
-        var relevantResult: List<Int>? = null
-        val signal = CountDownLatch(1)
-
-        val view = object : SudokuContract.View {
-            lateinit var mPresenter: SudokuContract.Presenter
-
-            override fun puzzleGenerated(t: Terminal?) {
-                puzzle = t
-                mPresenter.selectCell(41)
-            }
-
-            override fun terminalReveald(t: Terminal?) {}
-
-            override fun progressUpdated(index: Int, d: Int) {}
-
-            override fun progressResolved(t: Terminal?) {}
-
-            override fun possibilityUpdated(index: Int, possibility: IntArray) {}
-
-            override fun cellSelected(index: Int, relevant: List<Int>) {
-                indexResult = index
-                relevantResult = relevant
-                signal.countDown()
-            }
-
-            override fun possibilityEnterEnabled() {}
-
-            override fun possibilityEnterDisabled() {}
-
-            override fun digitCleard() {}
-
-            override fun possibilityCleard() {}
-
-            override fun digitEnterd(digit: Int) {}
-
-            override fun possibilityEnterd(digit: Int) {}
-
-            override fun setPresenter(presenter: SudokuContract.Presenter) {
-                mPresenter = presenter
-            }
-
-        }
-        val presenter = SudokuPresenter(view)
-        presenter.generatePuzzle(9, 4, 55)
-        signal.await(10, TimeUnit.SECONDS)
-
-        Assert.assertNotNull(puzzle)
-        Assert.assertEquals(41, indexResult)
-//                                5,
-//                                14,
-//                                23,
-//                        30, 31, 32,
-//            36, 37, 38, 39, 40, 41, 42, 43, 44,
-//                        48, 49, 50,
-//                                59,
-//                                68,
-//                                77
-        Assert.assertTrue("Actual:$relevantResult",
-                listOf(
-                        5,
-                        14,
-                        23,
-                        30, 31, 32,
-                        36, 37, 38, 39, 40, 41, 42, 43, 44,
-                        48, 49, 50,
-                        59,
-                        68,
-                        77
-                ) == relevantResult)
+                arrayOfNulls<Int?>(9).contentEquals((possibilityResult)))
     }
 
 }

@@ -8,11 +8,6 @@ import sudoku.Sudoku
  * Created by Yang Jiang on April 14, 2018
  *
  * Async task to handle puzzle generation.
- *
- * @param blockMode Always passing `SQUARE(0)`, since `IRREGULAR(1)` has not yet implemented
- * @param edge
- * @param minSubGiven
- * @param minTotalGiven
  */
 class GeneratePuzzleTask(callback: Callback? = null) : PuzzleTask<Int?, Void, Terminal?>() {
 
@@ -20,6 +15,12 @@ class GeneratePuzzleTask(callback: Callback? = null) : PuzzleTask<Int?, Void, Te
         mCallback = callback
     }
 
+    /**
+     * @param params[0] `blockMode`
+     * @param params[1] `edge`
+     * @param params[2] `minSubGiven`
+     * @param params[3] `minTotalGiven`
+     */
     override fun doInBackground(vararg params: Int?): Terminal? {
         if (params.isEmpty() || params.size < 4) {
             return null

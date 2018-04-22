@@ -26,8 +26,6 @@ class SudokuFragment : Fragment(), SudokuContract.View {
 
     private var mSudokuPresenter: SudokuContract.Presenter = SudokuPresenter(this)
 
-    private lateinit var mTerminalView: TerminalView
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_sudoku, container, false)
     }
@@ -39,8 +37,7 @@ class SudokuFragment : Fragment(), SudokuContract.View {
     }
 
     private fun onTerminalViewCreated(view: View?) {
-        mTerminalView = (view?.findViewById(R.id.terminalview) as TerminalView)
-        mTerminalView.isClickable = true
+        (view?.findViewById(R.id.terminalview) as TerminalView).isClickable = true
     }
 
     private fun onKeypadCreated(view: View?) {
@@ -95,12 +92,8 @@ class SudokuFragment : Fragment(), SudokuContract.View {
         Log.d(TAG, "progressResolved: $t")
     }
 
-    override fun possibilityUpdated(index: Int, possibility: IntArray) {
+    override fun possibilityUpdated(index: Int, possibility: Array<Int?>) {
         Log.d(TAG, "possibilityUpdated: $index, " + Arrays.toString(possibility))
-    }
-
-    override fun cellSelected(index: Int, relevant: List<Int>) {
-        Log.d(TAG, "cellSelected: $index, $relevant")
     }
 
     override fun possibilityEnterEnabled() {
