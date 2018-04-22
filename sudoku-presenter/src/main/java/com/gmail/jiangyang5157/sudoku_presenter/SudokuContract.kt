@@ -50,7 +50,7 @@ interface SudokuContract {
 
         fun possibilityUpdated(index: Int, possibility: IntArray)
 
-        fun cellSelected(index: Int, relevant: IntArray)
+        fun cellSelected(index: Int, relevant: List<Int>)
 
         fun possibilityEnterEnabled()
 

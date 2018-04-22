@@ -200,24 +200,14 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
     }
 
     /**
-     * Select [Cell] at [index], then call [SudokuContract.View.cellSelected] with a [IntArray] of relevant [Cell] indexes
+     * Select [Cell] at [index], then call [SudokuContract.View.cellSelected] with a [List] of relevant [Cell] indexes
      */
     override fun selectCell(index: Int) {
         val puzzles = mSudokuRepo.find(SudokuRepoSpec(intArrayOf(SudokuRepoSpec.INDEX_PUZZLE)))
         if (puzzles.isEmpty()) {
-            mView.cellSelected(index, IntArray(0))
+            mView.cellSelected(index, listOf(index))
         } else {
-            val p = puzzles[0]
-            val b = p.C[index]?.B
-            val row = p.row(index)
-            val col = p.col(index)
-            val ret: MutableSet<Int> = mutableSetOf()
-            p.C.forEachIndexed { index2, cell ->
-                if (cell?.B == b || p.row(index2) == row || p.col(index2) == col) {
-                    ret.add(index2)
-                }
-            }
-            mView.cellSelected(index, ret.toIntArray())
+            mView.cellSelected(index, puzzles[0].relevant(index))
         }
     }
 

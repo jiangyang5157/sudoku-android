@@ -99,8 +99,8 @@ class SudokuFragment : Fragment(), SudokuContract.View {
         Log.d(TAG, "possibilityUpdated: $index, " + Arrays.toString(possibility))
     }
 
-    override fun cellSelected(index: Int, relevant: IntArray) {
-        Log.d(TAG, "cellSelected: $index, " + Arrays.toString(relevant))
+    override fun cellSelected(index: Int, relevant: List<Int>) {
+        Log.d(TAG, "cellSelected: $index, $relevant")
     }
 
     override fun possibilityEnterEnabled() {

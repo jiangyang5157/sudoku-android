@@ -91,8 +91,8 @@ class DebugSudokuView : Fragment(), SudokuContract.View {
         tvNotification?.text = "index=" + index + "\npossibility=" + Arrays.toString(possibility) + "\n^----------------^ possibilityUpdated\n"
     }
 
-    override fun cellSelected(index: Int, relevant: IntArray) {
-        tvNotification?.text = "index=" + index + "\nrelevant=" + Arrays.toString(relevant) + "\n^----------------^ cellSelected\n"
+    override fun cellSelected(index: Int, relevant: List<Int>) {
+        tvNotification?.text = "index=" + index + "\nrelevant=" + relevant + "\n^----------------^ cellSelected\n"
     }
 
     override fun possibilityEnterEnabled() {

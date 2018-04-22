@@ -36,7 +36,7 @@ class SudokuPresenterTest {
 
             override fun possibilityUpdated(index: Int, possibility: IntArray) {}
 
-            override fun cellSelected(index: Int, relevant: IntArray) {}
+            override fun cellSelected(index: Int, relevant: List<Int>) {}
 
             override fun possibilityEnterEnabled() {}
 
@@ -87,7 +87,7 @@ class SudokuPresenterTest {
 
             override fun possibilityUpdated(index: Int, possibility: IntArray) {}
 
-            override fun cellSelected(index: Int, relevant: IntArray) {}
+            override fun cellSelected(index: Int, relevant: List<Int>) {}
 
             override fun possibilityEnterEnabled() {}
 
@@ -140,7 +140,7 @@ class SudokuPresenterTest {
 
             override fun possibilityUpdated(index: Int, possibility: IntArray) {}
 
-            override fun cellSelected(index: Int, relevant: IntArray) {}
+            override fun cellSelected(index: Int, relevant: List<Int>) {}
 
             override fun possibilityEnterEnabled() {}
 
@@ -196,7 +196,7 @@ class SudokuPresenterTest {
 
             override fun possibilityUpdated(index: Int, possibility: IntArray) {}
 
-            override fun cellSelected(index: Int, relevant: IntArray) {}
+            override fun cellSelected(index: Int, relevant: List<Int>) {}
 
             override fun possibilityEnterEnabled() {}
 
@@ -257,7 +257,7 @@ class SudokuPresenterTest {
                 signal.countDown()
             }
 
-            override fun cellSelected(index: Int, relevant: IntArray) {}
+            override fun cellSelected(index: Int, relevant: List<Int>) {}
 
             override fun possibilityEnterEnabled() {}
 
@@ -319,7 +319,7 @@ class SudokuPresenterTest {
                 signal.countDown()
             }
 
-            override fun cellSelected(index: Int, relevant: IntArray) {}
+            override fun cellSelected(index: Int, relevant: List<Int>) {}
 
             override fun possibilityEnterEnabled() {}
 
@@ -352,7 +352,7 @@ class SudokuPresenterTest {
     fun test_selectCell() {
         var puzzle: Terminal? = null
         var indexResult = 0
-        var relevantResult = IntArray(9)
+        var relevantResult: List<Int>? = null
         val signal = CountDownLatch(1)
 
         val view = object : SudokuContract.View {
@@ -371,7 +371,7 @@ class SudokuPresenterTest {
 
             override fun possibilityUpdated(index: Int, possibility: IntArray) {}
 
-            override fun cellSelected(index: Int, relevant: IntArray) {
+            override fun cellSelected(index: Int, relevant: List<Int>) {
                 indexResult = index
                 relevantResult = relevant
                 signal.countDown()
@@ -409,8 +409,8 @@ class SudokuPresenterTest {
 //                                59,
 //                                68,
 //                                77
-        Assert.assertTrue("Actual:" + Arrays.toString(relevantResult),
-                intArrayOf(
+        Assert.assertTrue("Actual:$relevantResult",
+                listOf(
                         5,
                         14,
                         23,
@@ -420,7 +420,7 @@ class SudokuPresenterTest {
                         59,
                         68,
                         77
-                ).contentEquals(relevantResult))
+                ) == relevantResult)
     }
 
 }
