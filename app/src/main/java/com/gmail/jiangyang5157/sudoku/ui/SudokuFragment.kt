@@ -1,6 +1,5 @@
 package com.gmail.jiangyang5157.sudoku.ui
 
-import android.graphics.*
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -8,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
-import com.gmail.jiangyang5157.kotlin_android_kit.widget.RenderView
 import com.gmail.jiangyang5157.sudoku.R
 import com.gmail.jiangyang5157.sudoku.widget.TerminalView
 import com.gmail.jiangyang5157.sudoku_presenter.SudokuContract
@@ -28,6 +26,8 @@ class SudokuFragment : Fragment(), SudokuContract.View {
 
     private var mSudokuPresenter: SudokuContract.Presenter = SudokuPresenter(this)
 
+    private lateinit var mTerminalView: TerminalView
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_sudoku, container, false)
     }
@@ -39,10 +39,8 @@ class SudokuFragment : Fragment(), SudokuContract.View {
     }
 
     private fun onTerminalViewCreated(view: View?) {
-        val terminalView = (view?.findViewById(R.id.terminalview) as TerminalView)
-        terminalView.setZOrderOnTop(true)
-        terminalView.holder.setFormat(PixelFormat.TRANSPARENT)
-        terminalView.setOnRenderCallback(onRenderCallback)
+        mTerminalView = (view?.findViewById(R.id.terminalview) as TerminalView)
+        mTerminalView.isClickable = true
     }
 
     private fun onKeypadCreated(view: View?) {
@@ -78,19 +76,6 @@ class SudokuFragment : Fragment(), SudokuContract.View {
         }
         (view?.findViewById(R.id.switch_keypad_possibility) as Switch).setOnCheckedChangeListener { _, _ ->
             mSudokuPresenter.invertPossibilityEnterStatus()
-        }
-    }
-
-    private val onRenderCallback = object : RenderView.OnRenderListener {
-
-        override fun onRender(canvas: Canvas) {
-            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
-
-            // TODO
-            val paint = Paint()
-            paint.color = Color.BLUE
-            paint.textSize = 100F
-            canvas.drawText("Hello world.", 200F, 200F, paint)
         }
     }
 
