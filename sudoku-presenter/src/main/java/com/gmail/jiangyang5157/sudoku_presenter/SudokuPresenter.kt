@@ -62,7 +62,7 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
 
     override fun revealTerminal() {
         mSudoku?.apply {
-            runResolver(puzzle, object : PuzzleTask.Callback {
+            runResolver(T, object : PuzzleTask.Callback {
                 override fun onResult(result: Terminal?) {
                     result?.apply {
                         mView.terminalReveald(result)
@@ -77,7 +77,7 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
             throw IllegalArgumentException()
         }
 
-        mSudoku?.progress?.T?.apply {
+        mSudoku?.PT?.T?.apply {
             C[index]?.apply {
                 C[index] = Cell(B, digit)
                 mView.progressUpdated(index, digit)
@@ -88,9 +88,9 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
     override fun clearProgress() {
         mSudoku?.apply {
             mView.progressCleard(
-                    Sudoku(puzzle).apply {
+                    Sudoku(T).apply {
                         mSudoku = this
-                    }.progress.T
+                    }.PT.T
             )
         }
     }
@@ -100,7 +100,7 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
             throw IllegalArgumentException()
         }
 
-        mSudoku?.progress?.apply {
+        mSudoku?.PT?.apply {
             val found = P[index].indexOfFirst { it == digit }
             if (found >= 0) {
                 P[index][found] = null
@@ -119,7 +119,7 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
             throw IllegalArgumentException()
         }
 
-        mSudoku?.progress?.apply {
+        mSudoku?.PT?.apply {
             P[index] = arrayOfNulls(T.E)
             mView.possibilityUpdated(index, P[index])
         }

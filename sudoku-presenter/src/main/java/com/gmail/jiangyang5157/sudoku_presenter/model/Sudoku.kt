@@ -8,10 +8,10 @@ data class Sudoku(
         /**
          * A non-editable [Terminal] has unique solution
          */
-        val puzzle: Terminal,
+        val T: Terminal,
 
         /**
          * A editable [PossibilityTerminal]
          */
-        val progress: PossibilityTerminal = PossibilityTerminal(puzzle.copy())
+        val PT: PossibilityTerminal = PossibilityTerminal(T.copy())
 )
