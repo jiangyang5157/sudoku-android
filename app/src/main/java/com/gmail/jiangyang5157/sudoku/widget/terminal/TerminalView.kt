@@ -36,19 +36,18 @@ class TerminalView : RenderView, Renderable<Canvas> {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 Log.d(TAG, "MotionEvent.ACTION_DOWN")
-                resumeRender() // TODO why not resume? RenderView or FrameThread is not working fine
+                refreshRender()
             }
             MotionEvent.ACTION_UP -> {
                 Log.d(TAG, "MotionEvent.ACTION_UP")
-                pauseRender()
                 refreshRender()
             }
             MotionEvent.ACTION_MOVE -> {
-                // TODO
+                refreshRender() // TODO conditional refresh
             }
             MotionEvent.ACTION_CANCEL -> {
                 Log.d(TAG, "MotionEvent.ACTION_CANCEL")
-                pauseRender()
+                refreshRender()
             }
             else -> {
             }
