@@ -13,7 +13,7 @@ data class Cell(
         val B: Int,
 
         /**
-         *
+         * Digit
          */
         var D: Int = 0
 ) {
