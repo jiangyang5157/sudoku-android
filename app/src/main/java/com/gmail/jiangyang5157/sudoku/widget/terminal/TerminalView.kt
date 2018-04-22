@@ -45,12 +45,6 @@ class TerminalView : RenderView, Renderable<Canvas> {
             MotionEvent.ACTION_MOVE -> {
                 refreshRender() // TODO conditional refresh
             }
-            MotionEvent.ACTION_CANCEL -> {
-                Log.d(TAG, "MotionEvent.ACTION_CANCEL")
-                refreshRender()
-            }
-            else -> {
-            }
         }
         return super.onTouchEvent(event)
     }
