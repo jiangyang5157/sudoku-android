@@ -5,12 +5,13 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
+import com.gmail.jiangyang5157.kotlin_android_kit.render.CanvasRenderable
 import com.gmail.jiangyang5157.kotlin_android_kit.widget.RenderView
 
 /**
  * Created by Yang Jiang on July 18, 2017
  */
-class TerminalView : RenderView, RenderView.OnRenderListener {
+class TerminalView : RenderView, CanvasRenderable {
 
     companion object {
         const val TAG = "TerminalView"
@@ -19,7 +20,7 @@ class TerminalView : RenderView, RenderView.OnRenderListener {
     init {
         setZOrderOnTop(true)
         holder.setFormat(PixelFormat.TRANSPARENT)
-        setRenderListener(this)
+        setCanvasRenderable(this)
     }
 
     constructor(context: Context)
@@ -45,18 +46,18 @@ class TerminalView : RenderView, RenderView.OnRenderListener {
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                renderResume()
+                resumeRender()
             }
             MotionEvent.ACTION_UP -> {
-                renderPause()
-                renderRefresh()
+                pauseRender()
+                refreshRender()
             }
             MotionEvent.ACTION_MOVE -> {
                 // TODO
             }
             MotionEvent.ACTION_CANCEL -> {
                 Log.d(TAG, "MotionEvent.ACTION_CANCEL")
-                renderPause()
+                pauseRender()
             }
             else -> {
             }
