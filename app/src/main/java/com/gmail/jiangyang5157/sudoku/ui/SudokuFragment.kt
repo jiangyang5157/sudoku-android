@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
 import com.gmail.jiangyang5157.sudoku.R
-import com.gmail.jiangyang5157.sudoku.widget.TerminalView
+import com.gmail.jiangyang5157.sudoku.widget.terminal.TerminalView
 import com.gmail.jiangyang5157.sudoku_presenter.SudokuContract
 import com.gmail.jiangyang5157.sudoku_presenter.SudokuPresenter
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal

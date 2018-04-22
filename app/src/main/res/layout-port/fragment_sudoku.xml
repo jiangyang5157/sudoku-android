@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.gmail.jiangyang5157.sudoku.widget.TerminalView
+        <com.gmail.jiangyang5157.sudoku.widget.terminal.TerminalView
             android:id="@+id/terminalview"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
