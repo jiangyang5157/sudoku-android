@@ -6,7 +6,7 @@ package com.gmail.jiangyang5157.sudoku_presenter.model
 data class Sudoku(
 
         /**
-         * A non-editable [Terminal] with unique solution
+         * A non-editable [Terminal] has unique solution
          */
         val puzzle: Terminal,
 
