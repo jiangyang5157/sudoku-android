@@ -20,6 +20,31 @@ data class Terminal(
         val C: Array<Cell?> = arrayOfNulls(E * E)
 ) {
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Terminal
+
+        if (E != other.E) return false
+        if (!Arrays.equals(C, other.C)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = E
+        result = 31 * result + Arrays.hashCode(C)
+        return result
+    }
+
+    /**
+     * To JSON [String]
+     */
+    override fun toString(): String {
+        return Gson().toJson(this)
+    }
+
     /**
      * To human readable [String]
      */
@@ -40,36 +65,13 @@ data class Terminal(
     }
 
     /**
-     * To JSON [String]
-     */
-    override fun toString(): String {
-        return Gson().toJson(this)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Terminal
-
-        if (E != other.E) return false
-        if (!Arrays.equals(C, other.C)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = E
-        result = 31 * result + Arrays.hashCode(C)
-        return result
-    }
-
-    /**
      * Deep copy
      */
     fun copy(): Terminal {
         val newTerminal = Terminal(E = E)
-        C.forEachIndexed { index, cell -> newTerminal.C[index] = cell?.copy() }
+        for (i in 0 until C.size) {
+            newTerminal.C[i] = C[i]?.copy()
+        }
         return newTerminal
     }
 

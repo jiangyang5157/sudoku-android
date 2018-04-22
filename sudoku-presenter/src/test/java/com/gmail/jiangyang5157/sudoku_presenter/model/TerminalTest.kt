@@ -91,12 +91,22 @@ class TerminalTest {
     fun test_deep_copy() {
         val t1 = Terminal(2)
         t1.C[1] = Cell(1, 1)
+        t1.C[2] = Cell(2, 2)
 
         val t2 = t1.copy()
         Assert.assertTrue(t2 == t1)
 
         t1.C[1]!!.D = 10
-        Assert.assertFalse(t2.C[1]!!.D == 10)
+        Assert.assertTrue(t2.C[1]!!.D != 10)
+        Assert.assertEquals(4, t1.C.size)
+        Assert.assertEquals(4, t2.C.size)
+
+        t1.C[2] = null
+        Assert.assertTrue(t2.C[2] != null)
+
+        val t3 = t1.copy()
+        Assert.assertEquals(4, t1.C.size)
+        Assert.assertEquals(4, t3.C.size)
     }
 
     @Test
