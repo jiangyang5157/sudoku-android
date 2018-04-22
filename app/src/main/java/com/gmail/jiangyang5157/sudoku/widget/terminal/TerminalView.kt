@@ -36,7 +36,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 Log.d(TAG, "MotionEvent.ACTION_DOWN")
-                resumeRender()
+                resumeRender() // TODO why not resume? RenderView or FrameThread is not working fine
             }
             MotionEvent.ACTION_UP -> {
                 Log.d(TAG, "MotionEvent.ACTION_UP")
