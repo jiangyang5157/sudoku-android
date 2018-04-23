@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.gmail.jiangyang5157.sudoku.R
-import com.gmail.jiangyang5157.sudoku.widget.terminal.KeypadView
+import com.gmail.jiangyang5157.sudoku.widget.KeypadView
 import com.gmail.jiangyang5157.sudoku.widget.terminal.TerminalView
 import com.gmail.jiangyang5157.sudoku_presenter.SudokuContract
 import com.gmail.jiangyang5157.sudoku_presenter.SudokuPresenter

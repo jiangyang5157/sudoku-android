@@ -18,7 +18,7 @@
             android:layout_height="match_parent" />
     </com.gmail.jiangyang5157.sudoku.widget.SquareFrameLayout>
 
-    <com.gmail.jiangyang5157.sudoku.widget.terminal.KeypadView
+    <com.gmail.jiangyang5157.sudoku.widget.KeypadView
         android:id="@+id/view_keypad"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
