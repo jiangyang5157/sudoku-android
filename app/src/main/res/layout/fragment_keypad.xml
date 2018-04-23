@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <Button
+        android:id="@+id/btn_keypad_1"
+        android:layout_width="@dimen/keypad_btn_normal"
+        android:layout_height="@dimen/keypad_btn_normal"
+        android:text="@string/label_digit_1" />
+
+    <Button
+        android:id="@+id/btn_keypad_2"
+        android:layout_width="@dimen/keypad_btn_normal"
+        android:layout_height="@dimen/keypad_btn_normal"
+        android:layout_alignTop="@id/btn_keypad_1"
+        android:layout_toEndOf="@id/btn_keypad_1"
+        android:text="@string/label_digit_2" />
+
+    <Button
+        android:id="@+id/btn_keypad_3"
+        android:layout_width="@dimen/keypad_btn_normal"
+        android:layout_height="@dimen/keypad_btn_normal"
+        android:layout_alignTop="@id/btn_keypad_2"
+        android:layout_toEndOf="@id/btn_keypad_2"
+        android:text="@string/label_digit_3" />
+
+    <Button
+        android:id="@+id/btn_keypad_4"
+        android:layout_width="@dimen/keypad_btn_normal"
+        android:layout_height="@dimen/keypad_btn_normal"
+        android:layout_alignStart="@id/btn_keypad_1"
+        android:layout_below="@id/btn_keypad_1"
+        android:text="@string/label_digit_4" />
+
+    <Button
+        android:id="@+id/btn_keypad_5"
+        android:layout_width="@dimen/keypad_btn_normal"
+        android:layout_height="@dimen/keypad_btn_normal"
+        android:layout_alignTop="@id/btn_keypad_4"
+        android:layout_toEndOf="@id/btn_keypad_4"
+        android:text="@string/label_digit_5" />
+
+    <Button
+        android:id="@+id/btn_keypad_6"
+        android:layout_width="@dimen/keypad_btn_normal"
+        android:layout_height="@dimen/keypad_btn_normal"
+        android:layout_alignTop="@id/btn_keypad_5"
+        android:layout_toEndOf="@id/btn_keypad_5"
+        android:text="@string/label_digit_6" />
+
+    <Button
+        android:id="@+id/btn_keypad_7"
+        android:layout_width="@dimen/keypad_btn_normal"
+        android:layout_height="@dimen/keypad_btn_normal"
+        android:layout_alignStart="@id/btn_keypad_4"
+        android:layout_below="@id/btn_keypad_4"
+        android:text="@string/label_digit_7" />
+
+    <Button
+        android:id="@+id/btn_keypad_8"
+        android:layout_width="@dimen/keypad_btn_normal"
+        android:layout_height="@dimen/keypad_btn_normal"
+        android:layout_alignTop="@id/btn_keypad_7"
+        android:layout_toEndOf="@id/btn_keypad_7"
+        android:text="@string/label_digit_8" />
+
+    <Button
+        android:id="@+id/btn_keypad_9"
+        android:layout_width="@dimen/keypad_btn_normal"
+        android:layout_height="@dimen/keypad_btn_normal"
+        android:layout_alignTop="@id/btn_keypad_8"
+        android:layout_toEndOf="@id/btn_keypad_8"
+        android:text="@string/label_digit_9" />
+
+    <Button
+        android:id="@+id/btn_keypad_clear"
+        android:layout_width="@dimen/keypad_btn_normal"
+        android:layout_height="@dimen/keypad_btn_normal"
+        android:layout_alignTop="@id/btn_keypad_3"
+        android:layout_toEndOf="@id/btn_keypad_3"
+        android:text="-" />
+
+    <Switch
+        android:id="@+id/switch_keypad_possibility"
+        android:layout_width="@dimen/keypad_btn_normal"
+        android:layout_height="@dimen/keypad_btn_large"
+        android:layout_alignStart="@id/btn_keypad_clear"
+        android:layout_below="@id/btn_keypad_clear" />
+
+</RelativeLayout>

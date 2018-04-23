@@ -37,18 +37,6 @@ class SudokuPresenterTest {
 
             override fun possibilityUpdated(index: Int, possibility: Array<Int?>) {}
 
-            override fun possibilityEnterEnabled() {}
-
-            override fun possibilityEnterDisabled() {}
-
-            override fun digitCleard() {}
-
-            override fun possibilityCleard() {}
-
-            override fun digitEnterd(digit: Int) {}
-
-            override fun possibilityEnterd(digit: Int) {}
-
             override fun setPresenter(presenter: SudokuContract.Presenter) {
                 mPresenter = presenter
             }
@@ -85,18 +73,6 @@ class SudokuPresenterTest {
             override fun progressCleard(progress: Terminal) {}
 
             override fun possibilityUpdated(index: Int, possibility: Array<Int?>) {}
-
-            override fun possibilityEnterEnabled() {}
-
-            override fun possibilityEnterDisabled() {}
-
-            override fun digitCleard() {}
-
-            override fun possibilityCleard() {}
-
-            override fun digitEnterd(digit: Int) {}
-
-            override fun possibilityEnterd(digit: Int) {}
 
             override fun setPresenter(presenter: SudokuContract.Presenter) {
                 mPresenter = presenter
@@ -139,18 +115,6 @@ class SudokuPresenterTest {
             override fun progressCleard(progress: Terminal) {}
 
             override fun possibilityUpdated(index: Int, possibility: Array<Int?>) {}
-
-            override fun possibilityEnterEnabled() {}
-
-            override fun possibilityEnterDisabled() {}
-
-            override fun digitCleard() {}
-
-            override fun possibilityCleard() {}
-
-            override fun digitEnterd(digit: Int) {}
-
-            override fun possibilityEnterd(digit: Int) {}
 
             override fun setPresenter(presenter: SudokuContract.Presenter) {
                 mPresenter = presenter
@@ -198,18 +162,6 @@ class SudokuPresenterTest {
                 possibilityResult = possibility
                 signal.countDown()
             }
-
-            override fun possibilityEnterEnabled() {}
-
-            override fun possibilityEnterDisabled() {}
-
-            override fun digitCleard() {}
-
-            override fun possibilityCleard() {}
-
-            override fun digitEnterd(digit: Int) {}
-
-            override fun possibilityEnterd(digit: Int) {}
 
             override fun setPresenter(presenter: SudokuContract.Presenter) {
                 mPresenter = presenter
@@ -259,18 +211,6 @@ class SudokuPresenterTest {
                 possibilityResult = possibility
                 signal.countDown()
             }
-
-            override fun possibilityEnterEnabled() {}
-
-            override fun possibilityEnterDisabled() {}
-
-            override fun digitCleard() {}
-
-            override fun possibilityCleard() {}
-
-            override fun digitEnterd(digit: Int) {}
-
-            override fun possibilityEnterd(digit: Int) {}
 
             override fun setPresenter(presenter: SudokuContract.Presenter) {
                 mPresenter = presenter

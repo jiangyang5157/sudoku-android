@@ -14,16 +14,14 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
         mView.setPresenter(this)
     }
 
-    private var mSudoku: Sudoku? = null
-
     private var mGenerator: GeneratePuzzleTask? = null
 
     private var mResolver: ResolvePuzzleTask? = null
 
+    private var mSudoku: Sudoku? = null
+
     // Use `SQUARE(0)`, since `IRREGULAR(1)` has not yet implemented
     private var mBlockMode = 0
-
-    private var isPossibilityEnterEnable = false
 
     private fun runGenerator(blockMode: Int, edge: Int, minSubGiven: Int, minTotalGiven: Int, callback: PuzzleTask.Callback) {
         mGenerator?.apply {
@@ -122,40 +120,6 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
         mSudoku?.PT?.apply {
             P[index] = arrayOfNulls(T.E)
             mView.possibilityUpdated(index, P[index])
-        }
-    }
-
-    override fun enterClear() {
-        mSudoku?.apply {
-            if (isPossibilityEnterEnable) {
-                mView.possibilityCleard()
-            } else {
-                mView.digitCleard()
-            }
-        }
-    }
-
-    override fun enterDigit(digit: Int) {
-        if (digit < 0) {
-            throw IllegalArgumentException()
-        }
-
-        mSudoku?.apply {
-            if (isPossibilityEnterEnable) {
-                mView.possibilityEnterd(digit)
-            } else {
-                mView.digitEnterd(digit)
-            }
-        }
-    }
-
-    override fun invertPossibilityEnterStatus() {
-        if (isPossibilityEnterEnable) {
-            isPossibilityEnterEnable = false
-            mView.possibilityEnterDisabled()
-        } else {
-            isPossibilityEnterEnable = true
-            mView.possibilityEnterEnabled()
         }
     }
 

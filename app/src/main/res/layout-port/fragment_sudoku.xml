@@ -19,12 +19,9 @@
             android:layout_height="match_parent" />
     </com.gmail.jiangyang5157.sudoku.widget.SquareFrameLayout>
 
-    <RelativeLayout
+    <FrameLayout
+        android:id="@+id/keypad_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center">
-
-        <include layout="@layout/container_keypad" />
-    </RelativeLayout>
+        android:layout_height="match_parent" />
 
 </LinearLayout>
