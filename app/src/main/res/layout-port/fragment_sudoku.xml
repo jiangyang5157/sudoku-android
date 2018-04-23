@@ -9,18 +9,17 @@
     android:paddingTop="@dimen/activity_vertical_margin">
 
     <com.gmail.jiangyang5157.sudoku.widget.SquareFrameLayout
-        android:id="@+id/terminal_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <com.gmail.jiangyang5157.sudoku.widget.terminal.TerminalView
-            android:id="@+id/terminalview"
+            android:id="@+id/view_terminal"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </com.gmail.jiangyang5157.sudoku.widget.SquareFrameLayout>
 
-    <FrameLayout
-        android:id="@+id/keypad_container"
+    <com.gmail.jiangyang5157.sudoku.widget.terminal.KeypadView
+        android:id="@+id/view_keypad"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

@@ -49,15 +49,15 @@ class TerminalView : RenderView, Renderable<Canvas> {
         return super.onTouchEvent(event)
     }
 
-    override fun onRender(t: Canvas) {
+    override fun onRender(canvas: Canvas) {
         Log.d(TAG, "onRender")
-        t.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
 
         // TODO
         val paint = Paint()
         paint.color = Color.BLUE
         paint.textSize = 100F
-        t.drawText("Hello world.", 200F, 200F, paint)
+        canvas.drawText("Hello world.", 200F, 200F, paint)
     }
 
 }

@@ -20,11 +20,13 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view?.findViewById(R.id.btn_sudoku)?.setOnClickListener {
-            activity.startActivity(Intent(context, SudokuActivity::class.java))
-        }
-        view?.findViewById(R.id.btn_scan)?.setOnClickListener {
-            activity.startActivity(Intent(context, ScanActivity::class.java))
+        view?.apply {
+            findViewById(R.id.btn_sudoku)?.setOnClickListener {
+                activity.startActivity(Intent(context, SudokuActivity::class.java))
+            }
+            findViewById(R.id.btn_scan)?.setOnClickListener {
+                activity.startActivity(Intent(context, ScanActivity::class.java))
+            }
         }
     }
 

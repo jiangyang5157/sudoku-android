@@ -6,11 +6,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.gmail.jiangyang5157.kotlin_android_kit.ext.instance
-import com.gmail.jiangyang5157.kotlin_android_kit.ext.replaceFragmentInActivity
 import com.gmail.jiangyang5157.sudoku.R
+import com.gmail.jiangyang5157.sudoku.widget.terminal.KeypadView
 import com.gmail.jiangyang5157.sudoku.widget.terminal.TerminalView
-import com.gmail.jiangyang5157.sudoku_presenter.KeypadContract
 import com.gmail.jiangyang5157.sudoku_presenter.SudokuContract
 import com.gmail.jiangyang5157.sudoku_presenter.SudokuPresenter
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
@@ -19,7 +17,7 @@ import java.util.*
 /**
  * Created by Yang Jiang on April 21, 2018
  */
-class SudokuFragment : Fragment(), SudokuContract.View, KeypadContract.View.Delegate {
+class SudokuFragment : Fragment(), SudokuContract.View, KeypadView.Callback {
 
     companion object {
 
@@ -35,11 +33,10 @@ class SudokuFragment : Fragment(), SudokuContract.View, KeypadContract.View.Dele
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val keypadFragment = instance<KeypadFragment>() as KeypadFragment
-        activity.replaceFragmentInActivity(R.id.keypad_container, keypadFragment)
-
-        keypadFragment.setDelegate(this)
-        (view?.findViewById(R.id.terminalview) as TerminalView).isClickable = true
+        view?.apply {
+            (findViewById(R.id.view_terminal) as TerminalView).isClickable = true
+            (findViewById(R.id.view_keypad) as KeypadView).setCallback(this@SudokuFragment)
+        }
     }
 
     override fun puzzleGenerated(puzzle: Terminal?) {
