@@ -10,11 +10,10 @@ import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TPossibilitySp
  * Created by Yang Jiang on April 25, 2018
  */
 class TPossibility(
-        var spec: TPossibilitySpec = TPossibilityNormal(),
         override var position: Vector2i = Vector2i(),
         override var w: Int = 0,
         override var h: Int = 0,
-        override var priority: Int = 0,
+        var spec: TPossibilitySpec = TPossibilityNormal(),
         override var paint: Paint = Paint())
     : TPRect {
 
@@ -24,9 +23,13 @@ class TPossibility(
         val right = position.x + w
         val bottom = position.y
 
-        spec.digit?.apply {
+        if (spec.digit != 0) {
             paint.color = spec.digitColorInt
-            t.drawText(this.toString(), left.toFloat(), top.toFloat(), paint)
+            paint.textSize = ((w + h) / 4).toFloat()
+            val distance = (paint.descent() + paint.ascent()) / 2
+            val textX: Float = left + w / 2 - distance
+            val textY: Float = top - h / 2 - distance
+            t.drawText(spec.digit.toString(), textX, textY, paint)
         }
     }
 

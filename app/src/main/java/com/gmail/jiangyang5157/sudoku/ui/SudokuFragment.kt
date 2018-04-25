@@ -25,6 +25,7 @@ class SudokuFragment : Fragment(), SudokuContract.View, KeypadView.Callback {
     }
 
     private var mSudokuPresenter: SudokuContract.Presenter = SudokuPresenter(this)
+    private var mTerminalView: TerminalView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_sudoku, container, false)
@@ -34,13 +35,20 @@ class SudokuFragment : Fragment(), SudokuContract.View, KeypadView.Callback {
         super.onViewCreated(view, savedInstanceState)
 
         view?.apply {
-            (findViewById(R.id.view_terminal) as TerminalView).isClickable = true
             (findViewById(R.id.view_keypad) as KeypadView).setCallback(this@SudokuFragment)
+            mTerminalView = findViewById(R.id.view_terminal) as TerminalView?
+            mTerminalView?.isClickable = true
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mSudokuPresenter.generatePuzzle(9, 4, 55)
     }
 
     override fun puzzleGenerated(puzzle: Terminal?) {
         Log.d(TAG, "puzzleGenerated: $puzzle")
+        mTerminalView?.setTerminal(puzzle)
     }
 
     override fun terminalReveald(terminal: Terminal?) {
@@ -49,18 +57,33 @@ class SudokuFragment : Fragment(), SudokuContract.View, KeypadView.Callback {
 
     override fun progressUpdated(index: Int, digit: Int) {
         Log.d(TAG, "progressUpdated: $index, $digit")
+        mTerminalView?.setCell(index, digit)
     }
 
     override fun progressCleard(progress: Terminal) {
         Log.d(TAG, "progressCleard: $progress")
+        mTerminalView?.setTerminal(progress)
     }
 
     override fun possibilityUpdated(index: Int, possibility: Array<Int?>) {
         Log.d(TAG, "possibilityUpdated: $index, " + Arrays.toString(possibility))
+        mTerminalView?.setPossibility(index, possibility)
     }
 
     override fun digitEnterd(digit: Int) {
         Log.d(TAG, "digitEnterd: $digit")
+        // TODO Remove
+        when (digit) {
+            1 -> mSudokuPresenter.updateProgress(1, 8)
+            2 -> mSudokuPresenter.updateProgress(2, 8)
+            3 -> mSudokuPresenter.updateProgress(3, 8)
+            4 -> mSudokuPresenter.updateProgress(4, 8)
+            5 -> mSudokuPresenter.updateProgress(5, 8)
+            6 -> mSudokuPresenter.updatePossibility(0, 1)
+            7 -> mSudokuPresenter.updatePossibility(0, 2)
+            8 -> mSudokuPresenter.updatePossibility(0, 3)
+            9 -> mSudokuPresenter.updatePossibility(0, 2)
+        }
     }
 
     override fun digitCleard() {

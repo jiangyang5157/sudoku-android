@@ -9,6 +9,6 @@ interface TCellSpec {
 
     val digitColorInt: Int
 
-    var digit: Int?
+    var digit: Int
 
 }

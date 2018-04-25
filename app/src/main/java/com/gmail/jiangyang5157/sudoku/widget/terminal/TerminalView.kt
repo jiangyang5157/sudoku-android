@@ -10,8 +10,8 @@ import android.util.Log
 import android.view.MotionEvent
 import com.gmail.jiangyang5157.kotlin_android_kit.widget.RenderView
 import com.gmail.jiangyang5157.kotlin_kit.render.Renderable
-import com.gmail.jiangyang5157.sudoku.widget.terminal.render.TPossibilityTerminal
-import com.gmail.jiangyang5157.sudoku_presenter.model.PossibilityTerminal
+import com.gmail.jiangyang5157.sudoku.widget.terminal.render.TTerminal
+import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
 
 /**
  * Created by Yang Jiang on July 18, 2017
@@ -22,7 +22,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
         const val TAG = "TerminalView"
     }
 
-    private var renderable: TPossibilityTerminal? = null
+    private var terminal: TTerminal? = null
 
     init {
         setZOrderOnTop(true)
@@ -59,25 +59,25 @@ class TerminalView : RenderView, Renderable<Canvas> {
     override fun onRender(t: Canvas) {
         Log.d(TAG, "onRender")
         t.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
-        renderable?.onRender(t)
+        terminal?.onRender(t)
     }
 
-    fun setTerminal(p: PossibilityTerminal?) {
-        this.renderable = p?.let {
+    fun setTerminal(p: Terminal?) {
+        this.terminal = p?.let {
             TMapper(width, height).map(p)
         }
     }
 
     fun setCell(index: Int, digit: Int?) {
-        this.renderable?.apply {
-            T.C[index].spec.digit = digit
+        this.terminal?.apply {
+            C[index].spec.digit = digit ?: 0
         }
     }
 
     fun setPossibility(index: Int, possibility: Array<Int?>) {
-        this.renderable?.apply {
+        this.terminal?.apply {
             possibility.forEachIndexed { i, p ->
-                P[index][i].spec.digit = p
+                C[index].P[i].spec.digit = p ?: 0
             }
         }
     }

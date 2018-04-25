@@ -10,11 +10,12 @@ import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellSpec
  * Created by Yang Jiang on April 25, 2018
  */
 class TCell(
-        var spec: TCellSpec = TCellNormal(),
+        val E: Int,
+        val P: Array<TPossibility> = Array(E) { TPossibility() },
         override var position: Vector2i = Vector2i(),
         override var w: Int = 0,
         override var h: Int = 0,
-        override var priority: Int = 0,
+        var spec: TCellSpec = TCellNormal(),
         override var paint: Paint = Paint())
     : TPRect {
 
@@ -27,10 +28,15 @@ class TCell(
         paint.color = spec.backgroundColorInt
         t.drawRect(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat(), paint)
 
-        spec.digit?.apply {
+        if (spec.digit != 0) {
             paint.color = spec.digitColorInt
-            t.drawText(this.toString(), left.toFloat(), top.toFloat(), paint)
+            paint.textSize = ((w + h) / 4).toFloat()
+            val textX: Float = (left + w / 2).toFloat()
+            val textY: Float = top - h / 2 - (paint.descent() + paint.ascent()) / 2
+            t.drawText(spec.digit.toString(), textX, textY, paint)
         }
+
+        P.forEach { it.onRender(t) }
     }
 
 }
