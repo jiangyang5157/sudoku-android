@@ -7,6 +7,4 @@ interface TPossibilitySpec {
 
     val digitColorInt: Int
 
-    var digit: Int
-
 }

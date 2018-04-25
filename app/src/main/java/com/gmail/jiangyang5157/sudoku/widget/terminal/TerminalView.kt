@@ -10,7 +10,12 @@ import android.util.Log
 import android.view.MotionEvent
 import com.gmail.jiangyang5157.kotlin_android_kit.widget.RenderView
 import com.gmail.jiangyang5157.kotlin_kit.render.Renderable
+import com.gmail.jiangyang5157.sudoku.widget.terminal.render.TCell
 import com.gmail.jiangyang5157.sudoku.widget.terminal.render.TTerminal
+import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellFocusd
+import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellHighlightd
+import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellNormal
+import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellSelectd
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
 
 /**
@@ -22,7 +27,12 @@ class TerminalView : RenderView, Renderable<Canvas> {
         const val TAG = "TerminalView"
     }
 
-    private var terminal: TTerminal? = null
+    private var mTerminal: TTerminal? = null
+
+    private var mCellSelectd: Int? = null
+    fun getCellSelected() = mCellSelectd
+    private var mCellHighlightd: List<TCell>? = null
+    private var mCellFocusd: List<TCell>? = null
 
     init {
         setZOrderOnTop(true)
@@ -43,6 +53,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 Log.d(TAG, "MotionEvent.ACTION_DOWN")
+                touch(event.x, event.y)
                 refreshRender()
             }
             MotionEvent.ACTION_UP -> {
@@ -50,39 +61,81 @@ class TerminalView : RenderView, Renderable<Canvas> {
                 refreshRender()
             }
             MotionEvent.ACTION_MOVE -> {
-                // TODO conditional refresh
+                touch(event.x, event.y)
             }
         }
         return super.onTouchEvent(event)
     }
 
+    private fun touch(x: Float, y: Float) {
+        mTerminal?.apply {
+            val cEdge = edge / E
+            if (x in 0..edge && y in 0..edge) {
+                val col = (x / cEdge).toInt()
+                val row = (y / cEdge).toInt()
+                if (col in 0 until E && row in 0 until E) {
+                    val index = row * E + col
+
+
+                    mCellFocusd?.forEach {
+                        it.spec = TCellNormal
+                    }
+                    mCellHighlightd?.forEach {
+                        it.spec = TCellNormal
+                    }
+                    mCellSelectd?.apply {
+                        C[this].spec = TCellNormal
+                    }
+
+                    mCellFocusd = relevantCells(index)
+                    mCellHighlightd = sameDigitCells(index)
+                    mCellSelectd = index
+
+                    mCellFocusd?.forEach {
+                        it.spec = TCellFocusd
+                    }
+                    mCellHighlightd?.forEach {
+                        it.spec = TCellHighlightd
+                    }
+                    mCellSelectd?.apply {
+                        C[this].spec = TCellSelectd
+                    }
+
+                    refreshRender()
+                }
+            }
+        }
+    }
+
     override fun onRender(t: Canvas) {
-        Log.d(TAG, "onRender")
         t.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
-        terminal?.onRender(t)
+        mTerminal?.onRender(t)
     }
 
     fun setTerminal(p: Terminal?) {
-        this.terminal = p?.let {
-            TMapper(width, height).map(p)
+        p?.apply {
+            mTerminal = TMapper(width, height).map(p)
+            mCellFocusd = null
+            mCellHighlightd = null
+            mCellSelectd = null
+            refreshRender()
         }
-        refreshRender()
     }
 
     fun setCell(index: Int, digit: Int?) {
-        this.terminal?.apply {
-            C[index].spec.digit = digit ?: 0
+        this.mTerminal?.apply {
+            C[index].digit = digit ?: 0
+            refreshRender()
         }
-        refreshRender()
     }
 
     fun setPossibility(index: Int, possibility: Array<Int?>) {
-        this.terminal?.apply {
+        mTerminal?.apply {
             possibility.forEachIndexed { i, p ->
-                C[index].P[i].spec.digit = p ?: 0
+                C[index].P[i].digit = p ?: 0
             }
+            refreshRender()
         }
-        refreshRender()
     }
 
 }

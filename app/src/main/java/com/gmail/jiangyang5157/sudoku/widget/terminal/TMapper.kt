@@ -14,38 +14,40 @@ data class TMapper(val width: Int, val height: Int) : Mapper<Terminal, TTerminal
         if (width != height) {
             throw IllegalStateException()
         }
-        val tLen = width
-        val cLen = tLen / from.E
-        val sqrtE = Math.sqrt(from.E.toDouble()).toInt()
-        val pLen = cLen / sqrtE
-        if (tLen <= 0 || cLen <= 0 || sqrtE <= 0 || pLen <= 0) {
+
+        val tEdge = width
+        val cEdge = tEdge / from.E
+        val eSqrt = Math.sqrt(from.E.toDouble()).toInt()
+        val pEdge = cEdge / eSqrt
+        if (tEdge <= 0 || cEdge <= 0 || eSqrt <= 0 || pEdge <= 0) {
             throw IllegalStateException()
         }
 
-        val ret = TTerminal(from.E, w = tLen, h = tLen)
+        val ret = TTerminal(from.E, edge = tEdge)
 
         ret.C.forEachIndexed { itc, tc ->
 
             val tcCol = from.col(itc)
             val tcRow = from.row(itc)
-            val tcX = tcCol * cLen
-            val tcY = tcRow * cLen
+            val tcX = tcCol * cEdge
+            val tcY = tcRow * cEdge
             tc.position = Vector2i(tcX, tcY)
-            tc.w = cLen
-            tc.h = cLen
+            tc.edge = cEdge
+            from.C[itc]?.B?.apply {
+                tc.B = this
+            }
             from.C[itc]?.D?.apply {
-                tc.spec.digit = this
+                tc.digit = this
             }
 
             tc.P.forEachIndexed { itcp, tcp ->
 
-                val tcpCol = itcp % sqrtE
-                val tcpRow = itcp / sqrtE
-                val tcpX = tcX + tcpCol * pLen
-                val tcpY = tcY + tcpRow * pLen
+                val tcpCol = itcp % eSqrt
+                val tcpRow = itcp / eSqrt
+                val tcpX = tcX + tcpCol * pEdge
+                val tcpY = tcY + tcpRow * pEdge
                 tcp.position = Vector2i(tcpX, tcpY)
-                tcp.w = pLen
-                tcp.h = pLen
+                tcp.edge = pEdge
             }
         }
 

@@ -17,7 +17,7 @@ import java.util.*
 /**
  * Created by Yang Jiang on April 21, 2018
  */
-class SudokuFragment : Fragment(), SudokuContract.View, KeypadView.Callback {
+class SudokuFragment : Fragment(), SudokuContract.View {
 
     companion object {
 
@@ -35,15 +35,52 @@ class SudokuFragment : Fragment(), SudokuContract.View, KeypadView.Callback {
         super.onViewCreated(view, savedInstanceState)
 
         view?.apply {
-            (findViewById(R.id.view_keypad) as KeypadView).setCallback(this@SudokuFragment)
+            (findViewById(R.id.view_keypad) as KeypadView).setCallback(keypadViewCallback)
             mTerminalView = findViewById(R.id.view_terminal) as TerminalView?
             mTerminalView?.isClickable = true
         }
+
+        // TODO Implement start logic
+        mSudokuPresenter.generatePuzzle(9, 4, 55)
     }
 
-    override fun onStart() {
-        super.onStart()
-        mSudokuPresenter.generatePuzzle(9, 4, 55)
+    private val keypadViewCallback = object : KeypadView.Callback {
+
+        override fun digitEnterd(digit: Int) {
+            Log.d(TAG, "digitEnterd: $digit")
+            mTerminalView?.getCellSelected()?.apply {
+                mSudokuPresenter.updateProgress(this, digit)
+            }
+        }
+
+        override fun digitCleard() {
+            Log.d(TAG, "digitCleard")
+            mTerminalView?.getCellSelected()?.apply {
+                mSudokuPresenter.updateProgress(this, 0)
+            }
+        }
+
+        override fun possibilityModeEnabled() {
+            Log.d(TAG, "possibilityModeEnabled")
+        }
+
+        override fun possibilityModeDisabled() {
+            Log.d(TAG, "possibilityModeDisabled")
+        }
+
+        override fun possibilityEnterd(digit: Int) {
+            Log.d(TAG, "possibilityEnterd: $digit")
+            mTerminalView?.getCellSelected()?.apply {
+                mSudokuPresenter.updatePossibility(this, digit)
+            }
+        }
+
+        override fun possibilityCleard() {
+            Log.d(TAG, "possibilityCleard")
+            mTerminalView?.getCellSelected()?.apply {
+                mSudokuPresenter.clearPossibility(this)
+            }
+        }
     }
 
     override fun puzzleGenerated(puzzle: Terminal?) {
@@ -68,42 +105,6 @@ class SudokuFragment : Fragment(), SudokuContract.View, KeypadView.Callback {
     override fun possibilityUpdated(index: Int, possibility: Array<Int?>) {
         Log.d(TAG, "possibilityUpdated: $index, " + Arrays.toString(possibility))
         mTerminalView?.setPossibility(index, possibility)
-    }
-
-    override fun digitEnterd(digit: Int) {
-        Log.d(TAG, "digitEnterd: $digit")
-        // TODO Remove
-        when (digit) {
-            1 -> mSudokuPresenter.updateProgress(1, 8)
-            2 -> mSudokuPresenter.updateProgress(2, 8)
-            3 -> mSudokuPresenter.updateProgress(3, 8)
-            4 -> mSudokuPresenter.updateProgress(4, 8)
-            5 -> mSudokuPresenter.updateProgress(5, 8)
-            6 -> mSudokuPresenter.updatePossibility(0, 1)
-            7 -> mSudokuPresenter.updatePossibility(0, 2)
-            8 -> mSudokuPresenter.updatePossibility(0, 3)
-            9 -> mSudokuPresenter.updatePossibility(0, 2)
-        }
-    }
-
-    override fun digitCleard() {
-        Log.d(TAG, "digitCleard")
-    }
-
-    override fun possibilityModeEnabled() {
-        Log.d(TAG, "possibilityModeEnabled")
-    }
-
-    override fun possibilityModeDisabled() {
-        Log.d(TAG, "possibilityModeDisabled")
-    }
-
-    override fun possibilityEnterd(digit: Int) {
-        Log.d(TAG, "possibilityEnterd: $digit")
-    }
-
-    override fun possibilityCleard() {
-        Log.d(TAG, "possibilityCleard")
     }
 
     override fun setPresenter(presenter: SudokuContract.Presenter) {

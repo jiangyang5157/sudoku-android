@@ -127,23 +127,4 @@ data class Terminal(
         return ret
     }
 
-    /**
-     * Calculate associated [Cell], which has same [row], or same [col], or same[Cell.B]
-     *
-     * @param index index of the [Cell]
-     * @return [List] of relevant [Cell] indexes, [index] itself is included
-     */
-    fun relevant(index: Int): List<Int> {
-        val b = C[index]?.B
-        val row = row(index)
-        val col = col(index)
-        val ret: MutableSet<Int> = mutableSetOf()
-        C.forEachIndexed { i, c ->
-            if (c?.B == b || row(i) == row || col(i) == col) {
-                ret.add(i)
-            }
-        }
-        return ret.toList()
-    }
-
 }

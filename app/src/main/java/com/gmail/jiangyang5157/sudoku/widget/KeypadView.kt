@@ -27,6 +27,10 @@ class KeypadView : FrameLayout {
     }
 
     private var mCallback: Callback? = null
+    fun getCallback() = mCallback
+    fun setCallback(callback: Callback) {
+        mCallback = callback
+    }
 
     private var isPossibilityModeEnable = false
 
@@ -117,12 +121,6 @@ class KeypadView : FrameLayout {
             mCallback?.possibilityModeDisabled()
         }
     }
-
-    fun setCallback(callback: Callback) {
-        mCallback = callback
-    }
-
-    fun getCallback() = mCallback
 
 }
 

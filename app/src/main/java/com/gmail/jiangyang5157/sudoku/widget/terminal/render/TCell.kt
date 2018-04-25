@@ -11,29 +11,34 @@ import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellSpec
  */
 class TCell(
         val E: Int,
+        var B: Int = 0,
+        var digit: Int = 0,
         val P: Array<TPossibility> = Array(E) { TPossibility() },
         override var position: Vector2i = Vector2i(),
-        override var w: Int = 0,
-        override var h: Int = 0,
-        var spec: TCellSpec = TCellNormal(),
+        override var edge: Int = 0,
+        var spec: TCellSpec = TCellNormal,
         override var paint: Paint = Paint())
-    : TPRect {
+    : TPSquare {
 
     override fun onRender(t: Canvas) {
         val left = position.x
-        val top = position.y + h
-        val right = position.x + w
+        val top = position.y + edge
+        val right = position.x + edge
         val bottom = position.y
 
-        paint.color = spec.backgroundColorInt
-        t.drawRect(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat(), paint)
+        spec.backgroundColorInt.apply {
+            paint.color = this
+            t.drawRect(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat(), paint)
+        }
 
-        if (spec.digit != 0) {
+        if (digit != 0) {
             paint.color = spec.digitColorInt
-            paint.textSize = ((w + h) / 4).toFloat()
-            val textX: Float = (left + w / 2).toFloat()
-            val textY: Float = top - h / 2 - (paint.descent() + paint.ascent()) / 2
-            t.drawText(spec.digit.toString(), textX, textY, paint)
+            val halfEdge = edge / 2
+            paint.textSize = halfEdge.toFloat()
+            val distance = (paint.descent() + paint.ascent()) / 2
+            val textX: Float = left + halfEdge + distance
+            val textY: Float = top - halfEdge - distance
+            t.drawText(digit.toString(), textX, textY, paint)
         }
 
         P.forEach { it.onRender(t) }

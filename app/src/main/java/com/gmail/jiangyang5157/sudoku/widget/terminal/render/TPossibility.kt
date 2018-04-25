@@ -10,26 +10,25 @@ import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TPossibilitySp
  * Created by Yang Jiang on April 25, 2018
  */
 class TPossibility(
+        var digit: Int = 0,
         override var position: Vector2i = Vector2i(),
-        override var w: Int = 0,
-        override var h: Int = 0,
-        var spec: TPossibilitySpec = TPossibilityNormal(),
+        override var edge: Int = 0,
+        var spec: TPossibilitySpec = TPossibilityNormal,
         override var paint: Paint = Paint())
-    : TPRect {
+    : TPSquare {
 
     override fun onRender(t: Canvas) {
         val left = position.x
-        val top = position.y + h
-        val right = position.x + w
-        val bottom = position.y
+        val top = position.y + edge
 
-        if (spec.digit != 0) {
+        if (digit != 0) {
             paint.color = spec.digitColorInt
-            paint.textSize = ((w + h) / 4).toFloat()
+            val halfEdge = edge / 2
+            paint.textSize = halfEdge.toFloat()
             val distance = (paint.descent() + paint.ascent()) / 2
-            val textX: Float = left + w / 2 - distance
-            val textY: Float = top - h / 2 - distance
-            t.drawText(spec.digit.toString(), textX, textY, paint)
+            val textX: Float = left + halfEdge + distance
+            val textY: Float = top - halfEdge - distance
+            t.drawText(digit.toString(), textX, textY, paint)
         }
     }
 
