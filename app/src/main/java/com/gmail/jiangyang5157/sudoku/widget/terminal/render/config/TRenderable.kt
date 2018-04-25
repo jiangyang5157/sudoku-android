@@ -1,4 +1,4 @@
-package com.gmail.jiangyang5157.sudoku.widget.terminal.render
+package com.gmail.jiangyang5157.sudoku.widget.terminal.render.config
 
 import android.graphics.Canvas
 import com.gmail.jiangyang5157.kotlin_kit.render.Renderable
