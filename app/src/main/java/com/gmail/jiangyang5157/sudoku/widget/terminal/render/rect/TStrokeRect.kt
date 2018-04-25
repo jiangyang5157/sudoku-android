@@ -4,11 +4,14 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import com.gmail.jiangyang5157.kotlin_kit.math.Vector2i
+import com.gmail.jiangyang5157.sudoku.widget.terminal.render.config.TRenderable
 
 /**
  * Created by Yang Jiang on April 25, 2018
  */
-open class TStrokeRect(override var position: Vector2i = Vector2i(), override var priority: Int = 0) : TRect<TStrokeRectSpec, Int> {
+open class TStrokeRect(override var position: Vector2i = Vector2i(),
+                       override var priority: Int = 0)
+    : TRect<TStrokeRectSpec, Int>, TRenderable {
 
     private val paint = Paint()
 
