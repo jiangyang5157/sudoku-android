@@ -16,7 +16,7 @@ class TCell(
         override var h: Int = 0,
         override var priority: Int = 0,
         override var paint: Paint = Paint())
-    : TPRect, TRenderable {
+    : TPRect {
 
     override fun onRender(t: Canvas) {
         val left = position.x
