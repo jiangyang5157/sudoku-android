@@ -50,7 +50,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
                 refreshRender()
             }
             MotionEvent.ACTION_MOVE -> {
-                refreshRender() // TODO conditional refresh
+                // TODO conditional refresh
             }
         }
         return super.onTouchEvent(event)
@@ -66,12 +66,14 @@ class TerminalView : RenderView, Renderable<Canvas> {
         this.terminal = p?.let {
             TMapper(width, height).map(p)
         }
+        refreshRender()
     }
 
     fun setCell(index: Int, digit: Int?) {
         this.terminal?.apply {
             C[index].spec.digit = digit ?: 0
         }
+        refreshRender()
     }
 
     fun setPossibility(index: Int, possibility: Array<Int?>) {
@@ -80,6 +82,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
                 C[index].P[i].spec.digit = p ?: 0
             }
         }
+        refreshRender()
     }
 
 }
