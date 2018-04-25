@@ -10,6 +10,8 @@ import android.util.Log
 import android.view.MotionEvent
 import com.gmail.jiangyang5157.kotlin_android_kit.widget.RenderView
 import com.gmail.jiangyang5157.kotlin_kit.render.Renderable
+import com.gmail.jiangyang5157.sudoku.widget.terminal.render.TPossibilityTerminal
+import com.gmail.jiangyang5157.sudoku_presenter.model.PossibilityTerminal
 
 /**
  * Created by Yang Jiang on July 18, 2017
@@ -20,21 +22,12 @@ class TerminalView : RenderView, Renderable<Canvas> {
         const val TAG = "TerminalView"
     }
 
-//    private val drawableTerminal: MutableList<TParticle> = mutableListOf()
+    private var renderable: TPossibilityTerminal? = null
 
     init {
         setZOrderOnTop(true)
         holder.setFormat(PixelFormat.TRANSPARENT)
         setRenderable(this)
-
-//        drawableTerminal.add(TCell(spec = TCellNormal(1),position= Vector2i(50,140), w=50, h=50, priority = 1))
-//        drawableTerminal.add(TCell(spec = TCellRelevant(1),position= Vector2i(150,170), w=50, h=50, priority = 0))
-//        drawableTerminal.add(TCell(spec = TCellRelevant(1),position= Vector2i(250,160), w=50, h=50, priority = 2))
-//        drawableTerminal.add(TCell(spec = TCellNormal(1),position= Vector2i(350,100), w=50, h=50, priority = 5))
-//        drawableTerminal.add(TCell(spec = TCellNormal(1),position= Vector2i(450,110), w=50, h=50, priority = 4))
-//        drawableTerminal.add(TCell(spec = TCellNormal(1),position= Vector2i(550,120), w=50, h=50, priority = 7))
-//        drawableTerminal.add(TCell(spec = TCellNormal(1),position= Vector2i(650,130), w=50, h=50, priority = 2))
-//        drawableTerminal.sortBy { it.priority }
     }
 
     constructor(context: Context)
@@ -66,11 +59,27 @@ class TerminalView : RenderView, Renderable<Canvas> {
     override fun onRender(t: Canvas) {
         Log.d(TAG, "onRender")
         t.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+        renderable?.onRender(t)
+    }
 
-//        drawableTerminal.forEach {
-//            Log.d(TAG, it.priority.toString())
-//            it.onRender(t)
-//        }
+    fun setTerminal(p: PossibilityTerminal?) {
+        this.renderable = p?.let {
+            TMapper(width, height).map(p)
+        }
+    }
+
+    fun setCell(index: Int, digit: Int?) {
+        this.renderable?.apply {
+            T.C[index].spec.digit = digit
+        }
+    }
+
+    fun setPossibility(index: Int, possibility: Array<Int?>) {
+        this.renderable?.apply {
+            possibility.forEachIndexed { i, p ->
+                P[index][i].spec.digit = p
+            }
+        }
     }
 
 }
