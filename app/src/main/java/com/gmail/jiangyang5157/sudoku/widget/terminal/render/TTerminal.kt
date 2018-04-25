@@ -32,44 +32,4 @@ class TTerminal(
         C.forEach { it.onRender(t) }
     }
 
-    /**
-     * Calculate associated [TCell], which has same [row], or same [col], or same[TCell.B]
-     *
-     * @param index index of the [TCell]
-     * @return [List] of relevant [TCell], itself is included
-     */
-    fun relevantCells(index: Int): List<TCell> {
-        if (index < 0) {
-            throw IllegalArgumentException()
-        }
-
-        val b = C[index].B
-        val row = row(index)
-        val col = col(index)
-        return C.filterIndexed { i, c ->
-            c.B == b || row(i) == row || col(i) == col
-        }
-    }
-
-    /**
-     * Calculate associated [TCell], which has same [TCell.digit]
-     *
-     * @param index index of the [TCell]
-     * @return [List] of relevant [TCell], itself is included
-     */
-    fun sameDigitCells(index: Int): List<TCell> {
-        if (index < 0) {
-            throw IllegalArgumentException()
-        }
-
-        val d = C[index].digit
-        return C.filterIndexed { _, c ->
-            c.digit == d && c.digit != 0
-        }
-    }
-
-    fun row(index: Int) = index / E
-
-    fun col(index: Int) = index % E
-
 }

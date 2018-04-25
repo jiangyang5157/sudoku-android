@@ -107,6 +107,42 @@ class TerminalView : RenderView, Renderable<Canvas> {
         }
     }
 
+    /**
+     * Calculate associated [TCell], which has same [row], or same [col], or same[TCell.B]
+     */
+    private fun relevantCells(index: Int): List<TCell>? {
+        if (index < 0) {
+            throw IllegalArgumentException()
+        }
+
+        mTerminal?.apply {
+            val b = C[index].B
+            val row = index / E
+            val col = index % E
+            return C.filterIndexed { i, c ->
+                c.B == b || i / E == row || i % E == col
+            }
+        }
+        return null
+    }
+
+    /**
+     * Calculate associated [TCell], which has same [TCell.digit]
+     */
+    private fun sameDigitCells(index: Int): List<TCell>? {
+        if (index < 0) {
+            throw IllegalArgumentException()
+        }
+
+        mTerminal?.apply {
+            val d = C[index].digit
+            return C.filterIndexed { _, c ->
+                c.digit == d && c.digit != 0
+            }
+        }
+        return null
+    }
+
     override fun onRender(t: Canvas) {
         t.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
         mTerminal?.onRender(t)
