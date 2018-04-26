@@ -29,7 +29,7 @@ class TTerminal(
             t.drawRect(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat(), paint)
         }
 
-        C.toList().sortedBy { it.spec.priority }.forEach { it.onRender(t) }
+        C.forEach { it.onRender(t) }
     }
 
 }
