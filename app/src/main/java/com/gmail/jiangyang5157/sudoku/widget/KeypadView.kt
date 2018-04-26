@@ -17,10 +17,6 @@ class KeypadView : FrameLayout {
 
         fun digitCleard()
 
-        fun possibilityModeEnabled()
-
-        fun possibilityModeDisabled()
-
         fun possibilityEnterd(digit: Int)
 
         fun possibilityCleard()
@@ -88,7 +84,7 @@ class KeypadView : FrameLayout {
                 enterClear()
             }
             (findViewById(R.id.switch_keypad_possibility) as Switch).setOnCheckedChangeListener { _, isChecked ->
-                switchPossibilityMode(isChecked)
+                isPossibilityModeEnable = isChecked
             }
         }
     }
@@ -112,15 +108,5 @@ class KeypadView : FrameLayout {
             mCallback?.digitCleard()
         }
     }
-
-    private fun switchPossibilityMode(enabled: Boolean) {
-        isPossibilityModeEnable = enabled
-        if (enabled) {
-            mCallback?.possibilityModeEnabled()
-        } else {
-            mCallback?.possibilityModeDisabled()
-        }
-    }
-
 }
 

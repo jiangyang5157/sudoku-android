@@ -20,7 +20,6 @@ import java.util.*
 class SudokuFragment : Fragment(), SudokuContract.View {
 
     companion object {
-
         const val TAG = "SudokuFragment"
     }
 
@@ -48,36 +47,28 @@ class SudokuFragment : Fragment(), SudokuContract.View {
 
         override fun digitEnterd(digit: Int) {
             Log.d(TAG, "digitEnterd: $digit")
-            mTerminalView?.getCellSelected()?.apply {
+            mTerminalView?.getSelectedCell()?.apply {
                 mSudokuPresenter.updateProgress(this, digit)
             }
         }
 
         override fun digitCleard() {
             Log.d(TAG, "digitCleard")
-            mTerminalView?.getCellSelected()?.apply {
+            mTerminalView?.getSelectedCell()?.apply {
                 mSudokuPresenter.updateProgress(this, 0)
             }
         }
 
-        override fun possibilityModeEnabled() {
-            Log.d(TAG, "possibilityModeEnabled")
-        }
-
-        override fun possibilityModeDisabled() {
-            Log.d(TAG, "possibilityModeDisabled")
-        }
-
         override fun possibilityEnterd(digit: Int) {
             Log.d(TAG, "possibilityEnterd: $digit")
-            mTerminalView?.getCellSelected()?.apply {
+            mTerminalView?.getSelectedCell()?.apply {
                 mSudokuPresenter.updatePossibility(this, digit)
             }
         }
 
         override fun possibilityCleard() {
             Log.d(TAG, "possibilityCleard")
-            mTerminalView?.getCellSelected()?.apply {
+            mTerminalView?.getSelectedCell()?.apply {
                 mSudokuPresenter.clearPossibility(this)
             }
         }
@@ -90,6 +81,7 @@ class SudokuFragment : Fragment(), SudokuContract.View {
 
     override fun terminalReveald(terminal: Terminal?) {
         Log.d(TAG, "terminalReveald: $terminal")
+        mTerminalView?.setTerminal(terminal)
     }
 
     override fun progressUpdated(index: Int, digit: Int) {

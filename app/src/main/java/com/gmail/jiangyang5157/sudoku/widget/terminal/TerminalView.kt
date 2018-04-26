@@ -12,10 +12,9 @@ import com.gmail.jiangyang5157.kotlin_android_kit.widget.RenderView
 import com.gmail.jiangyang5157.kotlin_kit.render.Renderable
 import com.gmail.jiangyang5157.sudoku.widget.terminal.render.TCell
 import com.gmail.jiangyang5157.sudoku.widget.terminal.render.TTerminal
-import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellFocusd
-import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellHighlightd
+import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellBgHighlightd
+import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellDigitHighlightd
 import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellNormal
-import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellSelectd
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
 
 /**
@@ -29,10 +28,10 @@ class TerminalView : RenderView, Renderable<Canvas> {
 
     private var mTerminal: TTerminal? = null
 
-    private var mCellSelectd: Int? = null
-    fun getCellSelected() = mCellSelectd
-    private var mCellHighlightd: List<TCell>? = null
-    private var mCellFocusd: List<TCell>? = null
+    private var mSelectdCell: Int? = null
+    fun getSelectedCell() = mSelectdCell
+    private var mDigitHighlightdCells: List<TCell>? = null
+    private var mBgHighlightdCells: List<TCell>? = null
 
     init {
         setZOrderOnTop(true)
@@ -74,36 +73,31 @@ class TerminalView : RenderView, Renderable<Canvas> {
                 val col = (x / cEdge).toInt()
                 val row = (y / cEdge).toInt()
                 if (col in 0 until E && row in 0 until E) {
-                    val index = row * E + col
-
-
-                    mCellFocusd?.forEach {
-                        it.spec = TCellNormal
-                    }
-                    mCellHighlightd?.forEach {
-                        it.spec = TCellNormal
-                    }
-                    mCellSelectd?.apply {
-                        C[this].spec = TCellNormal
-                    }
-
-                    mCellFocusd = relevantCells(index)
-                    mCellHighlightd = sameDigitCells(index)
-                    mCellSelectd = index
-
-                    mCellFocusd?.forEach {
-                        it.spec = TCellFocusd
-                    }
-                    mCellHighlightd?.forEach {
-                        it.spec = TCellHighlightd
-                    }
-                    mCellSelectd?.apply {
-                        C[this].spec = TCellSelectd
-                    }
-
-                    refreshRender()
+                    selectCell(row * E + col)
                 }
             }
+        }
+    }
+
+    private fun selectCell(index : Int) {
+        if (mSelectdCell == index) {
+            return
+        }
+
+        mTerminal?.apply {
+            mSelectdCell?.apply { C[this].spec = TCellNormal }
+            mDigitHighlightdCells?.forEach { it.spec = TCellNormal }
+            mBgHighlightdCells?.forEach {it.spec = TCellNormal }
+
+            mSelectdCell = index
+            mDigitHighlightdCells = digitCells(C[index].digit)
+            mBgHighlightdCells = relevantCells(index)
+
+            mSelectdCell?.apply { C[this].spec = TCellBgHighlightd }
+            mDigitHighlightdCells?.forEach { it.spec = TCellDigitHighlightd }
+            mBgHighlightdCells?.forEach { it.spec = TCellBgHighlightd }
+
+            refreshRender()
         }
     }
 
@@ -112,7 +106,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
      */
     private fun relevantCells(index: Int): List<TCell>? {
         if (index < 0) {
-            throw IllegalArgumentException()
+            return null
         }
 
         mTerminal?.apply {
@@ -127,17 +121,16 @@ class TerminalView : RenderView, Renderable<Canvas> {
     }
 
     /**
-     * Calculate associated [TCell], which has same [TCell.digit]
+     * Calculate associated [TCell], which has same [digit].
      */
-    private fun sameDigitCells(index: Int): List<TCell>? {
-        if (index < 0) {
-            throw IllegalArgumentException()
+    private fun digitCells(digit: Int): List<TCell>? {
+        if (digit == 0) {
+            return null
         }
 
         mTerminal?.apply {
-            val d = C[index].digit
             return C.filterIndexed { _, c ->
-                c.digit == d && c.digit != 0
+                c.digit == digit
             }
         }
         return null
@@ -151,9 +144,9 @@ class TerminalView : RenderView, Renderable<Canvas> {
     fun setTerminal(p: Terminal?) {
         p?.apply {
             mTerminal = TMapper(width, height).map(p)
-            mCellFocusd = null
-            mCellHighlightd = null
-            mCellSelectd = null
+            mBgHighlightdCells = null
+            mDigitHighlightdCells = null
+            mSelectdCell = null
             refreshRender()
         }
     }
