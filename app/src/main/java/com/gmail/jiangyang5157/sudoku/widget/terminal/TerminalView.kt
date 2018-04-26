@@ -75,9 +75,9 @@ class TerminalView : RenderView, Renderable<Canvas> {
                 if (col in 0 until E && row in 0 until E) {
                     val index = row * E + col
                     if (mSelectdCell != index) {
-                        selectCell(index)
-                        digitHighlightCell(index)
                         bgHighlightCell(index)
+                        digitHighlightCell(index)
+                        selectCell(index)
                         refreshRender()
                     }
                 }
@@ -89,7 +89,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
         mTerminal?.apply {
             mSelectdCell?.apply { C[this].spec = TCellNormal }
             mSelectdCell = index
-            mSelectdCell?.apply { C[this].spec = TCellDigitHighlightd(C[this].spec.backgroundColorInt) }
+            mSelectdCell?.apply { C[this].spec = TCellDigitHighlightd }
         }
     }
 
@@ -97,7 +97,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
         mTerminal?.apply {
             mDigitHighlightdCells?.forEach { it.spec = TCellNormal }
             mDigitHighlightdCells = digitCells(C[index].digit)
-            mDigitHighlightdCells?.forEach { it.spec = TCellDigitHighlightd(it.spec.backgroundColorInt) }
+            mDigitHighlightdCells?.forEach { it.spec = TCellDigitHighlightd }
         }
     }
 
@@ -105,7 +105,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
         mTerminal?.apply {
             mBgHighlightdCells?.forEach {it.spec = TCellNormal }
             mBgHighlightdCells = relevantCells(index)
-            mBgHighlightdCells?.forEach { it.spec = TCellBgHighlightd(it.spec.digitColorInt) }
+            mBgHighlightdCells?.forEach { it.spec = TCellBgHighlightd }
         }
     }
 

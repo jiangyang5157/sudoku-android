@@ -75,13 +75,11 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
             throw IllegalArgumentException()
         }
 
-        mSudoku?.apply {
-            if (T.C[index]?.D == 0) {
-                PT.T.apply {
-                    C[index]?.apply {
-                        C[index] = Cell(B, digit)
-                        mView.progressUpdated(index, digit)
-                    }
+        if (isCellEditable(index)) {
+            mSudoku?.PT?.T?.apply {
+                C[index]?.apply {
+                    C[index] = Cell(B, digit)
+                    mView.progressUpdated(index, digit)
                 }
             }
         }
@@ -102,20 +100,18 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
             throw IllegalArgumentException()
         }
 
-        mSudoku?.apply {
-            if (T.C[index]?.D == 0) {
-                PT.apply {
-                    val found = P[index].indexOfFirst { it == digit }
-                    if (found >= 0) {
-                        P[index][found] = null
-                    } else {
-                        val i = P[index].indexOfFirst { it == null }
-                        if (i >= 0) {
-                            P[index][i] = digit
-                        }
+        if (isCellEditable(index)) {
+            mSudoku?.PT?.apply {
+                val found = P[index].indexOfFirst { it == digit }
+                if (found >= 0) {
+                    P[index][found] = null
+                } else {
+                    val i = P[index].indexOfFirst { it == null }
+                    if (i >= 0) {
+                        P[index][i] = digit
                     }
-                    mView.possibilityUpdated(index, P[index])
                 }
+                mView.possibilityUpdated(index, P[index])
             }
         }
     }
@@ -125,14 +121,21 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
             throw IllegalArgumentException()
         }
 
-        mSudoku?.apply {
-            if (T.C[index]?.D == 0) {
-                PT.apply {
-                    P[index] = arrayOfNulls(T.E)
-                    mView.possibilityUpdated(index, P[index])
-                }
+        if (isCellEditable(index)) {
+            mSudoku?.PT?.apply {
+                P[index] = arrayOfNulls(T.E)
+                mView.possibilityUpdated(index, P[index])
             }
         }
+    }
+
+    private fun isCellEditable(index: Int): Boolean {
+        mSudoku?.apply {
+            if (T.C[index]?.D == 0) {
+                return true
+            }
+        }
+        return false
     }
 
 }

@@ -3,6 +3,7 @@ package com.gmail.jiangyang5157.sudoku.widget.terminal
 import com.gmail.jiangyang5157.kotlin_kit.math.Vector2i
 import com.gmail.jiangyang5157.kotlin_kit.model.Mapper
 import com.gmail.jiangyang5157.sudoku.widget.terminal.render.TTerminal
+import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellTodo
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
 
 /**
@@ -38,6 +39,9 @@ data class TMapper(val width: Int, val height: Int) : Mapper<Terminal, TTerminal
             }
             from.C[itc]?.D?.apply {
                 tc.digit = this
+                if (this == 0) {
+                    tc.spec = TCellTodo
+                }
             }
 
             tc.P.forEachIndexed { itcp, tcp ->
