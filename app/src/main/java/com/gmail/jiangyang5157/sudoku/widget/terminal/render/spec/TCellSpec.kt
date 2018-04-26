@@ -21,12 +21,15 @@ data class TCellSpec(
             FOCUSD -> 0xFFC8E6C9.toInt()
 
             FIXD or HIGHLIGHTD or FOCUSD -> 0xFFC8E6C9.toInt()
-            FIXD or HIGHLIGHTD  -> 0xFFEEEEEE.toInt()
-            FIXD or FOCUSD  -> 0xFFC8E6C9.toInt()
-            HIGHLIGHTD or FOCUSD  -> 0xFFC8E6C9.toInt()
+            FIXD or HIGHLIGHTD -> 0xFFEEEEEE.toInt()
+            FIXD or FOCUSD -> 0xFFC8E6C9.toInt()
+            HIGHLIGHTD or FOCUSD -> 0xFFC8E6C9.toInt()
 
             else -> 0xFFF5F5F5.toInt()
         }
+
+    val backgroundMargin: Int
+        get() = 1
 
     val digitColorInt: Int
         get() = when (flag.getStatus()) {
@@ -35,9 +38,9 @@ data class TCellSpec(
             FOCUSD -> 0xFF212121.toInt()
 
             FIXD or HIGHLIGHTD or FOCUSD -> 0xFFFF5722.toInt()
-            FIXD or HIGHLIGHTD  -> 0xFFFF5722.toInt()
-            FIXD or FOCUSD  -> 0xFF212121.toInt()
-            HIGHLIGHTD or FOCUSD  -> 0xFFFF5722.toInt()
+            FIXD or HIGHLIGHTD -> 0xFFFF5722.toInt()
+            FIXD or FOCUSD -> 0xFF212121.toInt()
+            HIGHLIGHTD or FOCUSD -> 0xFFFF5722.toInt()
 
             else -> 0xFF212121.toInt()
         }

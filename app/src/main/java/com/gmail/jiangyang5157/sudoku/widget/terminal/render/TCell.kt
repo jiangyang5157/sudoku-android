@@ -20,19 +20,20 @@ class TCell(
     val spec: TCellSpec = TCellSpec()
 
     override fun onRender(t: Canvas) {
+        val left = position.x
+        val top = position.y + edge
+        val right = position.x + edge
+        val bottom = position.y
 
         spec.backgroundColorInt?.apply {
-            val left = position.x
-            val top = position.y + edge
-            val right = position.x + edge
-            val bottom = position.y
             paint.color = this
-            t.drawRect(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat(), paint)
+            t.drawRect((left + spec.backgroundMargin).toFloat(),
+                    (top - spec.backgroundMargin).toFloat(),
+                    (right - spec.backgroundMargin).toFloat(),
+                    (bottom + spec.backgroundMargin).toFloat(), paint)
         }
 
         if (D != 0) {
-            val left = position.x
-            val top = position.y + edge
             paint.color = spec.digitColorInt
             val halfEdge = edge / 2
             paint.textSize = halfEdge.toFloat()
