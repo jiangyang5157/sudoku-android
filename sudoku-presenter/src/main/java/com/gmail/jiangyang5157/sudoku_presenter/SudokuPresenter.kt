@@ -75,10 +75,14 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
             throw IllegalArgumentException()
         }
 
-        mSudoku?.PT?.T?.apply {
-            C[index]?.apply {
-                C[index] = Cell(B, digit)
-                mView.progressUpdated(index, digit)
+        mSudoku?.apply {
+            if (T.C[index]?.D == 0) {
+                PT.T.apply {
+                    C[index]?.apply {
+                        C[index] = Cell(B, digit)
+                        mView.progressUpdated(index, digit)
+                    }
+                }
             }
         }
     }
@@ -98,17 +102,21 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
             throw IllegalArgumentException()
         }
 
-        mSudoku?.PT?.apply {
-            val found = P[index].indexOfFirst { it == digit }
-            if (found >= 0) {
-                P[index][found] = null
-            } else {
-                val i = P[index].indexOfFirst { it == null }
-                if (i >= 0) {
-                    P[index][i] = digit
+        mSudoku?.apply {
+            if (T.C[index]?.D == 0) {
+                PT.apply {
+                    val found = P[index].indexOfFirst { it == digit }
+                    if (found >= 0) {
+                        P[index][found] = null
+                    } else {
+                        val i = P[index].indexOfFirst { it == null }
+                        if (i >= 0) {
+                            P[index][i] = digit
+                        }
+                    }
+                    mView.possibilityUpdated(index, P[index])
                 }
             }
-            mView.possibilityUpdated(index, P[index])
         }
     }
 
@@ -117,9 +125,13 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
             throw IllegalArgumentException()
         }
 
-        mSudoku?.PT?.apply {
-            P[index] = arrayOfNulls(T.E)
-            mView.possibilityUpdated(index, P[index])
+        mSudoku?.apply {
+            if (T.C[index]?.D == 0) {
+                PT.apply {
+                    P[index] = arrayOfNulls(T.E)
+                    mView.possibilityUpdated(index, P[index])
+                }
+            }
         }
     }
 

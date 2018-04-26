@@ -5,6 +5,8 @@ package com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec
  */
 interface TCellSpec {
 
+    val priority : Int
+
     val backgroundColorInt: Int
 
     val digitColorInt: Int

@@ -5,6 +5,9 @@ package com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec
  */
 object TCellNormal : TCellSpec {
 
+    override val priority: Int
+        get() = 0
+
     override val backgroundColorInt: Int
         get() = 0xFFE0F2F1.toInt()
 

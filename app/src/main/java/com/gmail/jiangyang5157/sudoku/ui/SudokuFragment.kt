@@ -39,7 +39,7 @@ class SudokuFragment : Fragment(), SudokuContract.View {
             mTerminalView?.isClickable = true
         }
 
-        // TODO Implement start logic
+        // TODO Implement start & end & reveal logic
         mSudokuPresenter.generatePuzzle(9, 4, 55)
     }
 
@@ -81,7 +81,6 @@ class SudokuFragment : Fragment(), SudokuContract.View {
 
     override fun terminalReveald(terminal: Terminal?) {
         Log.d(TAG, "terminalReveald: $terminal")
-        mTerminalView?.setTerminal(terminal)
     }
 
     override fun progressUpdated(index: Int, digit: Int) {

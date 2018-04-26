@@ -89,7 +89,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
         mTerminal?.apply {
             mSelectdCell?.apply { C[this].spec = TCellNormal }
             mSelectdCell = index
-            mSelectdCell?.apply { C[this].spec = TCellBgHighlightd }
+            mSelectdCell?.apply { C[this].spec = TCellDigitHighlightd(C[this].spec.backgroundColorInt) }
         }
     }
 
@@ -97,7 +97,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
         mTerminal?.apply {
             mDigitHighlightdCells?.forEach { it.spec = TCellNormal }
             mDigitHighlightdCells = digitCells(C[index].digit)
-            mDigitHighlightdCells?.forEach { it.spec = TCellDigitHighlightd }
+            mDigitHighlightdCells?.forEach { it.spec = TCellDigitHighlightd(it.spec.backgroundColorInt) }
         }
     }
 
@@ -105,7 +105,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
         mTerminal?.apply {
             mBgHighlightdCells?.forEach {it.spec = TCellNormal }
             mBgHighlightdCells = relevantCells(index)
-            mBgHighlightdCells?.forEach { it.spec = TCellBgHighlightd }
+            mBgHighlightdCells?.forEach { it.spec = TCellBgHighlightd(it.spec.digitColorInt) }
         }
     }
 
