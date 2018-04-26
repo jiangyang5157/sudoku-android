@@ -9,7 +9,10 @@ data class TPossibilitySpec(
         val flag: BitFlag = BitFlag()
 ) {
 
+    val backgroundColorInt: Int?
+        get() = null
+
     val digitColorInt: Int
-        get() = 0xFF424242.toInt()
+        get() = 0xFF3F51B5.toInt()
 
 }

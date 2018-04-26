@@ -83,20 +83,25 @@ class TerminalView : RenderView, Renderable<Canvas> {
         }
     }
 
-    private fun highlightCell(index: Int) {
-        mTerminal?.apply {
-            mDigitHighlightdCells?.forEach { it.spec.flag.erase(TCellSpec.HIGHLIGHTD) }
-            mDigitHighlightdCells = digitCells(C[index].D).apply {
-                this?.forEach { it.spec.flag.set(TCellSpec.HIGHLIGHTD) }
-            }
-        }
-    }
-
     private fun focusCell(index: Int) {
         mTerminal?.apply {
             mBgHighlightdCells?.forEach { it.spec.flag.erase(TCellSpec.FOCUSD) }
             mBgHighlightdCells = relevantCells(index).apply {
                 this?.forEach { it.spec.flag.set(TCellSpec.FOCUSD) }
+            }
+        }
+    }
+
+    private fun highlightCell(index: Int) {
+        mTerminal?.apply {
+            val d = C[index].D
+            if (d == 0) {
+                return
+            }
+
+            mDigitHighlightdCells?.forEach { it.spec.flag.erase(TCellSpec.HIGHLIGHTD) }
+            mDigitHighlightdCells = digitCells(d).apply {
+                this?.forEach { it.spec.flag.set(TCellSpec.HIGHLIGHTD) }
             }
         }
     }
@@ -154,6 +159,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
     fun setCell(index: Int, digit: Int?) {
         this.mTerminal?.apply {
             C[index].D = digit ?: 0
+            highlightCell(index)
             refreshRender()
         }
     }

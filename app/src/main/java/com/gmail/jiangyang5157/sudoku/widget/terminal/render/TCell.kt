@@ -16,21 +16,23 @@ class TCell(
         override var position: Vector2i = Vector2i())
     : TPSquare {
 
-    override var paint: Paint = Paint()
+    override var paint: Paint = Paint().apply { isAntiAlias = true }
     val spec: TCellSpec = TCellSpec()
 
     override fun onRender(t: Canvas) {
-        val left = position.x
-        val top = position.y + edge
-        val right = position.x + edge
-        val bottom = position.y
 
-        spec.backgroundColorInt.apply {
+        spec.backgroundColorInt?.apply {
+            val left = position.x
+            val top = position.y + edge
+            val right = position.x + edge
+            val bottom = position.y
             paint.color = this
             t.drawRect(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat(), paint)
         }
 
         if (D != 0) {
+            val left = position.x
+            val top = position.y + edge
             paint.color = spec.digitColorInt
             val halfEdge = edge / 2
             paint.textSize = halfEdge.toFloat()

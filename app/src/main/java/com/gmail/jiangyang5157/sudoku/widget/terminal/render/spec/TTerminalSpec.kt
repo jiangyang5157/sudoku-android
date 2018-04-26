@@ -9,7 +9,7 @@ data class TTerminalSpec(
         val flag: BitFlag = BitFlag()
 ) {
 
-    val backgroundColorInt: Int
-        get() = 0xFFF5F5F5.toInt()
+    val backgroundColorInt: Int?
+        get() = null
 
 }

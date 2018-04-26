@@ -15,16 +15,15 @@ class TTerminal(
         override var position: Vector2i = Vector2i())
     : TPSquare {
 
-    override var paint: Paint = Paint()
+    override var paint: Paint = Paint().apply { isAntiAlias = true }
     var spec: TTerminalSpec = TTerminalSpec()
 
     override fun onRender(t: Canvas) {
-        val left = position.x
-        val top = position.y + edge
-        val right = position.x + edge
-        val bottom = position.y
-
-        spec.backgroundColorInt.apply {
+        spec.backgroundColorInt?.apply {
+            val left = position.x
+            val top = position.y + edge
+            val right = position.x + edge
+            val bottom = position.y
             paint.color = this
             t.drawRect(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat(), paint)
         }

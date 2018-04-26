@@ -14,18 +14,18 @@ data class TCellSpec(
         const val FOCUSD = 1L shl 3
     }
 
-    val backgroundColorInt: Int
+    val backgroundColorInt: Int?
         get() = when (flag.getStatus()) {
-            FIXD -> 0xFFE0F2F1.toInt()
-            HIGHLIGHTD -> 0xFFE0F2F1.toInt()
-            FOCUSD -> 0xFFB2DFDB.toInt()
+            FIXD -> 0xFFEEEEEE.toInt()
+            HIGHLIGHTD -> 0xFFEEEEEE.toInt()
+            FOCUSD -> 0xFFC8E6C9.toInt()
 
-            FIXD or HIGHLIGHTD or FOCUSD -> 0xFFB2DFDB.toInt()
-            FIXD or HIGHLIGHTD  -> 0xFFE0F2F1.toInt()
-            FIXD or FOCUSD  -> 0xFFB2DFDB.toInt()
-            HIGHLIGHTD or FOCUSD  -> 0xFFB2DFDB.toInt()
+            FIXD or HIGHLIGHTD or FOCUSD -> 0xFFC8E6C9.toInt()
+            FIXD or HIGHLIGHTD  -> 0xFFEEEEEE.toInt()
+            FIXD or FOCUSD  -> 0xFFC8E6C9.toInt()
+            HIGHLIGHTD or FOCUSD  -> 0xFFC8E6C9.toInt()
 
-            else -> 0xFFEEEEEE.toInt()
+            else -> 0xFFF5F5F5.toInt()
         }
 
     val digitColorInt: Int
