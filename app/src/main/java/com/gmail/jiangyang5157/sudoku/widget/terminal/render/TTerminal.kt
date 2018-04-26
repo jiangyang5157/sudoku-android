@@ -3,7 +3,6 @@ package com.gmail.jiangyang5157.sudoku.widget.terminal.render
 import android.graphics.Canvas
 import android.graphics.Paint
 import com.gmail.jiangyang5157.kotlin_kit.math.Vector2i
-import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TTerminalNormal
 import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TTerminalSpec
 
 /**
@@ -11,12 +10,13 @@ import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TTerminalSpec
  */
 class TTerminal(
         val E: Int,
-        val C: Array<TCell> = Array(E * E) { TCell(E) },
-        override var position: Vector2i = Vector2i(),
+        val C: Array<TCell> = Array(E * E) { TCell(P = Array(E) { TPossibility() }) },
         override var edge: Int = 0,
-        var spec: TTerminalSpec = TTerminalNormal,
-        override var paint: Paint = Paint())
+        override var position: Vector2i = Vector2i())
     : TPSquare {
+
+    override var paint: Paint = Paint()
+    var spec: TTerminalSpec = TTerminalSpec()
 
     override fun onRender(t: Canvas) {
         val left = position.x

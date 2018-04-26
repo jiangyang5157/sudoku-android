@@ -12,9 +12,7 @@ import com.gmail.jiangyang5157.kotlin_android_kit.widget.RenderView
 import com.gmail.jiangyang5157.kotlin_kit.render.Renderable
 import com.gmail.jiangyang5157.sudoku.widget.terminal.render.TCell
 import com.gmail.jiangyang5157.sudoku.widget.terminal.render.TTerminal
-import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellBgHighlightd
-import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellDigitHighlightd
-import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellNormal
+import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellSpec
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
 
 /**
@@ -75,9 +73,9 @@ class TerminalView : RenderView, Renderable<Canvas> {
                 if (col in 0 until E && row in 0 until E) {
                     val index = row * E + col
                     if (mSelectdCell != index) {
-                        bgHighlightCell(index)
-                        digitHighlightCell(index)
-                        selectCell(index)
+                        mSelectdCell = index
+                        focusCell(index)
+                        highlightCell(index)
                         refreshRender()
                     }
                 }
@@ -85,27 +83,21 @@ class TerminalView : RenderView, Renderable<Canvas> {
         }
     }
 
-    private fun selectCell(index : Int) {
+    private fun highlightCell(index: Int) {
         mTerminal?.apply {
-            mSelectdCell?.apply { C[this].spec = TCellNormal }
-            mSelectdCell = index
-            mSelectdCell?.apply { C[this].spec = TCellDigitHighlightd }
+            mDigitHighlightdCells?.forEach { it.spec.flag.erase(TCellSpec.HIGHLIGHTD) }
+            mDigitHighlightdCells = digitCells(C[index].D).apply {
+                this?.forEach { it.spec.flag.set(TCellSpec.HIGHLIGHTD) }
+            }
         }
     }
 
-    private fun digitHighlightCell(index : Int) {
+    private fun focusCell(index: Int) {
         mTerminal?.apply {
-            mDigitHighlightdCells?.forEach { it.spec = TCellNormal }
-            mDigitHighlightdCells = digitCells(C[index].digit)
-            mDigitHighlightdCells?.forEach { it.spec = TCellDigitHighlightd }
-        }
-    }
-
-    private fun bgHighlightCell(index : Int) {
-        mTerminal?.apply {
-            mBgHighlightdCells?.forEach {it.spec = TCellNormal }
-            mBgHighlightdCells = relevantCells(index)
-            mBgHighlightdCells?.forEach { it.spec = TCellBgHighlightd }
+            mBgHighlightdCells?.forEach { it.spec.flag.erase(TCellSpec.FOCUSD) }
+            mBgHighlightdCells = relevantCells(index).apply {
+                this?.forEach { it.spec.flag.set(TCellSpec.FOCUSD) }
+            }
         }
     }
 
@@ -138,7 +130,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
 
         mTerminal?.apply {
             return C.filterIndexed { _, c ->
-                c.digit == digit
+                c.D == digit
             }
         }
         return null
@@ -161,7 +153,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
 
     fun setCell(index: Int, digit: Int?) {
         this.mTerminal?.apply {
-            C[index].digit = digit ?: 0
+            C[index].D = digit ?: 0
             refreshRender()
         }
     }
@@ -169,7 +161,7 @@ class TerminalView : RenderView, Renderable<Canvas> {
     fun setPossibility(index: Int, possibility: Array<Int?>) {
         mTerminal?.apply {
             possibility.forEachIndexed { i, p ->
-                C[index].P[i].digit = p ?: 0
+                C[index].P[i].D = p ?: 0
             }
             refreshRender()
         }

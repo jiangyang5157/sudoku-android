@@ -3,7 +3,7 @@ package com.gmail.jiangyang5157.sudoku.widget.terminal
 import com.gmail.jiangyang5157.kotlin_kit.math.Vector2i
 import com.gmail.jiangyang5157.kotlin_kit.model.Mapper
 import com.gmail.jiangyang5157.sudoku.widget.terminal.render.TTerminal
-import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellTodo
+import com.gmail.jiangyang5157.sudoku.widget.terminal.render.spec.TCellSpec
 import com.gmail.jiangyang5157.sudoku_presenter.model.Terminal
 
 /**
@@ -24,10 +24,10 @@ data class TMapper(val width: Int, val height: Int) : Mapper<Terminal, TTerminal
             throw IllegalStateException()
         }
 
-        val ret = TTerminal(from.E, edge = tEdge)
+        val ret = TTerminal(E = from.E)
+        ret.edge = tEdge
 
         ret.C.forEachIndexed { itc, tc ->
-
             val tcCol = from.col(itc)
             val tcRow = from.row(itc)
             val tcX = tcCol * cEdge
@@ -38,14 +38,13 @@ data class TMapper(val width: Int, val height: Int) : Mapper<Terminal, TTerminal
                 tc.B = this
             }
             from.C[itc]?.D?.apply {
-                tc.digit = this
-                if (this == 0) {
-                    tc.spec = TCellTodo
+                if (this != 0) {
+                    tc.spec.flag.set(TCellSpec.FIXD)
                 }
+                tc.D = this
             }
 
             tc.P.forEachIndexed { itcp, tcp ->
-
                 val tcpCol = itcp % eSqrt
                 val tcpRow = itcp / eSqrt
                 val tcpX = tcX + tcpCol * pEdge
