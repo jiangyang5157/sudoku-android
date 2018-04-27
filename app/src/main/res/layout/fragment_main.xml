@@ -20,6 +20,7 @@
                 android:id="@+id/et_edge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="number"
                 android:hint="Edge (n >= 1, n^2): 1, 4, 9, 16, 25, ..."
                 android:text="9" />
         </android.support.design.widget.TextInputLayout>
@@ -32,6 +33,7 @@
                 android:id="@+id/et_min_sub_given"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="number"
                 android:hint="Minimum sub given (n >= 0)"
                 android:text="3" />
         </android.support.design.widget.TextInputLayout>
@@ -44,6 +46,7 @@
                 android:id="@+id/et_min_total_given"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="number"
                 android:hint="Minimum total given (n >= 0)"
                 android:text="27" />
         </android.support.design.widget.TextInputLayout>
