@@ -71,8 +71,9 @@ class KeypadView : FrameLayout {
         val sqrtS = Math.sqrt(size.toDouble()).toInt()
 
         findViewById(R.id.keypadview_digit_container)?.apply {
-            removeAllViews()
             val relativeLayout = this as RelativeLayout
+            relativeLayout.removeAllViews()
+
             val keypadBtnNormal = resources.getDimension(R.dimen.keypad_btn_normal).toInt()
             val btns = Array(size) { Button(context) }
             btns.forEachIndexed { i, btn ->

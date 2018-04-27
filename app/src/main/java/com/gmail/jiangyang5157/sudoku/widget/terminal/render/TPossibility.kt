@@ -34,7 +34,7 @@ class TPossibility(
             val quarterEdge = edge / 4
             paint.textSize = (edge - quarterEdge).toFloat()
             val distance = (paint.descent() + paint.ascent()) / 2
-            val textX: Float = left + halfEdge + distance
+            val textX: Float = left + halfEdge + distance * D.toString().length
             val textY: Float = top - halfEdge - distance
             t.drawText(D.toString(), textX, textY, paint)
         }
