@@ -16,7 +16,7 @@ class SudokuActivity : AppCompatActivity() {
         setContentView(R.layout.container_activity)
 
         if (savedInstanceState == null) {
-            replaceFragmentInActivity(R.id.activity_container, instance<SudokuFragment>())
+            replaceFragmentInActivity(R.id.activity_container, instance<SudokuFragment>(intent.extras))
         }
     }
 

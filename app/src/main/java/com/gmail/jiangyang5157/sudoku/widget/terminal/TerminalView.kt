@@ -147,13 +147,15 @@ class TerminalView : RenderView, Renderable<Canvas> {
     }
 
     fun setTerminal(p: Terminal?) {
-        p?.apply {
-            mTerminal = TMapper(width, height).map(p)
-            mBgHighlightdCells = null
-            mDigitHighlightdCells = null
-            mSelectdCell = null
-            refreshRender()
+        mTerminal = if (p == null) {
+            null
+        } else {
+            TMapper(width, height).map(p)
         }
+        mBgHighlightdCells = null
+        mDigitHighlightdCells = null
+        mSelectdCell = null
+        refreshRender()
     }
 
     fun setCell(index: Int, digit: Int?) {

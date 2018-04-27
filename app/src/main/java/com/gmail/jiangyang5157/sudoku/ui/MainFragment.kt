@@ -2,6 +2,7 @@ package com.gmail.jiangyang5157.sudoku.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.TextInputEditText
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +23,14 @@ class MainFragment : Fragment() {
 
         view?.apply {
             findViewById(R.id.btn_sudoku)?.setOnClickListener {
-                activity.startActivity(Intent(context, SudokuActivity::class.java))
+                val edge = (findViewById(R.id.et_edge) as TextInputEditText).text.trim().toString()
+                val subGiven = (findViewById(R.id.et_min_sub_given) as TextInputEditText).text.trim().toString()
+                val totalGiven = (findViewById(R.id.et_min_total_given) as TextInputEditText).text.trim().toString()
+                activity.startActivity(Intent(context, SudokuActivity::class.java).apply {
+                    putExtra(SudokuFragment.KEY_BUNDLE_EDGE, edge)
+                    putExtra(SudokuFragment.KEY_BUNDLE_MIN_SUB_GIVEN, subGiven)
+                    putExtra(SudokuFragment.KEY_BUNDLE_MIN_TOTAL_GIVEN, totalGiven)
+                })
             }
             findViewById(R.id.btn_scan)?.setOnClickListener {
                 activity.startActivity(Intent(context, ScanActivity::class.java))

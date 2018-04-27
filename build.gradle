@@ -11,6 +11,8 @@ buildscript {
 
     ext.appcompat_v7_version = '25.3.0'
 
+    ext.design = '25.3.0'
+
     ext.gradle_version = '3.0.1'
 
     ext.junit_version = '4.12'

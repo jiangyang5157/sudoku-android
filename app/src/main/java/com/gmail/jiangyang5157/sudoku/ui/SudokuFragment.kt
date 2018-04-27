@@ -21,6 +21,10 @@ class SudokuFragment : Fragment(), SudokuContract.View {
 
     companion object {
         const val TAG = "SudokuFragment"
+
+        const val KEY_BUNDLE_EDGE = "KEY_BUNDLE_EDGE"
+        const val KEY_BUNDLE_MIN_SUB_GIVEN = "KEY_BUNDLE_MIN_SUB_GIVEN"
+        const val KEY_BUNDLE_MIN_TOTAL_GIVEN = "KEY_BUNDLE_MIN_TOTAL_GIVEN"
     }
 
     private var mSudokuPresenter: SudokuContract.Presenter = SudokuPresenter(this)
@@ -39,8 +43,19 @@ class SudokuFragment : Fragment(), SudokuContract.View {
             mTerminalView?.isClickable = true
         }
 
-        // TODO Implement start & end & reveal logic
-        mSudokuPresenter.generatePuzzle(9, 4, 55)
+        arguments?.apply {
+            try {
+                val edge = arguments.getString(KEY_BUNDLE_EDGE).toInt()
+                val msg = arguments.getString(KEY_BUNDLE_MIN_SUB_GIVEN).toInt()
+                val mtg = arguments.getString(KEY_BUNDLE_MIN_TOTAL_GIVEN).toInt()
+                val sqrtE = Math.sqrt(edge.toDouble()).toInt()
+                if (edge > 1 && edge == sqrtE * sqrtE && msg > 0 && mtg > 0) {
+                    mSudokuPresenter.generatePuzzle(edge, msg, mtg)
+                }
+            } catch (e: NumberFormatException) {
+                activity.finish()
+            }
+        }
     }
 
     private val keypadViewCallback = object : KeypadView.Callback {
