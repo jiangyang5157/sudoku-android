@@ -21,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:hint="Edge (n >= 1, n^2): 1, 4, 9, 16, 25, ..."
+                android:hint="Edge (n >= 2, n^2): 4, 9, 16, 25, ..."
                 android:text="9" />
         </android.support.design.widget.TextInputLayout>
 

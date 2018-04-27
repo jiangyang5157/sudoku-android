@@ -22,12 +22,13 @@ class SudokuFragment : Fragment(), SudokuContract.View {
     companion object {
         const val TAG = "SudokuFragment"
 
-        const val KEY_BUNDLE_EDGE = "KEY_BUNDLE_EDGE"
-        const val KEY_BUNDLE_MIN_SUB_GIVEN = "KEY_BUNDLE_MIN_SUB_GIVEN"
-        const val KEY_BUNDLE_MIN_TOTAL_GIVEN = "KEY_BUNDLE_MIN_TOTAL_GIVEN"
+        const val KEY_EDGE = "KEY_BUNDLE_EDGE"
+        const val KEY_MIN_SUB_GIVEN = "KEY_BUNDLE_MIN_SUB_GIVEN"
+        const val KEY_MIN_TOTAL_GIVEN = "KEY_BUNDLE_MIN_TOTAL_GIVEN"
     }
 
     private var mSudokuPresenter: SudokuContract.Presenter = SudokuPresenter(this)
+    private var mKeypadView: KeypadView? = null
     private var mTerminalView: TerminalView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -37,22 +38,24 @@ class SudokuFragment : Fragment(), SudokuContract.View {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view?.apply {
-            (findViewById(R.id.view_keypad) as KeypadView).setCallback(keypadViewCallback)
-            mTerminalView = findViewById(R.id.view_terminal) as TerminalView?
-            mTerminalView?.isClickable = true
-        }
-
         arguments?.apply {
             try {
-                val edge = arguments.getString(KEY_BUNDLE_EDGE).toInt()
-                val msg = arguments.getString(KEY_BUNDLE_MIN_SUB_GIVEN).toInt()
-                val mtg = arguments.getString(KEY_BUNDLE_MIN_TOTAL_GIVEN).toInt()
+                val edge = arguments.getString(KEY_EDGE).toInt()
+                val msg = arguments.getString(KEY_MIN_SUB_GIVEN).toInt()
+                val mtg = arguments.getString(KEY_MIN_TOTAL_GIVEN).toInt()
                 val sqrtE = Math.sqrt(edge.toDouble()).toInt()
-                if (edge > 1 && edge == sqrtE * sqrtE && msg > 0 && mtg > 0) {
+                if (edge > 1 && edge == sqrtE * sqrtE && msg >= 0 && mtg >= 0) {
                     mSudokuPresenter.generatePuzzle(edge, msg, mtg)
                 } else {
                     activity.finish()
+                }
+
+                view?.apply {
+                    mKeypadView = findViewById(R.id.view_keypad) as KeypadView
+                    mKeypadView?.setSize(edge)
+                    mKeypadView?.setCallback(keypadViewCallback)
+                    mTerminalView = findViewById(R.id.view_terminal) as TerminalView?
+                    mTerminalView?.isClickable = true
                 }
             } catch (e: NumberFormatException) {
                 activity.finish()

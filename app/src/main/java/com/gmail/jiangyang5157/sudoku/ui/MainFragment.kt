@@ -27,9 +27,9 @@ class MainFragment : Fragment() {
                 val subGiven = (findViewById(R.id.et_min_sub_given) as TextInputEditText).text.trim().toString()
                 val totalGiven = (findViewById(R.id.et_min_total_given) as TextInputEditText).text.trim().toString()
                 activity.startActivity(Intent(context, SudokuActivity::class.java).apply {
-                    putExtra(SudokuFragment.KEY_BUNDLE_EDGE, edge)
-                    putExtra(SudokuFragment.KEY_BUNDLE_MIN_SUB_GIVEN, subGiven)
-                    putExtra(SudokuFragment.KEY_BUNDLE_MIN_TOTAL_GIVEN, totalGiven)
+                    putExtra(SudokuFragment.KEY_EDGE, edge)
+                    putExtra(SudokuFragment.KEY_MIN_SUB_GIVEN, subGiven)
+                    putExtra(SudokuFragment.KEY_MIN_TOTAL_GIVEN, totalGiven)
                 })
             }
             findViewById(R.id.btn_scan)?.setOnClickListener {

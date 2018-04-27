@@ -2,7 +2,9 @@ package com.gmail.jiangyang5157.sudoku.widget
 
 import android.content.Context
 import android.util.AttributeSet
+import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import android.widget.Switch
 import com.gmail.jiangyang5157.sudoku.R
 
@@ -53,38 +55,52 @@ class KeypadView : FrameLayout {
     private fun init() {
         val view = inflate(context, R.layout.view_keypad, this)
         view?.apply {
-            findViewById(R.id.btn_keypad_1)?.setOnClickListener {
-                enterDigit(1)
-            }
-            findViewById(R.id.btn_keypad_2)?.setOnClickListener {
-                enterDigit(2)
-            }
-            findViewById(R.id.btn_keypad_3)?.setOnClickListener {
-                enterDigit(3)
-            }
-            findViewById(R.id.btn_keypad_4)?.setOnClickListener {
-                enterDigit(4)
-            }
-            findViewById(R.id.btn_keypad_5)?.setOnClickListener {
-                enterDigit(5)
-            }
-            findViewById(R.id.btn_keypad_6)?.setOnClickListener {
-                enterDigit(6)
-            }
-            findViewById(R.id.btn_keypad_7)?.setOnClickListener {
-                enterDigit(7)
-            }
-            findViewById(R.id.btn_keypad_8)?.setOnClickListener {
-                enterDigit(8)
-            }
-            findViewById(R.id.btn_keypad_9)?.setOnClickListener {
-                enterDigit(9)
-            }
             findViewById(R.id.btn_keypad_clear)?.setOnClickListener {
                 enterClear()
             }
             (findViewById(R.id.switch_keypad_possibility) as Switch).setOnCheckedChangeListener { _, isChecked ->
                 isPossibilityModeEnable = isChecked
+            }
+        }
+    }
+
+    fun setSize(size: Int) {
+        if (size <= 1) {
+            throw IllegalArgumentException()
+        }
+        val sqrtS = Math.sqrt(size.toDouble()).toInt()
+
+        findViewById(R.id.keypadview_digit_container)?.apply {
+            removeAllViews()
+            val relativeLayout = this as RelativeLayout
+            val keypadBtnNormal = resources.getDimension(R.dimen.keypad_btn_normal).toInt()
+            val btns = Array(size) { Button(context) }
+            btns.forEachIndexed { i, btn ->
+                relativeLayout.addView(btn.apply {
+                    id = i + 1
+                    text = (i + 1).toString()
+                    setOnClickListener { enterDigit(i + 1) }
+                    when {
+                        i == 0 -> {
+                            layoutParams = RelativeLayout.LayoutParams(keypadBtnNormal, keypadBtnNormal)
+                        }
+                        i < sqrtS -> {
+                            layoutParams = RelativeLayout.LayoutParams(keypadBtnNormal, keypadBtnNormal).apply {
+                                addRule(RelativeLayout.RIGHT_OF, btns[i - 1].id)
+                            }
+                        }
+                        i % sqrtS == 0 ->
+                            layoutParams = RelativeLayout.LayoutParams(keypadBtnNormal, keypadBtnNormal).apply {
+                                addRule(RelativeLayout.BELOW, btns[i - sqrtS].id)
+                            }
+                        else -> {
+                            layoutParams = RelativeLayout.LayoutParams(keypadBtnNormal, keypadBtnNormal).apply {
+                                addRule(RelativeLayout.RIGHT_OF, btns[i - 1].id)
+                                addRule(RelativeLayout.BELOW, btns[i - sqrtS].id)
+                            }
+                        }
+                    }
+                })
             }
         }
     }
