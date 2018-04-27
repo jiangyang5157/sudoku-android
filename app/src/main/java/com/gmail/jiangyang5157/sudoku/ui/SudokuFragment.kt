@@ -51,6 +51,8 @@ class SudokuFragment : Fragment(), SudokuContract.View {
                 val sqrtE = Math.sqrt(edge.toDouble()).toInt()
                 if (edge > 1 && edge == sqrtE * sqrtE && msg > 0 && mtg > 0) {
                     mSudokuPresenter.generatePuzzle(edge, msg, mtg)
+                } else {
+                    activity.finish()
                 }
             } catch (e: NumberFormatException) {
                 activity.finish()
