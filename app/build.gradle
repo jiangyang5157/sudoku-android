@@ -37,6 +37,22 @@ android {
             path 'src/main/Android.mk'
         }
     }
+
+    splits {
+        // Configures multiple APKs based on ABI.
+        abi {
+            // Enables building multiple APKs per ABI.
+            enable true
+            // By default all ABIs are included,
+            // so resets the list of ABIs that Gradle should create APKs for to none.
+            reset()
+            // Specifies a list of ABIs that Gradle should create APKs for.
+            include 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+            // Specifies that we do not want to also generate a universal APK that includes all ABIs.
+            universalApk false
+        }
+    }
+
 }
 
 dependencies {
