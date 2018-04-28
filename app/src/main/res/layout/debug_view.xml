@@ -3,18 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/debug_btn_next"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="Next" />
-
     <ScrollView
         android:id="@+id/debug_scrollview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/debug_btn_next">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/debug_linearlayout"
