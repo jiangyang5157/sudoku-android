@@ -14,7 +14,10 @@ import android.widget.TextView
 import com.gmail.jiangyang5157.sudoku.R
 import org.opencv.android.Utils
 import org.opencv.core.Mat
+import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
+import org.opencv.imgproc.Imgproc.ADAPTIVE_THRESH_MEAN_C
+import org.opencv.imgproc.Imgproc.THRESH_BINARY_INV
 
 /**
  * Created by Yang Jiang on April 21, 2018
@@ -45,7 +48,7 @@ class ScanFragment : Fragment() {
          *
          */
         debugLinearLayout.addView(TextView(context).apply {
-            text = "original image..."
+            text = "Original image"
         })
         val srcBm = BitmapFactory.decodeStream(context.assets.open(filename))
         val srcMat = Mat()
@@ -56,7 +59,7 @@ class ScanFragment : Fragment() {
          *
          */
         debugLinearLayout.addView(TextView(context).apply {
-            text = "Gray scaled..."
+            text = "Gray scaled, BGR2GRAY"
         })
         val grayScaledMat = Mat()
         Imgproc.cvtColor(srcMat, grayScaledMat,
@@ -66,25 +69,36 @@ class ScanFragment : Fragment() {
         /**
          *
          */
-//        debugLinearLayout.addView(TextView(context).apply {
-//            text = "AdaptiveThreshold..."
-//        })
-//        val adaptiveThresholdMat = Mat()
-//        Imgproc.adaptiveThreshold(grayScaledMat, adaptiveThresholdMat,
-//                255.0,
-//                ADAPTIVE_THRESH_GAUSSIAN_C , THRESH_BINARY_INV, 3, 5.0)
-//        debugDisplayNewMat(adaptiveThresholdMat)
+        debugLinearLayout.addView(TextView(context).apply {
+            text = "Blur: 3, 3"
+        })
+        val blurMat = Mat()
+        Imgproc.blur(grayScaledMat, blurMat, Size(3.0, 3.0))
+        debugDisplayNewMat(blurMat)
 
         /**
          *
          */
         debugLinearLayout.addView(TextView(context).apply {
-            text = "Canny..."
+            text = "AdaptiveThreshold: 255, MEAN_C, BINARY_INV, 5, 2"
+        })
+        val adaptiveThresholdMat = Mat()
+        Imgproc.adaptiveThreshold(blurMat, adaptiveThresholdMat,
+                255.0,
+                ADAPTIVE_THRESH_MEAN_C , THRESH_BINARY_INV, 5, 2.0)
+        debugDisplayNewMat(adaptiveThresholdMat)
+
+        /**
+         *
+         */
+        debugLinearLayout.addView(TextView(context).apply {
+            text = "Canny: 127, 255, 3, true"
         })
         val cannyMat = Mat()
-        Imgproc.Canny(grayScaledMat, cannyMat,
+        Imgproc.Canny(adaptiveThresholdMat, cannyMat,
                 127.0, 255.0, 3, true)
         debugDisplayNewMat(cannyMat)
+
 
 
     }
