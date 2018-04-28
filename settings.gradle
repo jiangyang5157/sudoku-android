@@ -2,4 +2,5 @@ include ':app',
         ':kotlin-kit',
         ':kotlin-android-kit',
         ':go-sudoku',
-        ':sudoku-presenter'
+        ':sudoku-presenter',
+        ':openCVLibrary341'

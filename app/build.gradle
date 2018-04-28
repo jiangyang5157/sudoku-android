@@ -25,6 +25,18 @@ android {
             jniDebuggable true
         }
     }
+
+    sourceSets {
+        main {
+            jni.srcDirs = ['src/main/jni', 'src/main/jniLibs/']
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            path 'src/main/Android.mk'
+        }
+    }
 }
 
 dependencies {
@@ -43,4 +55,6 @@ dependencies {
     implementation project(':kotlin-kit')
     implementation project(':kotlin-android-kit')
     implementation project(':sudoku-presenter')
+
+    implementation project(':openCVLibrary341')
 }
