@@ -16,7 +16,6 @@ import org.opencv.android.Utils
 import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
 
-
 /**
  * Created by Yang Jiang on April 21, 2018
  */
@@ -36,60 +35,68 @@ class ScanFragment : Fragment() {
             debugScrollView = findViewById(R.id.debug_scrollview) as ScrollView
             debugLinearLayout = findViewById(R.id.debug_linearlayout) as LinearLayout
 
-            debug("debug_puzzle.png")
+            debug("puzzle_2.png")
         }
     }
 
     private fun debug(filename: String) {
-        val srcBm: Bitmap
-        val srcMat: Mat
 
-        /** 1. **/
+        /**
+         *
+         */
         debugLinearLayout.addView(TextView(context).apply {
             text = "original image..."
         })
-
-        srcBm = BitmapFactory.decodeStream(context.assets.open(filename))
-        srcMat = Mat()
+        val srcBm = BitmapFactory.decodeStream(context.assets.open(filename))
+        val srcMat = Mat()
         Utils.bitmapToMat(srcBm, srcMat)
-        debugLinearLayout.addView(ImageView(context).apply {
-            setImageBitmap(srcBm)
-        })
-        debugScrollView.fullScroll(View.FOCUS_DOWN)
+        debugDisplayNewMat(srcMat)
 
-        /** 2. **/
+        /**
+         *
+         */
         debugLinearLayout.addView(TextView(context).apply {
             text = "Gray scaled..."
         })
-
         val grayScaledMat = Mat()
-        Imgproc.cvtColor(srcMat, grayScaledMat, Imgproc.COLOR_BGR2GRAY)
-        val grayScaledBm = Bitmap.createBitmap(grayScaledMat.cols(), grayScaledMat.rows(), Bitmap.Config.ARGB_8888)
-        Utils.matToBitmap(grayScaledMat, grayScaledBm)
+        Imgproc.cvtColor(srcMat, grayScaledMat,
+                Imgproc.COLOR_BGR2GRAY)
+        debugDisplayNewMat(grayScaledMat)
 
-        debugLinearLayout.addView(ImageView(context).apply {
-            setImageBitmap(grayScaledBm)
-        })
-        debugScrollView.fullScroll(View.FOCUS_DOWN)
+        /**
+         *
+         */
+//        debugLinearLayout.addView(TextView(context).apply {
+//            text = "AdaptiveThreshold..."
+//        })
+//        val adaptiveThresholdMat = Mat()
+//        Imgproc.adaptiveThreshold(grayScaledMat, adaptiveThresholdMat,
+//                255.0,
+//                ADAPTIVE_THRESH_GAUSSIAN_C , THRESH_BINARY_INV, 3, 5.0)
+//        debugDisplayNewMat(adaptiveThresholdMat)
 
-
-        /** 3. **/
+        /**
+         *
+         */
         debugLinearLayout.addView(TextView(context).apply {
             text = "Canny..."
         })
-
         val cannyMat = Mat()
-        Imgproc.Canny(grayScaledMat, cannyMat, 10.toDouble(), 100.toDouble(), 3, true)
-        val cannyBm = Bitmap.createBitmap(cannyMat.cols(), cannyMat.rows(), Bitmap.Config.ARGB_8888)
-        Utils.matToBitmap(cannyMat, cannyBm)
+        Imgproc.Canny(grayScaledMat, cannyMat,
+                127.0, 255.0, 3, true)
+        debugDisplayNewMat(cannyMat)
 
+
+    }
+
+    private fun debugDisplayNewMat(mat : Mat) {
+        val adaptiveThresholdBm = Bitmap.createBitmap(
+                mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888)
+        Utils.matToBitmap(mat, adaptiveThresholdBm)
         debugLinearLayout.addView(ImageView(context).apply {
-            setImageBitmap(cannyBm)
+            setImageBitmap(adaptiveThresholdBm)
         })
         debugScrollView.fullScroll(View.FOCUS_DOWN)
-
-        /** 4. **/
-
     }
 
 }
