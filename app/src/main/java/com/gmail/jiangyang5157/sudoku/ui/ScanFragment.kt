@@ -41,17 +41,17 @@ class ScanFragment : Fragment() {
     }
 
     private fun debug(filename: String) {
-
         val srcBm: Bitmap
-        val dstBm: Bitmap
         val srcMat: Mat
-        val dstMat: Mat
 
         /** 1. **/
         debugLinearLayout.addView(TextView(context).apply {
             text = "original image..."
         })
+
         srcBm = BitmapFactory.decodeStream(context.assets.open(filename))
+        srcMat = Mat()
+        Utils.bitmapToMat(srcBm, srcMat)
         debugLinearLayout.addView(ImageView(context).apply {
             setImageBitmap(srcBm)
         })
@@ -62,18 +62,33 @@ class ScanFragment : Fragment() {
             text = "Gray scaled..."
         })
 
-        srcMat = Mat()
-        dstMat = Mat()
-        Utils.bitmapToMat(srcBm, srcMat)
-        Imgproc.cvtColor(srcMat, dstMat, Imgproc.COLOR_BGR2GRAY)
-        dstBm = Bitmap.createBitmap(dstMat.cols(), dstMat.rows(), Bitmap.Config.ARGB_8888)
-        Utils.matToBitmap(dstMat, dstBm)
+        val grayScaledMat = Mat()
+        Imgproc.cvtColor(srcMat, grayScaledMat, Imgproc.COLOR_BGR2GRAY)
+        val grayScaledBm = Bitmap.createBitmap(grayScaledMat.cols(), grayScaledMat.rows(), Bitmap.Config.ARGB_8888)
+        Utils.matToBitmap(grayScaledMat, grayScaledBm)
 
         debugLinearLayout.addView(ImageView(context).apply {
-            setImageBitmap(dstBm)
+            setImageBitmap(grayScaledBm)
         })
         debugScrollView.fullScroll(View.FOCUS_DOWN)
 
+
+        /** 3. **/
+        debugLinearLayout.addView(TextView(context).apply {
+            text = "Canny..."
+        })
+
+        val cannyMat = Mat()
+        Imgproc.Canny(grayScaledMat, cannyMat, 10.toDouble(), 100.toDouble(), 3, true)
+        val cannyBm = Bitmap.createBitmap(cannyMat.cols(), cannyMat.rows(), Bitmap.Config.ARGB_8888)
+        Utils.matToBitmap(cannyMat, cannyBm)
+
+        debugLinearLayout.addView(ImageView(context).apply {
+            setImageBitmap(cannyBm)
+        })
+        debugScrollView.fullScroll(View.FOCUS_DOWN)
+
+        /** 4. **/
 
     }
 
