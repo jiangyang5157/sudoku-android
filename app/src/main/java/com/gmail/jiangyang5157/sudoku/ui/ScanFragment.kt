@@ -120,7 +120,6 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
 
     private fun enableScanCamera2View() {
         if (!isScanCamera2ViewEnabled) {
-            mScanCamera2View?.enableFpsMeter()
             mScanCamera2View?.enableView()
             isScanCamera2ViewEnabled = true
         }
@@ -128,7 +127,6 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
 
     private fun disableScanCamera2View() {
         if (isScanCamera2ViewEnabled) {
-            mScanCamera2View?.disableFpsMeter()
             mScanCamera2View?.disableView()
             isScanCamera2ViewEnabled = false
         }

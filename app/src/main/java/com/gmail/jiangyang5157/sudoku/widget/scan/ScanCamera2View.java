@@ -258,7 +258,10 @@ public class ScanCamera2View extends CameraBridgeViewBase {
     }
 
     /*
-    Test on Nexus 6p, calcPreviewSize: 2392x1356 : 1.764
+    Nexus 6p：
+    With    statusbar, calcPreviewSize: 2392x1356 : 1.764
+    Without statusbar, calcPreviewSize: 2392x1440 : 1.661
+
         trying size: 4032x3024 : 1.333 Half+  <<<<<<<<<<<<<<<<
         trying size: 4000x3000 : 1.333 Failed
         trying size: 3840x2160 : 1.777 Full   <<<<<<<<<<<<<<<<
