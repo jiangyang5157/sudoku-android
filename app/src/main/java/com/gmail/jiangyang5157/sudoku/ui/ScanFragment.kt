@@ -8,14 +8,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.gmail.jiangyang5157.kotlin_kit.render.FPSValidation
 import com.gmail.jiangyang5157.sudoku.R
 import com.gmail.jiangyang5157.sudoku.widget.scan.ScanCamera2View
 import org.opencv.android.CameraBridgeViewBase
-import org.opencv.core.Mat
-import org.opencv.core.MatOfPoint
-import org.opencv.core.Scalar
-import org.opencv.core.Size
+import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import org.opencv.imgproc.Imgproc.ADAPTIVE_THRESH_MEAN_C
 import org.opencv.imgproc.Imgproc.THRESH_BINARY_INV
@@ -32,7 +28,6 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
     private var mScanCamera2View: ScanCamera2View? = null
     private var isScanCamera2ViewEnabled = false
     private lateinit var scalarAccent: Scalar
-    private val mRate = FPSValidation(2)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_scan, container, false)
@@ -58,13 +53,10 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
     }
 
     override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
-        val rgba = inputFrame.rgba().clone()
+        var rgba = inputFrame.rgba().clone()
         Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGBA2BGR)
-        return if (mRate.accept()) {
-            handleRgba(rgba, inputFrame.gray())
-        } else {
-            rgba
-        }
+        rgba = handleRgba(rgba, inputFrame.gray())
+        return rgba
     }
 
     private fun handleRgba(rgba: Mat, gray: Mat): Mat {
@@ -85,10 +77,20 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
                 255.0, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY_INV, 5, 2.0)
 
         /**
+         * Thresholding operation can disconnect certain connected parts (like lines).
+         * So dilating the image once will fill up any small "cracks" that might have crept in.
+         */
+        val dilateMat = Mat()
+        val dilationSize = 1.0
+        val kernelMat = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS,
+                Size(2 * dilationSize + 1, 2 * dilationSize + 1), Point(dilationSize, dilationSize))
+        Imgproc.dilate(adaptiveThresholdMat, dilateMat, kernelMat)
+
+        /**
          * Find contour with largest area
          */
         val contoursMatOfPoint = arrayListOf<MatOfPoint>()
-        Imgproc.findContours(adaptiveThresholdMat, contoursMatOfPoint, Mat(),
+        Imgproc.findContours(dilateMat, contoursMatOfPoint, Mat(),
                 Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
 
         var maxContourIndex = -1
