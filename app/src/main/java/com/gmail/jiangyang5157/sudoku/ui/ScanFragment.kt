@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.gmail.jiangyang5157.kotlin_kit.render.FPSValidation
 import com.gmail.jiangyang5157.sudoku.R
 import com.gmail.jiangyang5157.sudoku.widget.scan.ScanCamera2View
 import org.opencv.android.CameraBridgeViewBase
@@ -28,6 +29,7 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
     private var mScanCamera2View: ScanCamera2View? = null
     private var isScanCamera2ViewEnabled = false
     private lateinit var scalarAccent: Scalar
+    private val mOcrFrameRate = FPSValidation(2)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_scan, container, false)
@@ -55,7 +57,9 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
     override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
         var rgba = inputFrame.rgba().clone()
         Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGBA2BGR)
-        rgba = handleRgba(rgba, inputFrame.gray())
+        if (mOcrFrameRate.accept()) {
+            rgba = handleRgba(rgba, inputFrame.gray())
+        }
         return rgba
     }
 

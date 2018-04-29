@@ -52,14 +52,4 @@ class MainFragment : Fragment() {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            PERMISSIONS_REQUEST_CODE_CAMERA -> {
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    activity.startActivity(Intent(context, ScanActivity::class.java))
-                }
-            }
-        }
-    }
-
 }
