@@ -288,7 +288,7 @@ public class ScanCamera2View extends CameraBridgeViewBase {
     */
     private android.util.Size calcBestPreviewSize(final android.util.Size[] sizes, final int width, final int height) {
         float aspect = (float) width / height, aspectError = 0.02f;
-        int currWidth = sizes[0].getWidth(), minWidth = 600;
+        int currWidth = sizes[0].getWidth(), minWidth = 1280;
         int currHeight = sizes[0].getHeight();
 
         for (android.util.Size sz : sizes) {

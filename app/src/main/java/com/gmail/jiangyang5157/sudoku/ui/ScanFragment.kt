@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.gmail.jiangyang5157.kotlin_kit.render.FPSValidation
 import com.gmail.jiangyang5157.sudoku.R
 import com.gmail.jiangyang5157.sudoku.widget.scan.ScanCamera2View
 import org.opencv.android.CameraBridgeViewBase
@@ -31,6 +32,7 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
     private var mScanCamera2View: ScanCamera2View? = null
     private var isScanCamera2ViewEnabled = false
     private lateinit var scalarAccent: Scalar
+    private val mRate = FPSValidation(2)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_scan, container, false)
@@ -58,10 +60,14 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
     override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
         val rgba = inputFrame.rgba().clone()
         Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGBA2BGR)
-        return handleCameraFrame(rgba, inputFrame.gray())
+        return if (mRate.accept()) {
+            handleRgba(rgba, inputFrame.gray())
+        } else {
+            rgba
+        }
     }
 
-    private fun handleCameraFrame(rgba: Mat, gray: Mat): Mat {
+    private fun handleRgba(rgba: Mat, gray: Mat): Mat {
 
         /**
          * This smooths out the noise a bit and makes extracting the grid lines easier
