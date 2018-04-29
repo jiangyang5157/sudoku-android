@@ -1,4 +1,4 @@
-package com.gmail.jiangyang5157.sudoku.widget;
+package com.gmail.jiangyang5157.sudoku.widget.scan;
 
 import android.annotation.TargetApi;
 import android.content.Context;

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.gmail.jiangyang5157.sudoku.widget.ScanCamera2View
+    <com.gmail.jiangyang5157.sudoku.widget.scan.ScanCamera2View
         android:id="@+id/scancamera2view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
