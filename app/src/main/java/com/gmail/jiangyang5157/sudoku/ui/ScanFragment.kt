@@ -13,12 +13,11 @@ import android.widget.ScrollView
 import android.widget.TextView
 import com.gmail.jiangyang5157.sudoku.R
 import org.opencv.android.Utils
-import org.opencv.core.Mat
-import org.opencv.core.Point
-import org.opencv.core.Size
+import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import org.opencv.imgproc.Imgproc.ADAPTIVE_THRESH_MEAN_C
 import org.opencv.imgproc.Imgproc.THRESH_BINARY_INV
+
 
 /**
  * Created by Yang Jiang on April 21, 2018
@@ -109,16 +108,36 @@ class ScanFragment : Fragment() {
         Imgproc.dilate(adaptiveThresholdMat, dilateMat, kernelMat)
         debugDisplayNewMat(dilateMat)
 
-//        /**
-//         *
-//         */
-//        debugLinearLayout.addView(TextView(context).apply {
-//            text = "Canny: 127, 255, 3, true"
-//        })
-//        val cannyMat = Mat()
-//        Imgproc.Canny(adaptiveThresholdMat, cannyMat,
-//                127.0, 255.0, 3, true)
-//        debugDisplayNewMat(cannyMat)
+        /**
+         *
+         */
+        debugLinearLayout.addView(TextView(context).apply {
+            text = "DrawContours (largest 2): RETR_EXTERNAL, APPROX_SIMPLE"
+        })
+        val contoursMatOfPoint = arrayListOf<MatOfPoint>()
+        Imgproc.findContours(dilateMat, contoursMatOfPoint, Mat(),
+                Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
+        var maxContourIndex = -1
+        var maxContourIndex2 = -1
+        var maxContourArea = 0.0
+        contoursMatOfPoint.forEachIndexed { i, matOfPoint ->
+            Imgproc.contourArea(matOfPoint).apply {
+                if (this > maxContourArea) {
+                    maxContourArea = this
+                    maxContourIndex2 = maxContourIndex
+                    maxContourIndex = i
+                }
+            }
+        }
+        val contourMat = dilateMat.clone()
+        Imgproc.cvtColor(contourMat, contourMat, Imgproc.COLOR_GRAY2BGR)
+        Imgproc.drawContours(contourMat, contoursMatOfPoint, maxContourIndex,
+                Scalar(0.0, 0.0, 255.0), 2)
+        Imgproc.drawContours(contourMat, contoursMatOfPoint, maxContourIndex2,
+                Scalar(255.0, 0.0, 0.0), 2)
+        debugDisplayNewMat(contourMat)
+
+
 
     }
 
