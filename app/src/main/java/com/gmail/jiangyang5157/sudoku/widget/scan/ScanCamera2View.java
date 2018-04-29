@@ -287,14 +287,14 @@ public class ScanCamera2View extends CameraBridgeViewBase {
         trying size: 352x288   : 1.222 Failed
     */
     private android.util.Size calcBestPreviewSize(final android.util.Size[] sizes, final int width, final int height) {
-        float aspect = (float) width / height, aspectError = 0.02f;
+        float aspect = (float) width / height, aspectError = 0.2f;
         int currWidth = sizes[0].getWidth(), minWidth = 1280;
         int currHeight = sizes[0].getHeight();
 
         for (android.util.Size sz : sizes) {
             int w = sz.getWidth(), h = sz.getHeight();
             Log.d(TAG, "trying size: " + w + "x" + h);
-            if (minWidth <= w && w < currWidth && Math.abs(aspect - (float) w / h) < aspectError) {
+            if (minWidth <= w && w <= currWidth && Math.abs(aspect - (float) w / h) < aspectError) {
                 currWidth = w;
                 currHeight = h;
                 Log.i(TAG, "apply size: " + currWidth + "x" + currHeight);
