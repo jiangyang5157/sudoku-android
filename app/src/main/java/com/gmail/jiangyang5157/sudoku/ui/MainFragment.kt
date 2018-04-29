@@ -1,9 +1,13 @@
 package com.gmail.jiangyang5157.sudoku.ui
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +17,10 @@ import com.gmail.jiangyang5157.sudoku.R
  * Created by Yang Jiang on April 21, 2018
  */
 class MainFragment : Fragment() {
+
+    companion object {
+        const val PERMISSIONS_REQUEST_CODE_CAMERA = 1
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)
@@ -33,7 +41,23 @@ class MainFragment : Fragment() {
                 })
             }
             findViewById(R.id.btn_scan)?.setOnClickListener {
-                activity.startActivity(Intent(context, ScanActivity::class.java))
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.CAMERA),
+                            PERMISSIONS_REQUEST_CODE_CAMERA)
+                } else {
+                    activity.startActivity(Intent(context, ScanActivity::class.java))
+                }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            PERMISSIONS_REQUEST_CODE_CAMERA -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    activity.startActivity(Intent(context, ScanActivity::class.java))
+                }
             }
         }
     }

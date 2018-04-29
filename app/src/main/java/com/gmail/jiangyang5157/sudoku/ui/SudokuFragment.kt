@@ -122,4 +122,9 @@ class SudokuFragment : Fragment(), SudokuContract.View {
         mSudokuPresenter = presenter
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mSudokuPresenter.stop()
+    }
+
 }

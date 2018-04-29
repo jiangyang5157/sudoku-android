@@ -24,6 +24,8 @@ interface SudokuContract {
         fun updatePossibility(index: Int, digit: Int)
 
         fun clearPossibility(index: Int)
+
+        fun stop()
     }
 
     interface View : BaseView<Presenter> {

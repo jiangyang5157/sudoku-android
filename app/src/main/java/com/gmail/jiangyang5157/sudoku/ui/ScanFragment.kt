@@ -20,7 +20,8 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
         const val TAG = "ScanFragment"
     }
 
-    private lateinit var mScanCamera2View: ScanCamera2View
+    private var mScanCamera2View: ScanCamera2View? = null
+    private var isScanCamera2ViewEnabled = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_scan, container, false)
@@ -31,14 +32,13 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
 
         view?.apply {
             mScanCamera2View = findViewById(R.id.scancamera2view) as ScanCamera2View
-            mScanCamera2View.enableFpsMeter()
-            mScanCamera2View.enableView()
-            mScanCamera2View.setCvCameraViewListener(this@ScanFragment)
+            mScanCamera2View?.setCvCameraViewListener(this@ScanFragment)
+            findViewById(R.id.btn_toggle).setOnClickListener { toggleScanCamera2View() }
         }
     }
 
     override fun onCameraViewStarted(width: Int, height: Int) {
-        Log.d(TAG, "onCameraViewStarted: $width x $height")
+        Log.d(TAG, "onCameraViewStarted: ${width}x$height")
     }
 
     override fun onCameraViewStopped() {
@@ -46,10 +46,42 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
     }
 
     override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
-        Log.d(TAG, "inputFrame=" + inputFrame.toString())
         return inputFrame.rgba()
     }
 
+    private fun toggleScanCamera2View() {
+        if (isScanCamera2ViewEnabled) {
+            disableScanCamera2View()
+        } else {
+            enableScanCamera2View()
+        }
+    }
+
+    private fun enableScanCamera2View() {
+        if (!isScanCamera2ViewEnabled) {
+            mScanCamera2View?.enableFpsMeter()
+            mScanCamera2View?.enableView()
+            isScanCamera2ViewEnabled = true
+        }
+    }
+
+    private fun disableScanCamera2View() {
+        if (isScanCamera2ViewEnabled) {
+            mScanCamera2View?.disableFpsMeter()
+            mScanCamera2View?.disableView()
+            isScanCamera2ViewEnabled = false
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        enableScanCamera2View()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        disableScanCamera2View()
+    }
 
 //    private lateinit var debugScrollView: ScrollView
 //    private lateinit var debugLinearLayout: LinearLayout

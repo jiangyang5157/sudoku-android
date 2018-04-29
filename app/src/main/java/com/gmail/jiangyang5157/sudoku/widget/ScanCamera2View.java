@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Size;
 import android.view.Surface;
 import android.view.ViewGroup.LayoutParams;
 
@@ -256,6 +257,53 @@ public class ScanCamera2View extends CameraBridgeViewBase {
         }
     }
 
+    /*
+    Test on Nexus 6p, calcPreviewSize: 2392x1356 : 1.764
+        trying size: 4032x3024 : 1.333 Half+  <<<<<<<<<<<<<<<<
+        trying size: 4000x3000 : 1.333 Failed
+        trying size: 3840x2160 : 1.777 Full   <<<<<<<<<<<<<<<<
+        trying size: 3264x2448 : 1.333 Half+  <<<<<<<<<<<<<<<<
+        trying size: 3200x2400 : 1.333 Half+  <<<<<<<<<<<<<<<<
+        trying size: 2976x2976 : 1.000 Failed
+        trying size: 2592x1944 : 1.333 Failed
+        trying size: 2688x1512 : 1.777 Full   <<<<<<<<<<<<<<<<
+        trying size: 2048x1536 : 1.333 Failed
+        trying size: 1920x1080 : 1.777 Full   <<<<<<<<<<<<<<<<
+        trying size: 1600x1200 : 1.333 Half+  <<<<<<<<<<<<<<<<
+        trying size: 1440x1080 : 1.333 Failed
+        trying size: 1280x960  : 1.333 Failed
+        trying size: 1280x768  : 1.666 Failed
+        trying size: 1280x720  : 1.777 Full   <<<<<<<<<<<<<<<<
+        trying size: 1024x768  : 1.333 Failed
+        trying size: 800x600   : 1.333 Failed
+        trying size: 864x480   : 1.800 Failed
+        trying size: 800x480   : 1.666 Failed
+        trying size: 720x480   : 1.500 Failed
+        trying size: 640x480   : 1.333 Half+  <<<<<<<<<<<<<<<<
+        trying size: 640x360   : 1.777 Full   <<<<<<<<<<<<<<<<
+        trying size: 352x288   : 1.222 Failed
+    */
+    private android.util.Size calcBestPreviewSize(final android.util.Size[] sizes, final int width, final int height) {
+        float aspect = (float) width / height, aspectError = 0.02f;
+        int currWidth = sizes[0].getWidth(), minWidth = 800;
+        int currHeight = sizes[0].getHeight();
+
+        for (android.util.Size sz : sizes) {
+            int w = sz.getWidth(), h = sz.getHeight();
+            Log.d(TAG, "trying size: " + w + "x" + h);
+            if (minWidth <= w && w < currWidth && Math.abs(aspect - (float) w / h) < aspectError) {
+                currWidth = w;
+                currHeight = h;
+                Log.i(TAG, "apply size: " + currWidth + "x" + currHeight);
+            }
+        }
+        if (currWidth < 0 || currHeight < 0) {
+            return sizes[0];
+        } else {
+            return new Size(currWidth, currHeight);
+        }
+    }
+
     boolean calcPreviewSize(final int width, final int height) {
         Log.i(TAG, "calcPreviewSize: " + width + "x" + height);
         if (mCameraID == null) {
@@ -266,26 +314,13 @@ public class ScanCamera2View extends CameraBridgeViewBase {
         try {
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(mCameraID);
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-            int bestWidth = 0, bestHeight = 0;
-            float aspect = (float) width / height;
             android.util.Size[] sizes = map.getOutputSizes(ImageReader.class);
-            bestWidth = sizes[0].getWidth();
-            bestHeight = sizes[0].getHeight();
-            for (android.util.Size sz : sizes) {
-                int w = sz.getWidth(), h = sz.getHeight();
-                Log.d(TAG, "trying size: " + w + "x" + h);
-                if (width >= w && height >= h && bestWidth <= w && bestHeight <= h
-                        && Math.abs(aspect - (float) w / h) < 0.2) {
-                    bestWidth = w;
-                    bestHeight = h;
-                }
-            }
-            Log.i(TAG, "best size: " + bestWidth + "x" + bestHeight);
-            assert (!(bestWidth == 0 || bestHeight == 0));
-            if (mPreviewSize.getWidth() == bestWidth && mPreviewSize.getHeight() == bestHeight)
+            android.util.Size bestSize = calcBestPreviewSize(sizes, width, height);
+            Log.i(TAG, "best size: " + bestSize.toString());
+            if (mPreviewSize.equals(bestSize)) {
                 return false;
-            else {
-                mPreviewSize = new android.util.Size(bestWidth, bestHeight);
+            } else {
+                mPreviewSize = bestSize;
                 return true;
             }
         } catch (CameraAccessException e) {

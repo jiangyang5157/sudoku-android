@@ -23,6 +23,21 @@ class SudokuPresenter(override val mView: SudokuContract.View) : SudokuContract.
     // Use `SQUARE(0)`, since `IRREGULAR(1)` has not yet implemented
     private var mBlockMode = 0
 
+    override fun stop() {
+        mGenerator?.apply {
+            if (status != AsyncTask.Status.FINISHED) {
+                cancel(true)
+            }
+            mCallback = null
+        }
+        mResolver?.apply {
+            if (status != AsyncTask.Status.FINISHED) {
+                cancel(true)
+            }
+            mCallback = null
+        }
+    }
+
     private fun runGenerator(blockMode: Int, edge: Int, minSubGiven: Int, minTotalGiven: Int, callback: PuzzleTask.Callback) {
         mGenerator?.apply {
             if (status != AsyncTask.Status.FINISHED) {
