@@ -11,6 +11,5 @@
     <dimen name="space_micro">1dp</dimen>
 
     <dimen name="keypad_btn_normal">56dip</dimen>
-    <dimen name="scan_btn_toggle">56dip</dimen>
 
 </resources>

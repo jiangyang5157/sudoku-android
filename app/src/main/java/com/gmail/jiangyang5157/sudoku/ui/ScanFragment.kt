@@ -10,6 +10,7 @@ import com.gmail.jiangyang5157.sudoku.R
 import com.gmail.jiangyang5157.sudoku.widget.ScanCamera2View
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.core.Mat
+import org.opencv.imgproc.Imgproc
 
 /**
  * Created by Yang Jiang on April 21, 2018
@@ -46,7 +47,9 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
     }
 
     override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
-        return inputFrame.rgba()
+        val rgba = inputFrame.rgba().clone()
+        Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGBA2BGR)
+        return rgba
     }
 
     private fun toggleScanCamera2View() {
@@ -83,20 +86,6 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
         disableScanCamera2View()
     }
 
-//    private lateinit var debugScrollView: ScrollView
-//    private lateinit var debugLinearLayout: LinearLayout
-//
-//    private fun debugOnViewCreated(view: View?) {
-//        view?.apply {
-//            debugScrollView = findViewById(R.id.debug_scrollview) as ScrollView
-//            debugLinearLayout = findViewById(R.id.debug_linearlayout) as LinearLayout
-//
-//            debug("puzzle_paper.jpg")
-//            debug("puzzle_rotation.jpg")
-//            debug("puzzle_rotated_curve.jpg")
-//        }
-//    }
-//
 //    private fun debug(filename: String) {
 //
 //        /**
