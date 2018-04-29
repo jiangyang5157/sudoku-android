@@ -13,7 +13,10 @@ import android.widget.ScrollView
 import android.widget.TextView
 import com.gmail.jiangyang5157.sudoku.R
 import org.opencv.android.Utils
-import org.opencv.core.*
+import org.opencv.core.Mat
+import org.opencv.core.MatOfPoint
+import org.opencv.core.Scalar
+import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 import org.opencv.imgproc.Imgproc.ADAPTIVE_THRESH_MEAN_C
 import org.opencv.imgproc.Imgproc.THRESH_BINARY_INV
@@ -38,10 +41,9 @@ class ScanFragment : Fragment() {
             debugScrollView = findViewById(R.id.debug_scrollview) as ScrollView
             debugLinearLayout = findViewById(R.id.debug_linearlayout) as LinearLayout
 
-            debug("puzzle_curving.jpg")
-            debug("puzzle_gradient.jpg")
-            debug("puzzle_newspaper.jpg")
-            debug("puzzle_regular.png")
+            debug("puzzle_paper.jpg")
+            debug("puzzle_rotation.jpg")
+            debug("puzzle_rotated_curve.jpg")
         }
     }
 
@@ -53,14 +55,14 @@ class ScanFragment : Fragment() {
         val srcBm = BitmapFactory.decodeStream(context.assets.open(filename))
         val srcMat = Mat()
         Utils.bitmapToMat(srcBm, srcMat, false)
-        debugDisplayNewMat("Original image", srcMat)
+        debugShowInfo("Original image", srcMat)
 
         /**
          * We don't want to bother with the colour information, so just skip it
          */
         val grayScaledMat = Mat()
         Imgproc.cvtColor(srcMat, grayScaledMat, Imgproc.COLOR_BGR2GRAY)
-//        debugDisplayNewMat("Gray scaled, BGR2GRAY", grayScaledMat)
+        debugShowInfo("Gray scaled, BGR2GRAY", null)
 
         /**
          * This smooths out the noise a bit and makes extracting the grid lines easier
@@ -68,7 +70,7 @@ class ScanFragment : Fragment() {
         val blurMat = Mat()
         Imgproc.GaussianBlur(grayScaledMat, blurMat,
                 Size(5.0, 5.0), 0.0, 0.0)
-//        debugDisplayNewMat("GaussianBlur: (5, 5), (0, 0)", blurMat)
+        debugShowInfo("GaussianBlur: (5, 5), (0, 0)", null)
 
         /**
          * It calculates a mean over a 5x5 window and subtracts 2 from the mean.
@@ -77,7 +79,7 @@ class ScanFragment : Fragment() {
         val adaptiveThresholdMat = Mat()
         Imgproc.adaptiveThreshold(blurMat, adaptiveThresholdMat,
                 255.0, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY_INV, 5, 2.0)
-        debugDisplayNewMat("AdaptiveThreshold: 255, MEAN_C, BINARY_INV, 5, 2", adaptiveThresholdMat)
+        debugShowInfo("AdaptiveThreshold: 255, MEAN_C, BINARY_INV, 5, 2", adaptiveThresholdMat)
 
         /**
          * Thresholding operation can disconnect certain connected parts (like lines).
@@ -87,22 +89,22 @@ class ScanFragment : Fragment() {
          * 1.0, 1.0, 1.0,
          * 0.0, 1.0, 0.0
          */
-        val dilateMat = Mat()
-        val dilationSize = 0.5
-        val kernelMat = Imgproc.getStructuringElement(
-                Imgproc.MORPH_CROSS,
-                Size(2 * dilationSize + 1, 2 * dilationSize + 1),
-                Point(dilationSize, dilationSize))
-        Imgproc.dilate(adaptiveThresholdMat, dilateMat, kernelMat)
-        debugDisplayNewMat("Dilate: MORPH_CROSS, 0.5", dilateMat)
+//        val dilateMat = Mat()
+//        val dilationSize = 0.5
+//        val kernelMat = Imgproc.getStructuringElement(
+//                Imgproc.MORPH_CROSS,
+//                Size(2 * dilationSize + 1, 2 * dilationSize + 1),
+//                Point(dilationSize, dilationSize))
+//        Imgproc.dilate(adaptiveThresholdMat, dilateMat, kernelMat)
+//        debugShowInfo("Dilate: MORPH_CROSS, 0.5", dilateMat)
 
         /**
          *
          */
         val contoursMatOfPoint = arrayListOf<MatOfPoint>()
-        Imgproc.findContours(dilateMat, contoursMatOfPoint, Mat(),
+        Imgproc.findContours(adaptiveThresholdMat, contoursMatOfPoint, Mat(),
                 Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
-        val contourMat = dilateMat.clone()
+        val contourMat = adaptiveThresholdMat.clone()
         Imgproc.cvtColor(contourMat, contourMat, Imgproc.COLOR_GRAY2BGR)
         var maxContourIndex = -1
         var maxContourArea = 0.0
@@ -116,25 +118,26 @@ class ScanFragment : Fragment() {
         }
         Imgproc.drawContours(contourMat, contoursMatOfPoint, maxContourIndex,
                 Scalar(255.0, 0.0, 0.0), 2)
-        debugDisplayNewMat("DrawContours: RETR_EXTERNAL, APPROX_SIMPLE", contourMat)
-
+        debugShowInfo("DrawContours: RETR_EXTERNAL, APPROX_SIMPLE", contourMat)
 
 
     }
 
-    private fun debugDisplayNewMat(title: String, mat: Mat) {
+    private fun debugShowInfo(title: String, mat: Mat?) {
         debugLinearLayout.addView(TextView(context).apply {
             text = title
         })
-        debugLinearLayout.addView(ImageView(context).apply {
-            setImageBitmap(Bitmap.createBitmap(
-                    mat.cols(), mat.rows(), Bitmap.Config.RGB_565).apply {
-                Utils.matToBitmap(mat, this, false)
-            })
-        }, LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                600
-        ))
+        mat?.apply {
+            debugLinearLayout.addView(ImageView(context).apply {
+                setImageBitmap(Bitmap.createBitmap(
+                        mat.cols(), mat.rows(), Bitmap.Config.RGB_565).apply {
+                    Utils.matToBitmap(mat, this, false)
+                })
+            }, LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    600
+            ))
+        }
     }
 
 }
