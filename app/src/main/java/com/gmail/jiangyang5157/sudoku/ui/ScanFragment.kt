@@ -100,7 +100,7 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
          * Draw contour with largest area
          */
         Imgproc.drawContours(rgba, contoursMatOfPoint, maxContourIndex,
-                color2scalar(R.color.colorPrimary), 2)
+                color2scalar(R.color.colorAccent), 2)
 
         return rgba
     }
