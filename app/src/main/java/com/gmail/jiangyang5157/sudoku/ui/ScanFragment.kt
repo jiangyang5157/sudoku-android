@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.gmail.jiangyang5157.kotlin_kit.render.FPSValidation
 import com.gmail.jiangyang5157.sudoku.R
-import com.gmail.jiangyang5157.sudoku.widget.scan.CvCamera2View
+import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
@@ -26,7 +26,7 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
         const val TAG = "ScanFragment"
     }
 
-    private var mCvCamera2View: CvCamera2View? = null
+    private var mCamera2CvView: Camera2CvView? = null
     private var isScanCamera2ViewEnabled = false
     private lateinit var scalarAccent: Scalar
     private val mOcrFrameRate = FPSValidation(2)
@@ -39,8 +39,8 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
         super.onViewCreated(view, savedInstanceState)
 
         view?.apply {
-            mCvCamera2View = findViewById(R.id.scancamera2view) as CvCamera2View
-            mCvCamera2View?.setCvCameraViewListener(this@ScanFragment)
+            mCamera2CvView = findViewById(R.id.scancamera2view) as Camera2CvView
+            mCamera2CvView?.setCvCameraViewListener(this@ScanFragment)
             findViewById(R.id.btn_toggle).setOnClickListener { toggleScanCamera2View() }
         }
     }
@@ -131,14 +131,14 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
 
     private fun enableScanCamera2View() {
         if (!isScanCamera2ViewEnabled) {
-            mCvCamera2View?.enableView()
+            mCamera2CvView?.enableView()
             isScanCamera2ViewEnabled = true
         }
     }
 
     private fun disableScanCamera2View() {
         if (isScanCamera2ViewEnabled) {
-            mCvCamera2View?.disableView()
+            mCamera2CvView?.disableView()
             isScanCamera2ViewEnabled = false
         }
     }

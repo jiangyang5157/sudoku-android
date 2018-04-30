@@ -51,7 +51,7 @@ import java.util.Arrays;
  * converted to RGBA32 and then passed to the external callback for modifications if required.
  */
 @TargetApi(21)
-public class CvCamera2View extends CameraBridgeViewBase {
+public class Camera2CvView extends CameraBridgeViewBase {
 
     private static final String TAG = "ScanCamera2View";
 
@@ -67,11 +67,11 @@ public class CvCamera2View extends CameraBridgeViewBase {
     private HandlerThread mBackgroundThread;
     private Handler mBackgroundHandler;
 
-    public CvCamera2View(Context context, int cameraId) {
+    public Camera2CvView(Context context, int cameraId) {
         super(context, cameraId);
     }
 
-    public CvCamera2View(Context context, AttributeSet attrs) {
+    public Camera2CvView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
