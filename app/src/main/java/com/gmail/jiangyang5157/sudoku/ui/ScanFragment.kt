@@ -11,14 +11,14 @@ import android.view.ViewGroup
 import com.gmail.jiangyang5157.kotlin_kit.render.FPSValidation
 import com.gmail.jiangyang5157.sudoku.R
 import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView
-import org.opencv.android.CameraBridgeViewBase
+import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvViewBase
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 
 /**
  * Created by Yang Jiang on April 30, 2018
  */
-class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
+class ScanFragment : Fragment(), Camera2CvViewBase.CvCameraViewListener2 {
 
     companion object {
         const val TAG = "ScanFragment"
@@ -52,7 +52,7 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
         Log.d(TAG, "onCameraViewStopped")
     }
 
-    override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
+    override fun onCameraFrame(inputFrame: Camera2CvViewBase.CvCameraViewFrame): Mat {
         var rgba = inputFrame.rgba().clone()
         Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGBA2BGR)
         if (mOcrFrameRate.accept()) {

@@ -46,7 +46,7 @@ import java.util.Arrays;
  * When frame is delivered via callback from Camera - it processed via OpenCV to be
  * converted to RGBA32 and then passed to the external callback for modifications if required.
  */
-public class Camera2CvView extends CameraBridgeViewBase {
+public class Camera2CvView extends Camera2CvViewBase {
 
     private static final String TAG = "ScanCamera2View";
 

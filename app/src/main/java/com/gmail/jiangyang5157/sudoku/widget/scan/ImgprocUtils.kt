@@ -19,3 +19,6 @@ package com.gmail.jiangyang5157.sudoku.widget.scan
 //https://docs.opencv.org/2.4.3/doc/tutorials/introduction/android_binary_package/dev_with_OCV_on_Android.html
 //http://answers.opencv.org/question/1742/how-to-set-camera-resolution-in-opencv-on-android/
 //https://searchcode.com/codesearch/view/26664468/
+
+//I am using OpenCV 3.1, I fix it by apply transform when draw bitmap on deliverAndDrawFrame method of CameraBridgeViewBase class, Hope it helpful:
+//https://stackoverflow.com/questions/16669779/opencv-camera-orientation-issue
