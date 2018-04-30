@@ -767,8 +767,5 @@ class Camera2ScanFragment : Fragment(), View.OnClickListener, ActivityCompat.OnR
                 return choices[0]
             }
         }
-
-        @JvmStatic
-        fun newInstance(): Camera2ScanFragment = Camera2ScanFragment()
     }
 }
