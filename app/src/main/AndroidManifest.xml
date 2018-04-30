@@ -20,10 +20,7 @@
 
         <activity android:name=".ui.SudokuActivity" />
 
-        <activity
-            android:name=".ui.ScanActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.Scan" />
+        <activity android:name=".ui.ScanActivity" />
 
     </application>
 

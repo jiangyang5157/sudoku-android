@@ -32,7 +32,13 @@ import java.util.Arrays;
  * Created by Yang Jiang on April 29, 2018
  * <p>
  * This class is copied from openCVLibrary341 org.opencv.android.JavaCamera2View,
- * then be optimized for a better frame rate by reducing some of image quality.
+ * and optimize for a better frame rate by reducing some of image quality.
+ * <p>
+ * Modified:
+ * calcBestPreviewSize
+ * <p>
+ * Result:
+ * Still not good enough
  */
 
 /**
@@ -45,7 +51,7 @@ import java.util.Arrays;
  * converted to RGBA32 and then passed to the external callback for modifications if required.
  */
 @TargetApi(21)
-public class ScanCamera2View extends CameraBridgeViewBase {
+public class CvCamera2View extends CameraBridgeViewBase {
 
     private static final String TAG = "ScanCamera2View";
 
@@ -61,11 +67,11 @@ public class ScanCamera2View extends CameraBridgeViewBase {
     private HandlerThread mBackgroundThread;
     private Handler mBackgroundHandler;
 
-    public ScanCamera2View(Context context, int cameraId) {
+    public CvCamera2View(Context context, int cameraId) {
         super(context, cameraId);
     }
 
-    public ScanCamera2View(Context context, AttributeSet attrs) {
+    public CvCamera2View(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -287,8 +293,8 @@ public class ScanCamera2View extends CameraBridgeViewBase {
         trying size: 352x288   : 1.222 Failed
     */
     private android.util.Size calcBestPreviewSize(final android.util.Size[] sizes, final int width, final int height) {
-        float aspect = (float) width / height, aspectError = 0.2f;
-        int currWidth = sizes[0].getWidth(), minWidth = 1280;
+        float aspect = (float) width / height, aspectError = 0.02f;
+        int currWidth = sizes[0].getWidth(), minWidth = 600;
         int currHeight = sizes[0].getHeight();
 
         for (android.util.Size sz : sizes) {

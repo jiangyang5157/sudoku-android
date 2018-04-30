@@ -5,9 +5,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
-import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
+import android.support.v4.content.PermissionChecker
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,11 +40,21 @@ class MainFragment : Fragment() {
                 })
             }
             findViewById(R.id.btn_scan)?.setOnClickListener {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                if (PermissionChecker.checkSelfPermission(context, Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.CAMERA),
+                    requestPermissions(arrayOf(Manifest.permission.CAMERA),
                             PERMISSIONS_REQUEST_CODE_CAMERA)
                 } else {
+                    activity.startActivity(Intent(context, ScanActivity::class.java))
+                }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            PERMISSIONS_REQUEST_CODE_CAMERA -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     activity.startActivity(Intent(context, ScanActivity::class.java))
                 }
             }

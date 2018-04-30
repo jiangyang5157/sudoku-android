@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.gmail.jiangyang5157.kotlin_kit.render.FPSValidation
 import com.gmail.jiangyang5157.sudoku.R
-import com.gmail.jiangyang5157.sudoku.widget.scan.ScanCamera2View
+import com.gmail.jiangyang5157.sudoku.widget.scan.CvCamera2View
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
@@ -26,7 +26,7 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
         const val TAG = "ScanFragment"
     }
 
-    private var mScanCamera2View: ScanCamera2View? = null
+    private var mCvCamera2View: CvCamera2View? = null
     private var isScanCamera2ViewEnabled = false
     private lateinit var scalarAccent: Scalar
     private val mOcrFrameRate = FPSValidation(2)
@@ -39,8 +39,8 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
         super.onViewCreated(view, savedInstanceState)
 
         view?.apply {
-            mScanCamera2View = findViewById(R.id.scancamera2view) as ScanCamera2View
-            mScanCamera2View?.setCvCameraViewListener(this@ScanFragment)
+            mCvCamera2View = findViewById(R.id.scancamera2view) as CvCamera2View
+            mCvCamera2View?.setCvCameraViewListener(this@ScanFragment)
             findViewById(R.id.btn_toggle).setOnClickListener { toggleScanCamera2View() }
         }
     }
@@ -69,8 +69,7 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
          * This smooths out the noise a bit and makes extracting the grid lines easier
          */
         val blurMat = Mat()
-        Imgproc.GaussianBlur(gray, blurMat,
-                Size(5.0, 5.0), 0.0, 0.0)
+        Imgproc.GaussianBlur(gray, blurMat, Size(5.0, 5.0), 0.0, 0.0)
 
         /**
          * It calculates a mean over a 5x5 window and subtracts 2 from the mean.
@@ -132,14 +131,14 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
 
     private fun enableScanCamera2View() {
         if (!isScanCamera2ViewEnabled) {
-            mScanCamera2View?.enableView()
+            mCvCamera2View?.enableView()
             isScanCamera2ViewEnabled = true
         }
     }
 
     private fun disableScanCamera2View() {
         if (isScanCamera2ViewEnabled) {
-            mScanCamera2View?.disableView()
+            mCvCamera2View?.disableView()
             isScanCamera2ViewEnabled = false
         }
     }

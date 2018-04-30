@@ -6,8 +6,4 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.Scan">
-        <item name="android:windowFullscreen">true</item>
-    </style>
-
 </resources>
