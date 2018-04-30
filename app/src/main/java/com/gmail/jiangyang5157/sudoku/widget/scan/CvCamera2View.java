@@ -293,7 +293,9 @@ public class CvCamera2View extends CameraBridgeViewBase {
         trying size: 352x288   : 1.222 Failed
     */
     private android.util.Size calcBestPreviewSize(final android.util.Size[] sizes, final int width, final int height) {
-        float aspect = (float) width / height, aspectError = 0.02f;
+        float actualAspect = (float) width / height;
+        float aspect = Math.abs(1.333 - actualAspect) < Math.abs(1.777 - actualAspect) ? 1.333f : 1.777f;
+        float aspectError = 0.2f;
         int currWidth = sizes[0].getWidth(), minWidth = 600;
         int currHeight = sizes[0].getHeight();
 
