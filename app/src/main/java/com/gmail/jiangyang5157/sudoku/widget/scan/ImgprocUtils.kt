@@ -1,3 +1,8 @@
+package com.gmail.jiangyang5157.sudoku.widget.scan
+
+/**
+ * Created by Yang Jiang on May 01, 2018
+ */
 // TODO
 //https://github.com/ErnestWong/SudokuSolver
 //https://github.com/prajwalkr/SnapSudoku

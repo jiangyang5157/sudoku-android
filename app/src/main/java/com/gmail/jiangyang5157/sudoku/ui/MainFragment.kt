@@ -1,17 +1,13 @@
 package com.gmail.jiangyang5157.sudoku.ui
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.gmail.jiangyang5157.sudoku.R
-import com.gmail.jiangyang5157.sudoku.REQUEST_CAMERA_PERMISSION
 
 /**
  * Created by Yang Jiang on April 21, 2018
@@ -37,23 +33,7 @@ class MainFragment : Fragment() {
                 })
             }
             findViewById(R.id.btn_scan)?.setOnClickListener {
-                val permission = ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
-                if (permission != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(arrayOf(Manifest.permission.CAMERA),
-                            REQUEST_CAMERA_PERMISSION)
-                } else {
-                    activity.startActivity(Intent(context, ScanActivity::class.java))
-                }
-            }
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            REQUEST_CAMERA_PERMISSION -> {
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    activity.startActivity(Intent(context, ScanActivity::class.java))
-                }
+                activity.startActivity(Intent(context, ScanActivity::class.java))
             }
         }
     }

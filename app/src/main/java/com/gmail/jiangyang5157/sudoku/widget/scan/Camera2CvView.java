@@ -1,6 +1,5 @@
 package com.gmail.jiangyang5157.sudoku.widget.scan;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraAccessException;
@@ -31,14 +30,11 @@ import java.util.Arrays;
 /**
  * Created by Yang Jiang on April 29, 2018
  * <p>
- * This class is copied from openCVLibrary341 org.opencv.android.JavaCamera2View,
- * and optimize for a better frame rate by reducing some of image quality.
+ * This class is copied from openCVLibrary341 {@link org.opencv.android.JavaCamera2View},
+ * to optimize for a better frame rate by reducing some of image quality.
  * <p>
  * Modified:
- * calcBestPreviewSize
- * <p>
- * Result:
- * Still not good enough
+ * {@link com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView#calcBestPreviewSize(android.util.Size[], int, int)}
  */
 
 /**
@@ -50,7 +46,6 @@ import java.util.Arrays;
  * When frame is delivered via callback from Camera - it processed via OpenCV to be
  * converted to RGBA32 and then passed to the external callback for modifications if required.
  */
-@TargetApi(21)
 public class Camera2CvView extends CameraBridgeViewBase {
 
     private static final String TAG = "ScanCamera2View";

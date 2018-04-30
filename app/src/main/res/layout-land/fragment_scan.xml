@@ -3,19 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.gmail.jiangyang5157.sudoku.widget.scan.AutoFitTextureView
-        android:id="@+id/textureview_scan"
+    <com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView
+        android:id="@+id/view_camera2cv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true" />
 
     <FrameLayout
-        android:id="@+id/layout_scan_panel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/textureview_scan">
+        android:layout_toEndOf="@id/view_camera2cv">
 
         <Button
             android:id="@+id/btn_toggle"

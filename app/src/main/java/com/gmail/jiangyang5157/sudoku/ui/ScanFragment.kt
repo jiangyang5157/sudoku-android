@@ -1,4 +1,4 @@
-package com.gmail.jiangyang5157.sudoku.widget.scan
+package com.gmail.jiangyang5157.sudoku.ui
 
 import android.graphics.Color
 import android.os.Bundle
@@ -10,16 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import com.gmail.jiangyang5157.kotlin_kit.render.FPSValidation
 import com.gmail.jiangyang5157.sudoku.R
+import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
-import org.opencv.imgproc.Imgproc.ADAPTIVE_THRESH_MEAN_C
-import org.opencv.imgproc.Imgproc.THRESH_BINARY_INV
 
 /**
- * Created by Yang Jiang on April 21, 2018
+ * Created by Yang Jiang on April 30, 2018
  */
-class Camera2CvFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
+class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
 
     companion object {
         const val TAG = "ScanFragment"
@@ -28,18 +27,18 @@ class Camera2CvFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2
     private var mCamera2CvView: Camera2CvView? = null
     private var isScanCamera2ViewEnabled = false
     private lateinit var scalarAccent: Scalar
-    private val mOcrFrameRate = FPSValidation(2)
+    private val mOcrFrameRate = FPSValidation(-1)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_camera2cv_scan, container, false)
+        return inflater.inflate(R.layout.fragment_scan, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         view?.apply {
-            mCamera2CvView = findViewById(R.id.scancamera2view) as Camera2CvView
-            mCamera2CvView?.setCvCameraViewListener(this@Camera2CvFragment)
+            mCamera2CvView = findViewById(R.id.view_camera2cv) as Camera2CvView
+            mCamera2CvView?.setCvCameraViewListener(this@ScanFragment)
             findViewById(R.id.btn_toggle).setOnClickListener { toggleScanCamera2View() }
         }
     }
@@ -76,7 +75,7 @@ class Camera2CvFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2
          */
         val adaptiveThresholdMat = Mat()
         Imgproc.adaptiveThreshold(blurMat, adaptiveThresholdMat,
-                255.0, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY_INV, 5, 2.0)
+                255.0, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 5, 2.0)
 
         /**
          * Thresholding operation can disconnect certain connected parts (like lines).
