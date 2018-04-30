@@ -1,7 +1,6 @@
 package com.gmail.jiangyang5157.sudoku.widget.scan
 
 import android.Manifest
-import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -220,15 +219,13 @@ class Camera2ScanFragment : Fragment(), View.OnClickListener, ActivityCompat.OnR
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_camera2_scan, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_camera2_scan, container, false)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        view.findViewById(R.id.picture).setOnClickListener(this)
-        view.findViewById(R.id.info).setOnClickListener(this)
-        textureView = view.findViewById(R.id.texture) as AutoFitTextureView
+        view.findViewById(R.id.btn_toggle).setOnClickListener(this)
+        textureView = view.findViewById(R.id.textureview_scan) as AutoFitTextureView
     }
 
     override fun onResume() {
@@ -650,18 +647,7 @@ class Camera2ScanFragment : Fragment(), View.OnClickListener, ActivityCompat.OnR
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.picture -> lockFocus()
-            R.id.info -> {
-                if (activity != null) {
-                    AlertDialog.Builder(activity)
-                            .setMessage(
-                                    "This sample demonstrates the basic use of Camera2 API. " +
-                                            "Check the source code to see how you can display camera preview and take pictures."
-                            )
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show()
-                }
-            }
+            R.id.btn_toggle -> lockFocus()
         }
     }
 
@@ -678,7 +664,7 @@ class Camera2ScanFragment : Fragment(), View.OnClickListener, ActivityCompat.OnR
          * Conversion from screen rotation to JPEG orientation.
          */
         private val ORIENTATIONS = SparseIntArray()
-        private val FRAGMENT_DIALOG = "dialog"
+        private const val FRAGMENT_DIALOG = "dialog"
 
         init {
             ORIENTATIONS.append(Surface.ROTATION_0, 90)

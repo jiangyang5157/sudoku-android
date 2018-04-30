@@ -1,4 +1,4 @@
-package com.gmail.jiangyang5157.sudoku.ui
+package com.gmail.jiangyang5157.sudoku.widget.scan
 
 import android.graphics.Color
 import android.os.Bundle
@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.gmail.jiangyang5157.kotlin_kit.render.FPSValidation
 import com.gmail.jiangyang5157.sudoku.R
-import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
@@ -20,7 +19,7 @@ import org.opencv.imgproc.Imgproc.THRESH_BINARY_INV
 /**
  * Created by Yang Jiang on April 21, 2018
  */
-class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
+class Camera2CvFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
 
     companion object {
         const val TAG = "ScanFragment"
@@ -32,7 +31,7 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
     private val mOcrFrameRate = FPSValidation(2)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_scan, container, false)
+        return inflater.inflate(R.layout.fragment_camera2cv_scan, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -40,7 +39,7 @@ class ScanFragment : Fragment(), CameraBridgeViewBase.CvCameraViewListener2 {
 
         view?.apply {
             mCamera2CvView = findViewById(R.id.scancamera2view) as Camera2CvView
-            mCamera2CvView?.setCvCameraViewListener(this@ScanFragment)
+            mCamera2CvView?.setCvCameraViewListener(this@Camera2CvFragment)
             findViewById(R.id.btn_toggle).setOnClickListener { toggleScanCamera2View() }
         }
     }

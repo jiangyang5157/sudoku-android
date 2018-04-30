@@ -21,13 +21,13 @@
 
         <Button
             android:id="@+id/btn_keypad_clear"
-            android:layout_width="@dimen/keypad_btn_normal"
-            android:layout_height="@dimen/keypad_btn_normal"
+            android:layout_width="@dimen/btn_keypad_size"
+            android:layout_height="@dimen/btn_keypad_size"
             android:text="-" />
 
         <Switch
             android:id="@+id/switch_keypad_possibility"
-            android:layout_width="@dimen/keypad_btn_normal"
+            android:layout_width="@dimen/btn_keypad_size"
             android:layout_height="match_parent" />
     </LinearLayout>
 

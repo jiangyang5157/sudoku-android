@@ -3,34 +3,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.android.camera2basic.AutoFitTextureView
-        android:id="@+id/texture"
+    <com.gmail.jiangyang5157.sudoku.widget.scan.AutoFitTextureView
+        android:id="@+id/textureview_scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true" />
 
     <FrameLayout
-        android:id="@+id/control"
+        android:id="@+id/layout_scan_panel"
         android:layout_width="match_parent"
-        android:layout_height="112dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true">
+        android:layout_height="match_parent"
+        android:layout_below="@id/textureview_scan">
 
         <Button
-            android:id="@+id/picture"
+            android:id="@+id/btn_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="picture" />
-
-        <ImageButton
-            android:id="@+id/info"
-            style="@android:style/Widget.Material.Light.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|end"
-            android:src="@mipmap/ic_launcher" />
+            android:text="Toggle" />
 
     </FrameLayout>
 
