@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
 import android.support.v4.app.Fragment
-import android.support.v4.content.PermissionChecker
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,8 +37,8 @@ class MainFragment : Fragment() {
                 })
             }
             findViewById(R.id.btn_scan)?.setOnClickListener {
-                if (PermissionChecker.checkSelfPermission(context, Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
+                val permission = ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
+                if (permission != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(arrayOf(Manifest.permission.CAMERA),
                             REQUEST_CAMERA_PERMISSION)
                 } else {
