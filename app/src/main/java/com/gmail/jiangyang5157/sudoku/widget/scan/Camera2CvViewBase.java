@@ -420,8 +420,12 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
             Canvas canvas = getHolder().lockCanvas();
             if (canvas != null) {
                 canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
-                if (BuildConfig.DEBUG)
+                if (BuildConfig.DEBUG) {
                     Log.d(TAG, "mStretch value: " + mScale);
+                }
+                canvas.save();
+
+               //canvas.rotate(userRotation,  (canvas.getWidth()/ 2),(canvas.getHeight()/ 2));
 
                 if (mScale != 0) {
                     canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()),
@@ -441,6 +445,8 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
                     mFpsMeter.measure();
                     mFpsMeter.draw(canvas, 20, 30);
                 }
+
+                 canvas.restore();
                 getHolder().unlockCanvasAndPost(canvas);
             }
         }

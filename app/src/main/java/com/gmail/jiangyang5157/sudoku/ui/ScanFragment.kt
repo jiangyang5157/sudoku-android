@@ -28,6 +28,8 @@ class ScanFragment : Fragment(), Camera2CvViewBase.CvCameraViewListener2 {
     private var isScanCamera2ViewEnabled = false
     private lateinit var scalarAccent: Scalar
     private val mOcrFrameRate = FPSValidation(-1)
+    private var mRgba: Mat? = null
+    private var mGray: Mat? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_scan, container, false)
@@ -46,19 +48,31 @@ class ScanFragment : Fragment(), Camera2CvViewBase.CvCameraViewListener2 {
     override fun onCameraViewStarted(width: Int, height: Int) {
         Log.d(TAG, "onCameraViewStarted: ${width}x$height")
         scalarAccent = color2scalar(R.color.colorAccent)
+        mRgba = Mat(height, width, CvType.CV_8UC4)
+        mGray = Mat(height, width, CvType.CV_8UC1)
     }
 
     override fun onCameraViewStopped() {
         Log.d(TAG, "onCameraViewStopped")
+        mRgba?.release()
+        mGray?.release()
     }
 
     override fun onCameraFrame(inputFrame: Camera2CvViewBase.CvCameraViewFrame): Mat {
-        var rgba = inputFrame.rgba().clone()
-        Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGBA2BGR)
+        val rgba = inputFrame.rgba()
+        val gray = inputFrame.gray()
+
+        Imgproc.cvtColor(mRgba, mRgba, Imgproc.COLOR_RGBA2BGR)
+
+//        int colorChannels = (mRgba.channels() == 3) ? Imgproc.COLOR_BGR2GRAY : ((mRgba.channels() == 4) ? Imgproc.COLOR_BGRA2GRAY : 1)
+//        Imgproc.cvtColor(mRgba, mGray, colorChannels)
+
         if (mOcrFrameRate.accept()) {
-            rgba = handleRgba(rgba, inputFrame.gray())
+            mGray = gray
+            mRgba = handleRgba(rgba, gray)
         }
-        return rgba
+
+        return mRgba!!
     }
 
     private fun handleRgba(rgba: Mat, gray: Mat): Mat {
