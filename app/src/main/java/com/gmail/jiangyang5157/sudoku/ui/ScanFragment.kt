@@ -60,17 +60,16 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
     }
 
     override fun onCameraFrame(inputFrame: Camera2CvViewBase.CvCameraViewFrame): Mat {
-        val rgba = inputFrame.rgba()
-        val gray = inputFrame.gray()
+        mRgba = inputFrame.rgba()
+        mGray = inputFrame.gray()
 
-        Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2BGR)
+        Imgproc.cvtColor(mRgba, mRgba, Imgproc.COLOR_RGB2BGR)
 
-//        if (mProcessorFps.accept()) {
-//            mRgba = handleRgba(rgba, gray)
-//            mGray = gray
-//        }
+        if (mProcessorFps.accept()) {
+            mRgba = handleRgba(mRgba!!, mGray!!)
+        }
 
-        return rgba
+        return mRgba!!
     }
 
     private fun handleRgba(rgba: Mat, gray: Mat): Mat {
@@ -94,7 +93,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
          * So dilating the image once will fill up any small "cracks" that might have crept in.
          */
         val dilateMat = Mat()
-        val dilationSize = 1.0
+        val dilationSize = 0.5
         val kernelMat = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS,
                 Size(2 * dilationSize + 1, 2 * dilationSize + 1), Point(dilationSize, dilationSize))
         Imgproc.dilate(adaptiveThresholdMat, dilateMat, kernelMat)
