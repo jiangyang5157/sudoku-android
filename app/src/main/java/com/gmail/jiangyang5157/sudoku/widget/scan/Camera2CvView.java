@@ -314,35 +314,6 @@ public class Camera2CvView extends Camera2CvViewBase {
         }
     }
 
-    /*
-    Nexus 6p：
-    With    statusbar, calcPreviewSize: 2392x1356 : 1.764
-    Without statusbar, calcPreviewSize: 2392x1440 : 1.661
-
-        trying size: 4032x3024 : 1.333 Half+  <<<<<<<<<<<<<<<<
-        trying size: 4000x3000 : 1.333 Failed
-        trying size: 3840x2160 : 1.777 Full   <<<<<<<<<<<<<<<<
-        trying size: 3264x2448 : 1.333 Half+  <<<<<<<<<<<<<<<<
-        trying size: 3200x2400 : 1.333 Half+  <<<<<<<<<<<<<<<<
-        trying size: 2976x2976 : 1.000 Failed
-        trying size: 2592x1944 : 1.333 Failed
-        trying size: 2688x1512 : 1.777 Full   <<<<<<<<<<<<<<<<
-        trying size: 2048x1536 : 1.333 Failed
-        trying size: 1920x1080 : 1.777 Full   <<<<<<<<<<<<<<<<
-        trying size: 1600x1200 : 1.333 Half+  <<<<<<<<<<<<<<<<
-        trying size: 1440x1080 : 1.333 Failed
-        trying size: 1280x960  : 1.333 Failed
-        trying size: 1280x768  : 1.666 Failed
-        trying size: 1280x720  : 1.777 Full   <<<<<<<<<<<<<<<<
-        trying size: 1024x768  : 1.333 Failed
-        trying size: 800x600   : 1.333 Failed
-        trying size: 864x480   : 1.800 Failed
-        trying size: 800x480   : 1.666 Failed
-        trying size: 720x480   : 1.500 Failed
-        trying size: 640x480   : 1.333 Half+  <<<<<<<<<<<<<<<<
-        trying size: 640x360   : 1.777 Full   <<<<<<<<<<<<<<<<
-        trying size: 352x288   : 1.222 Failed
-    */
     private Size calcBestPreviewSize(final Size[] sizes, int minWidth, float aspect, float aspectError) {
         int currWidth = sizes[0].getWidth();
         int currHeight = sizes[0].getHeight();
@@ -363,6 +334,35 @@ public class Camera2CvView extends Camera2CvViewBase {
         }
     }
 
+    /* TODO WHY?
+   Nexus 6p：
+   With    statusbar, calcPreviewSize: 2392x1356 : 1.764
+   Without statusbar, calcPreviewSize: 2392x1440 : 1.661
+
+       trying size: 4032x3024 : 1.333 Half+  <<<<<<<<<<<<<<<<
+       trying size: 4000x3000 : 1.333 Failed
+       trying size: 3840x2160 : 1.777 Full   <<<<<<<<<<<<<<<<
+       trying size: 3264x2448 : 1.333 Half+  <<<<<<<<<<<<<<<<
+       trying size: 3200x2400 : 1.333 Half+  <<<<<<<<<<<<<<<<
+       trying size: 2976x2976 : 1.000 Failed
+       trying size: 2592x1944 : 1.333 Failed
+       trying size: 2688x1512 : 1.777 Full   <<<<<<<<<<<<<<<<
+       trying size: 2048x1536 : 1.333 Failed
+       trying size: 1920x1080 : 1.777 Full   <<<<<<<<<<<<<<<<
+       trying size: 1600x1200 : 1.333 Half+  <<<<<<<<<<<<<<<<
+       trying size: 1440x1080 : 1.333 Failed
+       trying size: 1280x960  : 1.333 Failed
+       trying size: 1280x768  : 1.666 Failed
+       trying size: 1280x720  : 1.777 Full   <<<<<<<<<<<<<<<<
+       trying size: 1024x768  : 1.333 Failed
+       trying size: 800x600   : 1.333 Failed
+       trying size: 864x480   : 1.800 Failed
+       trying size: 800x480   : 1.666 Failed
+       trying size: 720x480   : 1.500 Failed
+       trying size: 640x480   : 1.333 Half+  <<<<<<<<<<<<<<<<
+       trying size: 640x360   : 1.777 Full   <<<<<<<<<<<<<<<<
+       trying size: 352x288   : 1.222 Failed
+   */
     boolean calcPreviewSize(final int width, final int height) {
         if (mCameraID == null) {
             Log.e(TAG, "Camera isn't initialized!");
@@ -382,6 +382,7 @@ public class Camera2CvView extends Camera2CvViewBase {
             } else {
                 displayAspect = (float) displaySize.x / displaySize.y;
             }
+//            float aspect = displayAspect;
             float aspect = Math.abs(1.333 - displayAspect) < Math.abs(1.777 - displayAspect) ? 1.333f : 1.777f;
 
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(mCameraID);
@@ -420,7 +421,6 @@ public class Camera2CvView extends Camera2CvViewBase {
         try {
             boolean needReconfig = calcPreviewSize(width, height);
             AllocateCache(width, height, mPreviewSize.getWidth(), mPreviewSize.getHeight());
-
             if (needReconfig) {
                 if (null != mCaptureSession) {
                     Log.d(TAG, "closing existing previewSession");
