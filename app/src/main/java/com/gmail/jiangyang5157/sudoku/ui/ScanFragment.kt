@@ -99,6 +99,12 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
         Imgproc.dilate(adaptiveThresholdMat, dilateMat, kernelMat)
 
         /**
+         * Canny
+         */
+//        val cannyMat = Mat()
+//        Imgproc.Canny(dilateMat, cannyMat, 127.0, 255.0, 3, false)
+
+        /**
          * Find contour with largest area
          */
         val contoursMatOfPoint = arrayListOf<MatOfPoint>()
