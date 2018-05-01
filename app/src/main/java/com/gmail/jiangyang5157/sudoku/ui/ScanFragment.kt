@@ -18,7 +18,7 @@ import org.opencv.imgproc.Imgproc
 /**
  * Created by Yang Jiang on April 30, 2018
  */
-class ScanFragment : Fragment(), Camera2CvViewBase.CvCameraViewListener2 {
+class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
 
     companion object {
         const val TAG = "ScanFragment"
@@ -27,7 +27,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.CvCameraViewListener2 {
     private var mCamera2CvView: Camera2CvView? = null
     private var isScanCamera2ViewEnabled = false
     private lateinit var scalarAccent: Scalar
-    private val mOcrFrameRate = FPSValidation(-1)
+    private val mProcessorFps = FPSValidation(-1)
     private var mRgba: Mat? = null
     private var mGray: Mat? = null
 
@@ -41,6 +41,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.CvCameraViewListener2 {
         view?.apply {
             mCamera2CvView = findViewById(R.id.view_camera2cv) as Camera2CvView
             mCamera2CvView?.setCvCameraViewListener(this@ScanFragment)
+            mCamera2CvView?.enableFpsMeter()
             findViewById(R.id.btn_toggle).setOnClickListener { toggleScanCamera2View() }
         }
     }
@@ -62,17 +63,14 @@ class ScanFragment : Fragment(), Camera2CvViewBase.CvCameraViewListener2 {
         val rgba = inputFrame.rgba()
         val gray = inputFrame.gray()
 
-        Imgproc.cvtColor(mRgba, mRgba, Imgproc.COLOR_RGBA2BGR)
+        Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2BGR)
 
-//        int colorChannels = (mRgba.channels() == 3) ? Imgproc.COLOR_BGR2GRAY : ((mRgba.channels() == 4) ? Imgproc.COLOR_BGRA2GRAY : 1)
-//        Imgproc.cvtColor(mRgba, mGray, colorChannels)
+//        if (mProcessorFps.accept()) {
+//            mRgba = handleRgba(rgba, gray)
+//            mGray = gray
+//        }
 
-        if (mOcrFrameRate.accept()) {
-            mGray = gray
-            mRgba = handleRgba(rgba, gray)
-        }
-
-        return mRgba!!
+        return rgba
     }
 
     private fun handleRgba(rgba: Mat, gray: Mat): Mat {

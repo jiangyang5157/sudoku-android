@@ -2,6 +2,7 @@ package com.gmail.jiangyang5157.sudoku.widget.scan;
 
 import android.content.Context;
 import android.graphics.ImageFormat;
+import android.graphics.Point;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -13,28 +14,26 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
-import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager;
 
-import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Created by Yang Jiang on April 29, 2018
  * <p>
- * This class is copied from openCVLibrary341 {@link org.opencv.android.JavaCamera2View},
- * to optimize for a better frame rate by reducing some of image quality.
+ * This class is copied from openCVLibrary341 {@link org.opencv.android.JavaCamera2View} to optimize for a better frame rate.
  * <p>
  * Modified:
- * {@link com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView#calcBestPreviewSize(android.util.Size[], int, int)}
+ * {@link com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView#calcBestPreviewSize(Size[], int, int)}
  */
 
 /**
@@ -57,29 +56,35 @@ public class Camera2CvView extends Camera2CvViewBase {
     private CameraCaptureSession mCaptureSession;
     private CaptureRequest.Builder mPreviewRequestBuilder;
     private String mCameraID;
-    private android.util.Size mPreviewSize = new android.util.Size(-1, -1);
+    private Size mPreviewSize = new Size(-1, -1);
 
     private HandlerThread mBackgroundThread;
     private Handler mBackgroundHandler;
 
-    public Camera2CvView(Context context, int cameraId) {
-        super(context, cameraId);
+    public Camera2CvView(Context context) {
+        super(context);
     }
 
     public Camera2CvView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
+    public Camera2CvView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    public Camera2CvView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+    }
+
     private void startBackgroundThread() {
-        Log.i(TAG, "startBackgroundThread");
         stopBackgroundThread();
-        mBackgroundThread = new HandlerThread("OpenCVCameraBackground");
+        mBackgroundThread = new HandlerThread("Camera2CvViewBackgroundThread");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
     }
 
     private void stopBackgroundThread() {
-        Log.i(TAG, "stopBackgroundThread");
         if (mBackgroundThread == null)
             return;
         mBackgroundThread.quitSafely();
@@ -93,30 +98,39 @@ public class Camera2CvView extends Camera2CvViewBase {
     }
 
     protected boolean initializeCamera() {
-        Log.i(TAG, "initializeCamera");
+        Log.i(TAG, "Initialize camera");
         CameraManager manager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
         try {
+            assert manager != null;
             String camList[] = manager.getCameraIdList();
             if (camList.length == 0) {
                 Log.e(TAG, "Error: camera isn't detected.");
                 return false;
             }
-            if (mCameraIndex == CameraBridgeViewBase.CAMERA_ID_ANY) {
-                mCameraID = camList[0];
-            } else {
-                for (String cameraID : camList) {
-                    CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraID);
-                    if ((mCameraIndex == CameraBridgeViewBase.CAMERA_ID_BACK &&
-                            characteristics.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_BACK) ||
-                            (mCameraIndex == CameraBridgeViewBase.CAMERA_ID_FRONT &&
-                                    characteristics.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT)
-                            ) {
+
+            CameraCharacteristics characteristics = null;
+            for (String cameraID : camList) {
+                characteristics = manager.getCameraCharacteristics(cameraID);
+                if (mCameraIndex == Camera2CvViewBase.CAMERA_ID_ANY) {
+                    mCameraID = cameraID;
+                    break;
+                } else if (mCameraIndex == Camera2CvViewBase.CAMERA_ID_BACK) {
+                    if (characteristics.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_BACK) {
+                        mCameraID = cameraID;
+                        break;
+                    }
+                } else if (mCameraIndex == Camera2CvViewBase.CAMERA_ID_FRONT) {
+                    if (characteristics.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT) {
                         mCameraID = cameraID;
                         break;
                     }
                 }
             }
+
             if (mCameraID != null) {
+                mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+                mDisplayRotation = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
+                mRotationDegree = rotationDegree();
                 Log.i(TAG, "Opening camera: " + mCameraID);
                 manager.openCamera(mCameraID, mStateCallback, mBackgroundHandler);
             }
@@ -129,6 +143,48 @@ public class Camera2CvView extends Camera2CvViewBase {
             Log.e(TAG, "OpenCamera - Security Exception", e);
         }
         return false;
+    }
+
+    private int rotationDegree() {
+        switch (mDisplayRotation) {
+            case Surface.ROTATION_0:
+                return (90 + mSensorOrientation + 270) % 360;
+            case Surface.ROTATION_90:
+                return (mSensorOrientation + 270) % 360;
+            case Surface.ROTATION_180:
+                return (270 + mSensorOrientation + 270) % 360;
+            case Surface.ROTATION_270:
+                return (180 + mSensorOrientation + 270) % 360;
+            default:
+                throw new IllegalArgumentException("Unknown display rotation: " + mDisplayRotation);
+        }
+    }
+
+    /**
+     * Determines if the dimensions are swapped given the phone's current rotation.
+     *
+     * @return true if the dimensions are swapped, false otherwise.
+     */
+    private boolean areDimensionsSwapped() {
+        boolean swappedDimensions = false;
+        switch (mDisplayRotation) {
+            case Surface.ROTATION_0:
+            case Surface.ROTATION_180:
+                if (mSensorOrientation == 90 || mSensorOrientation == 270) {
+                    swappedDimensions = true;
+                }
+                break;
+            case Surface.ROTATION_90:
+            case Surface.ROTATION_270:
+                if (mSensorOrientation == 0 || mSensorOrientation == 180) {
+                    swappedDimensions = true;
+                }
+                break;
+            default:
+                Log.e(TAG, "Display rotation is invalid: " + mDisplayRotation);
+                break;
+        }
+        return swappedDimensions;
     }
 
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
@@ -154,8 +210,10 @@ public class Camera2CvView extends Camera2CvViewBase {
     };
 
     private void createCameraPreviewSession() {
-        final int w = mPreviewSize.getWidth(), h = mPreviewSize.getHeight();
+        final int w = mPreviewSize.getWidth();
+        final int h = mPreviewSize.getHeight();
         Log.i(TAG, "createCameraPreviewSession(" + w + "x" + h + ")");
+
         if (w < 0 || h < 0)
             return;
         try {
@@ -173,25 +231,24 @@ public class Camera2CvView extends Camera2CvViewBase {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
                     Image image = reader.acquireLatestImage();
-                    if (image == null)
+                    if (image == null) {
                         return;
+                    }
 
-                    // sanity checks - 3 planes
                     Image.Plane[] planes = image.getPlanes();
-                    assert (planes.length == 3);
-                    assert (image.getFormat() == mPreviewFormat);
-
                     // see also https://developer.android.com/reference/android/graphics/ImageFormat.html#YUV_420_888
                     // Y plane (0) non-interleaved => stride == 1; U/V plane interleaved => stride == 2
-                    assert (planes[0].getPixelStride() == 1);
-                    assert (planes[1].getPixelStride() == 2);
-                    assert (planes[2].getPixelStride() == 2);
+//                    assert (image.getFormat() == mPreviewFormat);
+//                    assert (planes.length == 3);
+//                    assert (planes[0].getPixelStride() == 1);
+//                    assert (planes[1].getPixelStride() == 2);
+//                    assert (planes[2].getPixelStride() == 2);
 
                     ByteBuffer y_plane = planes[0].getBuffer();
                     ByteBuffer uv_plane = planes[1].getBuffer();
                     Mat y_mat = new Mat(h, w, CvType.CV_8UC1, y_plane);
                     Mat uv_mat = new Mat(h / 2, w / 2, CvType.CV_8UC2, uv_plane);
-                    JavaCamera2Frame tempFrame = new JavaCamera2Frame(y_mat, uv_mat, w, h);
+                    Camera2CvFrame tempFrame = new Camera2CvFrame(mPreviewFormat, y_mat, uv_mat, w, h);
                     deliverAndDrawFrame(tempFrame);
                     tempFrame.release();
                     image.close();
@@ -202,11 +259,10 @@ public class Camera2CvView extends Camera2CvViewBase {
             mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             mPreviewRequestBuilder.addTarget(surface);
 
-            mCameraDevice.createCaptureSession(Arrays.asList(surface),
+            mCameraDevice.createCaptureSession(Collections.singletonList(surface),
                     new CameraCaptureSession.StateCallback() {
                         @Override
-                        public void onConfigured(CameraCaptureSession cameraCaptureSession) {
-                            Log.i(TAG, "createCaptureSession::onConfigured");
+                        public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                             if (null == mCameraDevice) {
                                 return; // camera is already closed
                             }
@@ -238,7 +294,7 @@ public class Camera2CvView extends Camera2CvViewBase {
 
     @Override
     protected void disconnectCamera() {
-        Log.i(TAG, "closeCamera");
+        Log.i(TAG, "Disconnect camera");
         try {
             CameraDevice c = mCameraDevice;
             mCameraDevice = null;
@@ -287,20 +343,17 @@ public class Camera2CvView extends Camera2CvViewBase {
         trying size: 640x360   : 1.777 Full   <<<<<<<<<<<<<<<<
         trying size: 352x288   : 1.222 Failed
     */
-    private android.util.Size calcBestPreviewSize(final android.util.Size[] sizes, final int width, final int height) {
-        float actualAspect = (float) width / height;
-        float aspect = Math.abs(1.333 - actualAspect) < Math.abs(1.777 - actualAspect) ? 1.333f : 1.777f;
-        float aspectError = 0.2f;
-        int currWidth = sizes[0].getWidth(), minWidth = 600;
+    private Size calcBestPreviewSize(final Size[] sizes, int minWidth, float aspect, float aspectError) {
+        int currWidth = sizes[0].getWidth();
         int currHeight = sizes[0].getHeight();
 
-        for (android.util.Size sz : sizes) {
+        for (Size sz : sizes) {
             int w = sz.getWidth(), h = sz.getHeight();
-            Log.d(TAG, "trying size: " + w + "x" + h);
+            Log.d(TAG, "Trying size: " + w + "x" + h);
             if (minWidth <= w && w <= currWidth && Math.abs(aspect - (float) w / h) < aspectError) {
                 currWidth = w;
                 currHeight = h;
-                Log.i(TAG, "apply size: " + currWidth + "x" + currHeight);
+                Log.i(TAG, "Apply size: " + currWidth + "x" + currHeight);
             }
         }
         if (currWidth < 0 || currHeight < 0) {
@@ -311,22 +364,41 @@ public class Camera2CvView extends Camera2CvViewBase {
     }
 
     boolean calcPreviewSize(final int width, final int height) {
-        Log.i(TAG, "calcPreviewSize: " + width + "x" + height);
         if (mCameraID == null) {
             Log.e(TAG, "Camera isn't initialized!");
             return false;
         }
+
         CameraManager manager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
         try {
+            int minWidth = 600;
+            float aspectError = 0.02f;
+            float displayAspect;
+            Point displaySize = new Point();
+            ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getSize(displaySize);
+            boolean swappedDimensions = areDimensionsSwapped();
+            if (swappedDimensions) {
+                displayAspect = (float) displaySize.y / displaySize.x;
+            } else {
+                displayAspect = (float) displaySize.x / displaySize.y;
+            }
+            float aspect = Math.abs(1.333 - displayAspect) < Math.abs(1.777 - displayAspect) ? 1.333f : 1.777f;
+
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(mCameraID);
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-            android.util.Size[] sizes = map.getOutputSizes(ImageReader.class);
-            android.util.Size bestSize = calcBestPreviewSize(sizes, width, height);
-            Log.i(TAG, "best size: " + bestSize.toString());
+            Size[] sizes = map.getOutputSizes(ImageReader.class);
+            Size bestSize = calcBestPreviewSize(sizes, minWidth, aspect, aspectError);
+            Log.i(TAG, "Best preview size: " + bestSize.toString());
+
             if (mPreviewSize.equals(bestSize)) {
                 return false;
             } else {
                 mPreviewSize = bestSize;
+                if (swappedDimensions) {
+                    mScale = Math.min(((float) height) / mPreviewSize.getWidth(), ((float) width) / mPreviewSize.getHeight());
+                } else {
+                    mScale = Math.min(((float) height) / mPreviewSize.getHeight(), ((float) width) / mPreviewSize.getWidth());
+                }
                 return true;
             }
         } catch (CameraAccessException e) {
@@ -341,20 +413,13 @@ public class Camera2CvView extends Camera2CvViewBase {
 
     @Override
     protected boolean connectCamera(int width, int height) {
-        Log.i(TAG, "setCameraPreviewSize(" + width + "x" + height + ")");
+        Log.i(TAG, "connectCamera(" + width + "x" + height + ")");
         startBackgroundThread();
         initializeCamera();
+
         try {
             boolean needReconfig = calcPreviewSize(width, height);
-            mFrameWidth = mPreviewSize.getWidth();
-            mFrameHeight = mPreviewSize.getHeight();
-
-            if ((getLayoutParams().width == LayoutParams.MATCH_PARENT) && (getLayoutParams().height == LayoutParams.MATCH_PARENT))
-                mScale = Math.min(((float) height) / mFrameHeight, ((float) width) / mFrameWidth);
-            else
-                mScale = 0;
-
-            AllocateCache();
+            AllocateCache(width, height, mPreviewSize.getWidth(), mPreviewSize.getHeight());
 
             if (needReconfig) {
                 if (null != mCaptureSession) {
@@ -370,53 +435,4 @@ public class Camera2CvView extends Camera2CvViewBase {
         return true;
     }
 
-    private class JavaCamera2Frame implements CvCameraViewFrame {
-        @Override
-        public Mat gray() {
-            return mYuvFrameData.submat(0, mHeight, 0, mWidth);
-        }
-
-        @Override
-        public Mat rgba() {
-            if (mPreviewFormat == ImageFormat.NV21)
-                Imgproc.cvtColor(mYuvFrameData, mRgba, Imgproc.COLOR_YUV2RGBA_NV21, 4);
-            else if (mPreviewFormat == ImageFormat.YV12)
-                Imgproc.cvtColor(mYuvFrameData, mRgba, Imgproc.COLOR_YUV2RGB_I420, 4); // COLOR_YUV2RGBA_YV12 produces inverted colors
-            else if (mPreviewFormat == ImageFormat.YUV_420_888) {
-                assert (mUVFrameData != null);
-                Imgproc.cvtColorTwoPlane(mYuvFrameData, mUVFrameData, mRgba, Imgproc.COLOR_YUV2RGBA_NV21);
-            } else
-                throw new IllegalArgumentException("Preview Format can be NV21 or YV12");
-
-            return mRgba;
-        }
-
-        public JavaCamera2Frame(Mat Yuv420sp, int width, int height) {
-            super();
-            mWidth = width;
-            mHeight = height;
-            mYuvFrameData = Yuv420sp;
-            mUVFrameData = null;
-            mRgba = new Mat();
-        }
-
-        public JavaCamera2Frame(Mat Y, Mat UV, int width, int height) {
-            super();
-            mWidth = width;
-            mHeight = height;
-            mYuvFrameData = Y;
-            mUVFrameData = UV;
-            mRgba = new Mat();
-        }
-
-        public void release() {
-            mRgba.release();
-        }
-
-        private Mat mYuvFrameData;
-        private Mat mUVFrameData;
-        private Mat mRgba;
-        private int mWidth;
-        private int mHeight;
-    }
 }

@@ -11,5 +11,6 @@
     <dimen name="space_micro">1dp</dimen>
 
     <dimen name="btn_keypad_size">56dip</dimen>
+    <dimen name="control_panel_size">112dp</dimen>
 
 </resources>
