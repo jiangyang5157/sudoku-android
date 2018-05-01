@@ -31,9 +31,6 @@ import java.util.Collections;
  * Created by Yang Jiang on April 29, 2018
  * <p>
  * This class is copied from openCVLibrary341 {@link org.opencv.android.JavaCamera2View} to optimize for a better frame rate.
- * <p>
- * Modified:
- * {@link com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView#calcBestPreviewSize(Size[], int, int)}
  */
 
 /**
