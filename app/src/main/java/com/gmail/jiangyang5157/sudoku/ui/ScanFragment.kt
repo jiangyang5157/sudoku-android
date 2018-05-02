@@ -78,6 +78,8 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
 
     override fun onCameraViewStopped() {
         Log.d(TAG, "onCameraViewStopped")
+        mRgba?.release()
+        mGray?.release()
     }
 
     override fun onCameraFrame(inputFrame: Camera2CvViewBase.CvCameraViewFrame): Mat {
@@ -264,7 +266,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        debug_sb_guassion_blur_ksize.progress = 2
+        debug_sb_guassion_blur_ksize.progress = 1
         val guassion_blur_sigma_step = 0.1
         val guassion_blur_sigma_min = 0.0
         val guassion_blur_sigma_max = 20.0
@@ -280,7 +282,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        debug_sb_guassion_blur_sigma.progress = 0
+        debug_sb_guassion_blur_sigma.progress = 1
 
         /*
         Adaptive Threshold
@@ -320,7 +322,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        debug_sb_adaptive_threshold_c.progress = 20
+        debug_sb_adaptive_threshold_c.progress = 1
 
         /*
         Cross Dilate
@@ -344,7 +346,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        debug_sb_cross_dilate_dilation_size.progress = 5
+        debug_sb_cross_dilate_dilation_size.progress = 1
 
         /*
         Canny
@@ -371,7 +373,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        debug_sb_canny_threshold1.progress = 127
+        debug_sb_canny_threshold1.progress = 1
         val canny_threshold2_step = 1.0
         val canny_threshold2_min = 0.0
         val canny_threshold2_max = 255.0
@@ -386,7 +388,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        debug_sb_canny_threshold2.progress = 255
+        debug_sb_canny_threshold2.progress = 1
         val canny_apertureSize_step = 2
         val canny_apertureSize_min = 3
         val canny_apertureSize_max = 7
@@ -401,7 +403,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        debug_sb_canny_aperture_size.progress = 0
+        debug_sb_canny_aperture_size.progress = 1
         debug_sc_canny_l2gradient.setOnCheckedChangeListener { _, isChecked ->
             mCanny.l2gradient = isChecked
         }
