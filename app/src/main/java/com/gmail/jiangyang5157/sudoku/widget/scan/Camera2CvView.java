@@ -1,7 +1,6 @@
 package com.gmail.jiangyang5157.sudoku.widget.scan;
 
 import android.content.Context;
-import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -55,11 +54,11 @@ public class Camera2CvView extends Camera2CvViewBase {
     private Handler mBackgroundHandler;
 
     private ImageReader mImageReader;
-    private int mPreviewFormat = ImageFormat.YUV_420_888;
 
+    private int mPreviewWidth = -1;
+    private int mPreviewHeight = -1;
     protected int mSensorOrientation = 0;
     protected int mDisplayRotation = 0;
-    private Size mPreviewSize = new Size(-1, -1);
     protected float mScale = 1;
 
     public Camera2CvView(Context context) {
@@ -86,8 +85,9 @@ public class Camera2CvView extends Camera2CvViewBase {
     }
 
     private void stopBackgroundThread() {
-        if (mBackgroundThread == null)
+        if (mBackgroundThread == null) {
             return;
+        }
         mBackgroundThread.quitSafely();
         try {
             mBackgroundThread.join();
@@ -98,93 +98,30 @@ public class Camera2CvView extends Camera2CvViewBase {
         }
     }
 
-    protected boolean initializeCamera() {
-        Log.i(TAG, "Initialize camera");
+    protected boolean openCamera() {
+        Log.i(TAG, "Opening camera");
         CameraManager manager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
+        assert manager != null;
         try {
-            assert manager != null;
             String camList[] = manager.getCameraIdList();
             if (camList.length == 0) {
-                Log.e(TAG, "Error: camera isn't detected.");
+                Log.e(TAG, "Open camera - camera isn't detected.");
                 return false;
             }
-
-            CameraCharacteristics characteristics = null;
-            for (String cameraID : camList) {
-                characteristics = manager.getCameraCharacteristics(cameraID);
-                if (mCameraIndex == Camera2CvViewBase.CAMERA_ID_ANY) {
-                    mCameraID = cameraID;
-                    break;
-                } else if (mCameraIndex == Camera2CvViewBase.CAMERA_ID_BACK) {
-                    if (characteristics.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_BACK) {
-                        mCameraID = cameraID;
-                        break;
-                    }
-                } else if (mCameraIndex == Camera2CvViewBase.CAMERA_ID_FRONT) {
-                    if (characteristics.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT) {
-                        mCameraID = cameraID;
-                        break;
-                    }
-                }
-            }
-
+            mCameraID = camList[0];
+            Log.d(TAG, "Camera ID: " + mCameraID);
             if (mCameraID != null) {
-                mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-                mDisplayRotation = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
-                Log.i(TAG, "Opening camera: " + mCameraID);
                 manager.openCamera(mCameraID, mStateCallback, mBackgroundHandler);
             }
             return true;
         } catch (CameraAccessException e) {
-            Log.e(TAG, "OpenCamera - Camera Access Exception", e);
+            Log.e(TAG, "Open camera - Camera Access Exception", e);
         } catch (IllegalArgumentException e) {
-            Log.e(TAG, "OpenCamera - Illegal Argument Exception", e);
+            Log.e(TAG, "Open camera - Illegal Argument Exception", e);
         } catch (SecurityException e) {
-            Log.e(TAG, "OpenCamera - Security Exception", e);
+            Log.e(TAG, "Open camera - Security Exception", e);
         }
         return false;
-    }
-
-    private int rotationDegree() {
-        switch (mDisplayRotation) {
-            case Surface.ROTATION_0:
-                return (90 + mSensorOrientation + 270) % 360;
-            case Surface.ROTATION_90:
-                return (mSensorOrientation + 270) % 360;
-            case Surface.ROTATION_180:
-                return (270 + mSensorOrientation + 270) % 360;
-            case Surface.ROTATION_270:
-                return (180 + mSensorOrientation + 270) % 360;
-            default:
-                throw new IllegalArgumentException("Unknown display rotation: " + mDisplayRotation);
-        }
-    }
-
-    /**
-     * Determines if the dimensions are swapped given the phone's current rotation.
-     *
-     * @return true if the dimensions are swapped, false otherwise.
-     */
-    private boolean areDimensionsSwapped() {
-        boolean swappedDimensions = false;
-        switch (mDisplayRotation) {
-            case Surface.ROTATION_0:
-            case Surface.ROTATION_180:
-                if (mSensorOrientation == 90 || mSensorOrientation == 270) {
-                    swappedDimensions = true;
-                }
-                break;
-            case Surface.ROTATION_90:
-            case Surface.ROTATION_270:
-                if (mSensorOrientation == 0 || mSensorOrientation == 180) {
-                    swappedDimensions = true;
-                }
-                break;
-            default:
-                Log.e(TAG, "Display rotation is invalid: " + mDisplayRotation);
-                break;
-        }
-        return swappedDimensions;
     }
 
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
@@ -206,16 +143,18 @@ public class Camera2CvView extends Camera2CvViewBase {
             cameraDevice.close();
             mCameraDevice = null;
         }
-
     };
 
     private void createCameraPreviewSession() {
-        final int w = mPreviewSize.getWidth();
-        final int h = mPreviewSize.getHeight();
-        Log.i(TAG, "createCameraPreviewSession(" + w + "x" + h + ")");
+        final int w = mPreviewWidth;
+        final int h = mPreviewHeight;
 
-        if (w < 0 || h < 0)
+        Log.i(TAG, "createCameraPreviewSession: " + w + "_" + h + ")");
+        if (w < 0 || h < 0) {
+            Log.d(TAG, "createCameraPreviewSession: preview size is not ready");
             return;
+        }
+
         try {
             if (null == mCameraDevice) {
                 Log.e(TAG, "createCameraPreviewSession: camera isn't opened");
@@ -226,7 +165,7 @@ public class Camera2CvView extends Camera2CvViewBase {
                 return;
             }
 
-            mImageReader = ImageReader.newInstance(w, h, mPreviewFormat, 2);
+            mImageReader = ImageReader.newInstance(w, h, Camera2CvFrame.IMAGE_FORMAT, 2);
             mImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
@@ -236,19 +175,12 @@ public class Camera2CvView extends Camera2CvViewBase {
                     }
 
                     Image.Plane[] planes = image.getPlanes();
-                    // see also https://developer.android.com/reference/android/graphics/ImageFormat.html#YUV_420_888
-                    // Y plane (0) non-interleaved => stride == 1; U/V plane interleaved => stride == 2
-//                    assert (image.getFormat() == mPreviewFormat);
-//                    assert (planes.length == 3);
-//                    assert (planes[0].getPixelStride() == 1);
-//                    assert (planes[1].getPixelStride() == 2);
-//                    assert (planes[2].getPixelStride() == 2);
-
                     ByteBuffer y_plane = planes[0].getBuffer();
                     ByteBuffer uv_plane = planes[1].getBuffer();
                     Mat y_mat = new Mat(h, w, CvType.CV_8UC1, y_plane);
                     Mat uv_mat = new Mat(h / 2, w / 2, CvType.CV_8UC2, uv_plane);
-                    Camera2CvFrame tempFrame = new Camera2CvFrame(mPreviewFormat, y_mat, uv_mat, w, h);
+
+                    Camera2CvFrame tempFrame = new Camera2CvFrame(y_mat, uv_mat, w, h);
                     deliverAndDrawFrame(tempFrame);
                     tempFrame.release();
                     image.close();
@@ -264,15 +196,16 @@ public class Camera2CvView extends Camera2CvViewBase {
                         @Override
                         public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                             if (null == mCameraDevice) {
-                                return; // camera is already closed
+                                Log.d(TAG, "camera is already closed");
+                                return;
                             }
+
                             mCaptureSession = cameraCaptureSession;
                             try {
                                 mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
                                         CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
                                 mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
                                         CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
-
                                 mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), null, mBackgroundHandler);
                                 Log.i(TAG, "CameraPreviewSession has been started");
                             } catch (Exception e) {
@@ -285,8 +218,7 @@ public class Camera2CvView extends Camera2CvViewBase {
                             Log.e(TAG, "createCameraPreviewSession failed");
                         }
                     },
-                    null
-            );
+                    null);
         } catch (CameraAccessException e) {
             Log.e(TAG, "createCameraPreviewSession", e);
         }
@@ -364,43 +296,50 @@ public class Camera2CvView extends Camera2CvViewBase {
        trying size: 352x288   : 1.222 Failed
    */
     boolean calcPreviewSize(final int width, final int height) {
-        if (mCameraID == null) {
-            Log.e(TAG, "Camera isn't initialized!");
-            return false;
-        }
-
+        Log.d(TAG, "calcPreviewSize: " + width + "_" + height);
         CameraManager manager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
+        assert manager != null;
+
         try {
+            CameraCharacteristics characteristics = manager.getCameraCharacteristics(mCameraID);
+            mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+            mDisplayRotation = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
+
             int minWidth = 600;
             float aspectError = 0.02f;
             float displayAspect;
+
             Point displaySize = new Point();
             ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getSize(displaySize);
             Log.i(TAG, "displaySize: " + displaySize);
-            boolean swappedDimensions = areDimensionsSwapped();
+
+            boolean swappedDimensions = areDimensionsSwapped(mSensorOrientation, mDisplayRotation);
             Log.i(TAG, "swappedDimensions: " + swappedDimensions);
+
             if (swappedDimensions) {
                 displayAspect = (float) displaySize.y / displaySize.x;
             } else {
                 displayAspect = (float) displaySize.x / displaySize.y;
             }
             float aspect = Math.abs(1.333 - displayAspect) < Math.abs(1.777 - displayAspect) ? 1.333f : 1.777f;
+            Log.i(TAG, "aspect: " + aspect);
 
-            CameraCharacteristics characteristics = manager.getCameraCharacteristics(mCameraID);
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             Size[] sizes = map.getOutputSizes(ImageReader.class);
+
             Size bestSize = calcBestPreviewSize(sizes, minWidth, aspect, aspectError);
             Log.i(TAG, "Best size: " + bestSize.toString());
 
-            if (mPreviewSize.equals(bestSize)) {
-                return false;
+            if (swappedDimensions) {
+                mScale = Math.min(((float) height) / bestSize.getWidth(), ((float) width) / bestSize.getHeight());
             } else {
-                mPreviewSize = bestSize;
-                if (swappedDimensions) {
-                    mScale = Math.min(((float) height) / bestSize.getWidth(), ((float) width) / bestSize.getHeight());
-                } else {
-                    mScale = Math.min(((float) height) / bestSize.getHeight(), ((float) width) / bestSize.getWidth());
-                }
+                mScale = Math.min(((float) height) / bestSize.getHeight(), ((float) width) / bestSize.getWidth());
+            }
+            Log.i(TAG, "Scale: " + mScale);
+
+            if (mPreviewWidth != bestSize.getWidth() || mPreviewHeight != bestSize.getHeight()) {
+                mPreviewWidth = bestSize.getWidth();
+                mPreviewHeight = bestSize.getHeight();
                 return true;
             }
         } catch (CameraAccessException e) {
@@ -414,29 +353,25 @@ public class Camera2CvView extends Camera2CvViewBase {
     }
 
     @Override
-    protected boolean connectCamera(int width, int height) {
-        Log.i(TAG, "connectCamera(" + width + "x" + height + ")");
+    protected void connectCamera(int width, int height) {
+        Log.i(TAG, "Connect camera: " + width + "_" + height);
         startBackgroundThread();
-        initializeCamera();
+        openCamera();
 
-        try {
-            boolean needReconfig = calcPreviewSize(width, height);
-            AllocateCache(width, height,
-                    mPreviewSize.getWidth(), mPreviewSize.getHeight(),
-                    mPreviewSize.getWidth(), mPreviewSize.getHeight(),
-                    mScale, rotationDegree());
-            if (needReconfig) {
-                if (null != mCaptureSession) {
-                    Log.d(TAG, "closing existing previewSession");
-                    mCaptureSession.close();
-                    mCaptureSession = null;
-                }
-                createCameraPreviewSession();
+        boolean needReconfig = calcPreviewSize(width, height);
+        if (needReconfig) {
+            if (null != mCaptureSession) {
+                Log.d(TAG, "closing existing previewSession");
+                mCaptureSession.close();
+                mCaptureSession = null;
             }
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Interrupted while setCameraPreviewSize.", e);
+            createCameraPreviewSession();
         }
-        return true;
-    }
 
+        AllocateCache(
+                width, height,
+                mPreviewWidth, mPreviewHeight,
+                mScale,
+                rotationDegree(mSensorOrientation, mDisplayRotation));
+    }
 }

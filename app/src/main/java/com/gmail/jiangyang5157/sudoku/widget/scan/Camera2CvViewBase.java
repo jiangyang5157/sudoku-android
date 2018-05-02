@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -25,14 +26,17 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
 
     private static final String TAG = "Camera2CvViewBase";
 
+    private Camera2CvViewListener mListener;
+
+    private final Object mSyncObject = new Object();
+
+    private boolean mSurfaceExist;
+    private boolean mEnabled;
+    protected FpsMeter mFpsMeter = null;
+
     private static final int STOPPED = 0;
     private static final int STARTED = 1;
     private int mState = STOPPED;
-
-    public static final int CAMERA_ID_ANY = -1;
-    public static final int CAMERA_ID_BACK = 99;
-    public static final int CAMERA_ID_FRONT = 98;
-    protected int mCameraIndex = CAMERA_ID_ANY;
 
     protected int mCacheWidth;
     protected int mCacheHeight;
@@ -44,16 +48,6 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
     private Rect mCacheSrcRect;
     private Rect mCacheDstRect;
     protected int mCacheRotation = 0;
-
-    private final Object mSyncObject = new Object();
-
-    private Camera2CvViewListener mListener;
-
-    private boolean mSurfaceExist;
-
-    protected boolean mEnabled;
-
-    protected FpsMeter mFpsMeter = null;
 
     public Camera2CvViewBase(Context context) {
         super(context);
@@ -233,27 +227,12 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
         }
     }
 
+    private void onEnterStartedState() {
+        connectCamera(getWidth(), getHeight());
+    }
+
     private void onEnterStoppedState() {
         /* nothing to do */
-    }
-
-    private void onExitStoppedState() {
-        /* nothing to do */
-    }
-
-    private void onEnterStartedState() {
-        if (!connectCamera(getWidth(), getHeight())) {
-            AlertDialog ad = new AlertDialog.Builder(getContext()).create();
-            ad.setCancelable(false);
-            ad.setMessage("It seems that you device does not support camera (or it is locked). Application will be closed.");
-            ad.setButton(DialogInterface.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    ((Activity) getContext()).finish();
-                }
-            });
-            ad.show();
-        }
     }
 
     private void onExitStartedState() {
@@ -261,6 +240,10 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
         if (mCacheBitmap != null) {
             mCacheBitmap.recycle();
         }
+    }
+
+    private void onExitStoppedState() {
+        /* nothing to do */
     }
 
     /**
@@ -308,13 +291,11 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
 
     /**
      * This method is invoked shall perform concrete operation to initialize the camera.
-     * CONTRACT: as a result of this method variables mCacheFrameWidth and mCacheFrameHeight MUST be
-     * initialized with the size of the Camera frames that will be delivered to external processor.
      *
      * @param width  - the width of this SurfaceView
      * @param height - the height of this SurfaceView
      */
-    protected abstract boolean connectCamera(int width, int height);
+    protected abstract void connectCamera(int width, int height);
 
     /**
      * Disconnects and release the particular camera object being connected to this surface view.
@@ -322,14 +303,57 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
      */
     protected abstract void disconnectCamera();
 
-    protected void AllocateCache(int width, int height, int frameWidth, int frameHeight, int previewWidth, int previewHeight, float scale, int rotation) {
+    public int rotationDegree(int sensorOrientation, int surfaceRotation) {
+        switch (surfaceRotation) {
+            case Surface.ROTATION_0:
+                return (90 + sensorOrientation + 270) % 360;
+            case Surface.ROTATION_90:
+                return (sensorOrientation + 270) % 360;
+            case Surface.ROTATION_180:
+                return (270 + sensorOrientation + 270) % 360;
+            case Surface.ROTATION_270:
+                return (180 + sensorOrientation + 270) % 360;
+            default:
+                Log.e(TAG, "Surface rotation is invalid: " + surfaceRotation);
+                return 0;
+        }
+    }
+
+    /**
+     * Determines if the dimensions are swapped given the phone's current rotation.
+     *
+     * @return true if the dimensions are swapped, false otherwise.
+     */
+    public boolean areDimensionsSwapped(int sensorOrientation, int surfaceRotation) {
+        boolean swappedDimensions = false;
+        switch (surfaceRotation) {
+            case Surface.ROTATION_0:
+            case Surface.ROTATION_180:
+                if (sensorOrientation == 90 || sensorOrientation == 270) {
+                    swappedDimensions = true;
+                }
+                break;
+            case Surface.ROTATION_90:
+            case Surface.ROTATION_270:
+                if (sensorOrientation == 0 || sensorOrientation == 180) {
+                    swappedDimensions = true;
+                }
+                break;
+            default:
+                Log.e(TAG, "Surface rotation is invalid: " + surfaceRotation);
+                break;
+        }
+        return swappedDimensions;
+    }
+
+    protected void AllocateCache(int width, int height, int previewWidth, int previewHeight, float scale, int rotation) {
         mCacheWidth = width;
         mCacheHeight = height;
         mCacheCenterX = (float) width / 2;
         mCacheCenterY = (float) height / 2;
 
-        mCacheFrameWidth = frameWidth;
-        mCacheFrameHeight = frameHeight;
+        mCacheFrameWidth = previewWidth;
+        mCacheFrameHeight = previewHeight;
 
         mCacheBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888);
         mCacheSrcRect = new Rect(0, 0, previewWidth, previewHeight);
@@ -342,7 +366,6 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
         mCacheRotation = rotation;
 
         Log.d(TAG, "AllocateCache: width_height=" + width + "_" + height + ", "
-                + "frameWidth_frameHeight=" + frameWidth + "_" + frameHeight + ", "
                 + "previewWidth_previewHeight=" + previewWidth + "_" + previewHeight + ", "
                 + "scale=" + scale + ", "
                 + "rotation=" + rotation);
