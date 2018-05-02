@@ -23,7 +23,6 @@ import android.view.WindowManager;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
-import java.nio.ByteBuffer;
 import java.util.Collections;
 
 /**
@@ -165,7 +164,6 @@ public class Camera2CvView extends Camera2CvViewBase {
                 return;
             }
 
-            final Camera2CvFrame tempFrame = new Camera2CvFrame(w, h);
             mImageReader = ImageReader.newInstance(w, h, Camera2CvFrame.IMAGE_FORMAT, 2);
             mImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
                 @Override
@@ -176,18 +174,13 @@ public class Camera2CvView extends Camera2CvViewBase {
                     }
 
                     Image.Plane[] planes = image.getPlanes();
-                    ByteBuffer y_plane = planes[0].getBuffer();
-                    ByteBuffer uv_plane = planes[1].getBuffer();
-                    Mat y_mat = new Mat(h, w, CvType.CV_8UC1, y_plane);
-                    Mat uv_mat = new Mat(h / 2, w / 2, CvType.CV_8UC2, uv_plane);
-                    tempFrame.init(y_mat, uv_mat);
-                    deliverAndDrawFrame(tempFrame);
+                    Mat yMat = new Mat(h, w, CvType.CV_8UC1, planes[0].getBuffer());
+                    Mat uvMat = new Mat(h / 2, w / 2, CvType.CV_8UC2, planes[1].getBuffer());
+                    Camera2CvFrame tempFrame = new Camera2CvFrame(yMat, uvMat, w, h);
+
+                    drawFrame(tempFrame);
                     tempFrame.release();
                     image.close();
-                    y_mat.release();
-                    uv_mat.release();
-                    y_plane.clear();
-                    uv_plane.clear();
                 }
             }, mBackgroundHandler);
             Surface surface = mImageReader.getSurface();

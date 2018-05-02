@@ -237,7 +237,7 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
      *
      * @param frame - the current frame to be delivered
      */
-    protected void deliverAndDrawFrame(CvCameraViewFrame frame) {
+    protected void drawFrame(CvCameraViewFrame frame) {
         Mat modified;
         if (mListener != null) {
             modified = mListener.onCameraFrame(frame);
