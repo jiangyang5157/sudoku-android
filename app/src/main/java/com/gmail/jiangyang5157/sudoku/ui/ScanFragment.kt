@@ -41,7 +41,6 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
         view?.apply {
             mCamera2CvView = findViewById(R.id.view_camera2cv) as Camera2CvView
             mCamera2CvView?.setCvCameraViewListener(this@ScanFragment)
-            mCamera2CvView?.enableFpsMeter()
             findViewById(R.id.btn_toggle).setOnClickListener { toggleScanCamera2View() }
         }
     }
@@ -65,9 +64,9 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
 
         Imgproc.cvtColor(mRgba, mRgba, Imgproc.COLOR_RGB2BGR)
 
-        if (mProcessorFps.accept()) {
-            mRgba = handleRgba(mRgba!!, mGray!!)
-        }
+//        if (mProcessorFps.accept()) {
+//            mRgba = handleRgba(mRgba!!, mGray!!)
+//        }
 
         return mRgba!!
     }

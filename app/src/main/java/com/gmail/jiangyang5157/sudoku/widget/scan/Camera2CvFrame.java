@@ -18,12 +18,15 @@ public class Camera2CvFrame implements Camera2CvViewBase.CvCameraViewFrame {
     private int mHeight;
     private Mat mRgba;
 
-    public Camera2CvFrame(Mat Y, Mat UV, int width, int height) {
+    public Camera2CvFrame(int width, int height) {
         super();
-        mYuvFrameData = Y;
-        mUVFrameData = UV;
         mWidth = width;
         mHeight = height;
+    }
+
+    public void init(Mat Y, Mat UV) {
+        mYuvFrameData = Y;
+        mUVFrameData = UV;
         mRgba = new Mat();
     }
 
@@ -39,8 +42,14 @@ public class Camera2CvFrame implements Camera2CvViewBase.CvCameraViewFrame {
     }
 
     public void release() {
-        mYuvFrameData.release();
-        mUVFrameData.release();
-        mRgba.release();
+        if (mYuvFrameData != null) {
+            mYuvFrameData.release();
+        }
+        if (mUVFrameData != null) {
+            mUVFrameData.release();
+        }
+        if (mRgba != null) {
+            mRgba.release();
+        }
     }
 }

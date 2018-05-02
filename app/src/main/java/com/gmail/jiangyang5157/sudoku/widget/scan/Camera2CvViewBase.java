@@ -1,9 +1,6 @@
 package com.gmail.jiangyang5157.sudoku.widget.scan;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -13,7 +10,6 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import org.opencv.android.FpsMeter;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
@@ -32,7 +28,6 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
 
     private boolean mSurfaceExist;
     private boolean mEnabled;
-    protected FpsMeter mFpsMeter = null;
 
     private static final int STOPPED = 0;
     private static final int STARTED = 1;
@@ -164,17 +159,6 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
         }
     }
 
-    public void enableFpsMeter() {
-        if (mFpsMeter == null) {
-            mFpsMeter = new FpsMeter();
-            mFpsMeter.setResolution(mCacheFrameWidth, mCacheFrameHeight);
-        }
-    }
-
-    public void disableFpsMeter() {
-        mFpsMeter = null;
-    }
-
     public void setCvCameraViewListener(Camera2CvViewListener listener) {
         mListener = listener;
     }
@@ -260,30 +244,14 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
         } else {
             modified = frame.rgba();
         }
-
-        if (modified != null) {
-            try {
-                Utils.matToBitmap(modified, mCacheBitmap);
-            } catch (Exception e) {
-                Log.e(TAG, "Mat type: " + modified);
-                Log.e(TAG, "Bitmap type: " + mCacheFrameWidth + "*" + mCacheFrameHeight);
-                Log.e(TAG, "Utils.matToBitmap() throws an exception: " + e.getMessage());
-                return;
-            }
-        }
+        Utils.matToBitmap(modified, mCacheBitmap);
 
         if (getHolder().getSurface().isValid()) {
             Canvas canvas = getHolder().lockCanvas();
             if (canvas != null) {
                 canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
-                canvas.save();
                 canvas.rotate(mCacheRotation, mCacheCenterX, mCacheCenterY);
                 canvas.drawBitmap(mCacheBitmap, mCacheSrcRect, mCacheDstRect, null);
-                canvas.restore();
-                if (mFpsMeter != null) {
-                    mFpsMeter.measure();
-                    mFpsMeter.draw(canvas, 20, 30);
-                }
                 getHolder().unlockCanvasAndPost(canvas);
             }
         }

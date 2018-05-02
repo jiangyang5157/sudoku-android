@@ -165,6 +165,7 @@ public class Camera2CvView extends Camera2CvViewBase {
                 return;
             }
 
+            final Camera2CvFrame tempFrame = new Camera2CvFrame(w, h);
             mImageReader = ImageReader.newInstance(w, h, Camera2CvFrame.IMAGE_FORMAT, 2);
             mImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
                 @Override
@@ -179,11 +180,14 @@ public class Camera2CvView extends Camera2CvViewBase {
                     ByteBuffer uv_plane = planes[1].getBuffer();
                     Mat y_mat = new Mat(h, w, CvType.CV_8UC1, y_plane);
                     Mat uv_mat = new Mat(h / 2, w / 2, CvType.CV_8UC2, uv_plane);
-
-                    Camera2CvFrame tempFrame = new Camera2CvFrame(y_mat, uv_mat, w, h);
+                    tempFrame.init(y_mat, uv_mat);
                     deliverAndDrawFrame(tempFrame);
                     tempFrame.release();
                     image.close();
+                    y_mat.release();
+                    uv_mat.release();
+                    y_plane.clear();
+                    uv_plane.clear();
                 }
             }, mBackgroundHandler);
             Surface surface = mImageReader.getSurface();
