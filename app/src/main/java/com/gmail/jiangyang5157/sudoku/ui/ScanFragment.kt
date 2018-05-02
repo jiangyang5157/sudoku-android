@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.annotation.ColorRes
 import android.support.v4.app.Fragment
+import android.support.v7.widget.SwitchCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,6 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import com.gmail.jiangyang5157.kotlin_android_kit.ext.layoutInflater
-import com.gmail.jiangyang5157.kotlin_kit.render.FPSValidation
 import com.gmail.jiangyang5157.sudoku.R
 import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView
 import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvViewBase
@@ -37,7 +37,6 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
     private var isSnapshotEnabled = false
     private var isCamera2ViewEnabled = false
 
-    private val mProcessorFps = FPSValidation(-1)
     private lateinit var scalarAccent: Scalar
     private var mRgba: Mat? = null
     private var mGray: Mat? = null
@@ -79,20 +78,28 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
 
     override fun onCameraViewStopped() {
         Log.d(TAG, "onCameraViewStopped")
-        mRgba?.release()
-        mGray?.release()
     }
 
     override fun onCameraFrame(inputFrame: Camera2CvViewBase.CvCameraViewFrame): Mat {
-        mRgba = inputFrame.rgba()
+        mRgba?.release()
+        mGray?.release()
+
+//        mRgba = inputFrame.rgba()
+//        Imgproc.cvtColor(mRgba, mRgba, Imgproc.COLOR_RGB2BGR)
+        mRgba = Mat()
         mGray = inputFrame.gray()
-        Imgproc.cvtColor(mRgba, mRgba, Imgproc.COLOR_RGB2BGR)
 
-        if (mProcessorFps.accept()) {
-            mGray = frameproc(mGray!!)
+        mGray = frameproc(mGray!!)
+        Imgproc.cvtColor(mGray, mRgba, Imgproc.COLOR_GRAY2RGB)
+
+        val contours = mFindContours.find(mGray!!)
+        val maxAreaContour = mMaxAreaContourFilter.filter(contours)
+        maxAreaContour?.apply {
+            mDrawContour.draw(mRgba!!, maxAreaContour)
         }
+        contours.forEach { it.release() }
 
-        return mGray!!
+        return mRgba!!
     }
 
     private fun frameproc(gray: Mat): Mat {
@@ -121,14 +128,6 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             last.release()
             last = cannyMat
         }
-
-        val contours = mFindContours.find(last)
-
-        val maxAreaContour = mMaxAreaContourFilter.filter(contours)
-        maxAreaContour?.apply {
-            mDrawContour.draw(last, maxAreaContour)
-        }
-        contours.forEach { it.release() }
 
         return last
     }
@@ -204,6 +203,9 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
     private fun setup_debug_panel(view: View) {
         val debug_panel_container = view.findViewById(R.id.debug_panel_container) as ViewGroup
         val debug_panel_gaussian_blur = context.layoutInflater.inflate(R.layout.debug_panel_gaussian_blur, debug_panel_container, false)
+        val debug_panel_adaptive_threshold = context.layoutInflater.inflate(R.layout.debug_panel_adaptive_threshold, debug_panel_container, false)
+        val debug_panel_cross_dilate = context.layoutInflater.inflate(R.layout.debug_panel_cross_dilate, debug_panel_container, false)
+        val debug_panel_canny = context.layoutInflater.inflate(R.layout.debug_panel_canny, debug_panel_container, false)
 
         view.findViewById(R.id.debug_btn_gaussian_blur).setOnClickListener {
             if (debug_panel_gaussian_blur.parent == null) {
@@ -213,8 +215,34 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
                 debug_panel_container.removeAllViews()
             }
         }
+        view.findViewById(R.id.debug_btn_adaptive_threshold).setOnClickListener {
+            if (debug_panel_adaptive_threshold.parent == null) {
+                debug_panel_container.removeAllViews()
+                debug_panel_container.addView(debug_panel_adaptive_threshold)
+            } else {
+                debug_panel_container.removeAllViews()
+            }
+        }
+        view.findViewById(R.id.debug_btn_cross_dilate).setOnClickListener {
+            if (debug_panel_cross_dilate.parent == null) {
+                debug_panel_container.removeAllViews()
+                debug_panel_container.addView(debug_panel_cross_dilate)
+            } else {
+                debug_panel_container.removeAllViews()
+            }
+        }
+        view.findViewById(R.id.debug_btn_canny).setOnClickListener {
+            if (debug_panel_canny.parent == null) {
+                debug_panel_container.removeAllViews()
+                debug_panel_container.addView(debug_panel_canny)
+            } else {
+                debug_panel_container.removeAllViews()
+            }
+        }
 
-        /* Gaussian Blur */
+        /*
+        Gaussian Blur
+        */
         val debug_sb_guassion_blur_ksize = debug_panel_gaussian_blur.findViewById(R.id.debug_sb_guassion_blur_ksize) as SeekBar
         val debug_sb_guassion_blur_sigma = debug_panel_gaussian_blur.findViewById(R.id.debug_sb_guassion_blur_sigma) as SeekBar
         (debug_panel_gaussian_blur.findViewById(R.id.debug_cb_guassian_blur) as CheckBox)
@@ -236,6 +264,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
+        debug_sb_guassion_blur_ksize.progress = 2
         val guassion_blur_sigma_step = 0.1
         val guassion_blur_sigma_min = 0.0
         val guassion_blur_sigma_max = 20.0
@@ -251,10 +280,131 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        debug_sb_guassion_blur_ksize.progress = 2
         debug_sb_guassion_blur_sigma.progress = 0
 
+        /*
+        Adaptive Threshold
+        */
+        val debug_sb_adaptive_threshold_block_size = debug_panel_adaptive_threshold.findViewById(R.id.debug_sb_adaptive_threshold_block_size) as SeekBar
+        val debug_sb_adaptive_threshold_c = debug_panel_adaptive_threshold.findViewById(R.id.debug_sb_adaptive_threshold_c) as SeekBar
+        (debug_panel_adaptive_threshold.findViewById(R.id.debug_cb_adaptive_threshold) as CheckBox)
+                .setOnCheckedChangeListener { _, isChecked ->
+                    debug_enable_AdaptiveThreshold = isChecked
+                }
+        val adaptive_threshold_block_size_step = 2
+        val adaptive_threshold_block_size_min = 3
+        val adaptive_threshold_block_size_max = 41
+        debug_sb_adaptive_threshold_block_size.max = ((adaptive_threshold_block_size_max - adaptive_threshold_block_size_min) / adaptive_threshold_block_size_step)
+        debug_sb_adaptive_threshold_block_size.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val value = adaptive_threshold_block_size_min + progress * adaptive_threshold_block_size_step
+                (debug_panel_adaptive_threshold.findViewById(R.id.debug_tv_adaptive_threshold_block_size) as TextView).text = value.toString()
+                mAdaptiveThreshold.blockSize = value
+            }
 
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+        debug_sb_adaptive_threshold_block_size.progress = 1
+        val adaptive_threshold_c_step = 0.1
+        val adaptive_threshold_c_min = 0.0
+        val adaptive_threshold_c_max = 10.0
+        debug_sb_adaptive_threshold_c.max = ((adaptive_threshold_c_max - adaptive_threshold_c_min) / adaptive_threshold_c_step).toInt()
+        debug_sb_adaptive_threshold_c.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val value = adaptive_threshold_c_min + progress.toDouble() * adaptive_threshold_c_step
+                (debug_panel_adaptive_threshold.findViewById(R.id.debug_tv_adaptive_threshold_c) as TextView).text = value.toString()
+                mAdaptiveThreshold.c = value
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+        debug_sb_adaptive_threshold_c.progress = 20
+
+        /*
+        Cross Dilate
+        */
+        val debug_sb_cross_dilate_dilation_size = debug_panel_cross_dilate.findViewById(R.id.debug_sb_cross_dilate_dilation_size) as SeekBar
+        (debug_panel_cross_dilate.findViewById(R.id.debug_cb_cross_dilate) as CheckBox)
+                .setOnCheckedChangeListener { _, isChecked ->
+                    debug_enable_CrossDilate = isChecked
+                }
+        val cross_dilate_dilation_size_step = 0.1
+        val cross_dilate_dilation_size_min = 0.0
+        val cross_dilate_dilation_size_max = 10.0
+        debug_sb_cross_dilate_dilation_size.max = (((cross_dilate_dilation_size_max - cross_dilate_dilation_size_min) / cross_dilate_dilation_size_step).toInt())
+        debug_sb_cross_dilate_dilation_size.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val value = cross_dilate_dilation_size_min + progress.toDouble() * cross_dilate_dilation_size_step
+                (debug_panel_cross_dilate.findViewById(R.id.debug_tv_cross_dilate_dilation_size) as TextView).text = value.toString()
+                mCrossDilate.dilationSize = value
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+        debug_sb_cross_dilate_dilation_size.progress = 5
+
+        /*
+        Canny
+        */
+        val debug_sb_canny_threshold1 = debug_panel_canny.findViewById(R.id.debug_sb_canny_threshold1) as SeekBar
+        val debug_sb_canny_threshold2 = debug_panel_canny.findViewById(R.id.debug_sb_canny_threshold2) as SeekBar
+        val debug_sb_canny_aperture_size = debug_panel_canny.findViewById(R.id.debug_sb_canny_aperture_size) as SeekBar
+        val debug_sc_canny_l2gradient = debug_panel_canny.findViewById(R.id.debug_sc_canny_l2gradient) as SwitchCompat
+        (debug_panel_canny.findViewById(R.id.debug_cb_canny) as CheckBox)
+                .setOnCheckedChangeListener { _, isChecked ->
+                    debug_enable_Canny = isChecked
+                }
+        val canny_threshold1_step = 1.0
+        val canny_threshold1_min = 0.0
+        val canny_threshold1_max = 255.0
+        debug_sb_canny_threshold1.max = (((canny_threshold1_max - canny_threshold1_min) / canny_threshold1_step).toInt())
+        debug_sb_canny_threshold1.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val value = canny_threshold1_min + progress.toDouble() * canny_threshold1_step
+                (debug_panel_canny.findViewById(R.id.debug_tv_canny_threshold1) as TextView).text = value.toString()
+                mCanny.threshold1 = value
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+        debug_sb_canny_threshold1.progress = 127
+        val canny_threshold2_step = 1.0
+        val canny_threshold2_min = 0.0
+        val canny_threshold2_max = 255.0
+        debug_sb_canny_threshold2.max = (((canny_threshold2_max - canny_threshold2_min) / canny_threshold2_step).toInt())
+        debug_sb_canny_threshold2.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val value = canny_threshold2_min + progress.toDouble() * canny_threshold2_step
+                (debug_panel_canny.findViewById(R.id.debug_tv_canny_threshold2) as TextView).text = value.toString()
+                mCanny.threshold2 = value
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+        debug_sb_canny_threshold2.progress = 255
+        val canny_apertureSize_step = 2
+        val canny_apertureSize_min = 3
+        val canny_apertureSize_max = 7
+        debug_sb_canny_aperture_size.max = (((canny_apertureSize_max - canny_apertureSize_min) / canny_apertureSize_step))
+        debug_sb_canny_aperture_size.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val value = canny_apertureSize_min + progress * canny_apertureSize_step
+                (debug_panel_canny.findViewById(R.id.debug_tv_canny_aperture_size) as TextView).text = value.toString()
+                mCanny.apertureSize = value
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+        debug_sb_canny_aperture_size.progress = 0
+        debug_sc_canny_l2gradient.setOnCheckedChangeListener { _, isChecked ->
+            mCanny.l2gradient = isChecked
+        }
     }
 
 }
