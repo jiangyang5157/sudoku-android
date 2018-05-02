@@ -361,6 +361,7 @@ public class Camera2CvView extends Camera2CvViewBase {
        trying size: 352x288   : 1.222 Failed
    */
     boolean calcPreviewSize(final int width, final int height) {
+        Log.i(TAG, "calcPreviewSize: " + width + "x" + height);
         if (mCameraID == null) {
             Log.e(TAG, "Camera isn't initialized!");
             return false;
@@ -373,13 +374,14 @@ public class Camera2CvView extends Camera2CvViewBase {
             float displayAspect;
             Point displaySize = new Point();
             ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getSize(displaySize);
+            Log.i(TAG, "displaySize: " + displaySize);
             boolean swappedDimensions = areDimensionsSwapped();
+            Log.i(TAG, "swappedDimensions: " + swappedDimensions);
             if (swappedDimensions) {
                 displayAspect = (float) displaySize.y / displaySize.x;
             } else {
                 displayAspect = (float) displaySize.x / displaySize.y;
             }
-//            float aspect = displayAspect;
             float aspect = Math.abs(1.333 - displayAspect) < Math.abs(1.777 - displayAspect) ? 1.333f : 1.777f;
 
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(mCameraID);
@@ -393,9 +395,9 @@ public class Camera2CvView extends Camera2CvViewBase {
             } else {
                 mPreviewSize = bestSize;
                 if (swappedDimensions) {
-                    mScale = Math.min(((float) height) / mPreviewSize.getWidth(), ((float) width) / mPreviewSize.getHeight());
+                    mScale = Math.min(((float) height) / bestSize.getWidth(), ((float) width) / bestSize.getHeight());
                 } else {
-                    mScale = Math.min(((float) height) / mPreviewSize.getHeight(), ((float) width) / mPreviewSize.getWidth());
+                    mScale = Math.min(((float) height) / bestSize.getHeight(), ((float) width) / bestSize.getWidth());
                 }
                 return true;
             }

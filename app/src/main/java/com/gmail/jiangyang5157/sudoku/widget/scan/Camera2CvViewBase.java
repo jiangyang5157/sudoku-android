@@ -288,7 +288,7 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
                 Utils.matToBitmap(modified, mCacheBitmap);
             } catch (Exception e) {
                 Log.e(TAG, "Mat type: " + modified);
-                Log.e(TAG, "Bitmap type: " + mCacheBitmap.getWidth() + "*" + mCacheBitmap.getHeight());
+                Log.e(TAG, "Bitmap type: " + mCacheFrameWidth + "*" + mCacheFrameHeight);
                 Log.e(TAG, "Utils.matToBitmap() throws an exception: " + e.getMessage());
                 return;
             }
