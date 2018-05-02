@@ -78,8 +78,8 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
          * This method is invoked when camera preview has started. After this method is invoked
          * the frames will start to be delivered to client via the onCameraFrame() callback.
          *
-         * @param width  -  the width of the frames that will be delivered
-         * @param height - the height of the frames that will be delivered
+         * @param width  The width of the frames that will be delivered
+         * @param height The height of the frames that will be delivered
          */
         void onCameraViewStarted(int width, int height);
 

@@ -57,9 +57,9 @@ public class Camera2CvView extends Camera2CvViewBase {
 
     private int mPreviewWidth = -1;
     private int mPreviewHeight = -1;
+    protected float mScale = 1;
     protected int mSensorOrientation = 0;
     protected int mDisplayRotation = 0;
-    protected float mScale = 1;
 
     public Camera2CvView(Context context) {
         super(context);
@@ -105,7 +105,7 @@ public class Camera2CvView extends Camera2CvViewBase {
         try {
             String camList[] = manager.getCameraIdList();
             if (camList.length == 0) {
-                Log.e(TAG, "Open camera - camera isn't detected.");
+                Log.e(TAG, "openCamera - camera isn't detected.");
                 return false;
             }
             mCameraID = camList[0];
@@ -115,11 +115,11 @@ public class Camera2CvView extends Camera2CvViewBase {
             }
             return true;
         } catch (CameraAccessException e) {
-            Log.e(TAG, "Open camera - Camera Access Exception", e);
+            Log.e(TAG, "openCamera - Camera Access Exception", e);
         } catch (IllegalArgumentException e) {
-            Log.e(TAG, "Open camera - Illegal Argument Exception", e);
+            Log.e(TAG, "openCamera - Illegal Argument Exception", e);
         } catch (SecurityException e) {
-            Log.e(TAG, "Open camera - Security Exception", e);
+            Log.e(TAG, "openCamera - Security Exception", e);
         }
         return false;
     }
@@ -151,17 +151,17 @@ public class Camera2CvView extends Camera2CvViewBase {
 
         Log.i(TAG, "createCameraPreviewSession: " + w + "_" + h + ")");
         if (w < 0 || h < 0) {
-            Log.d(TAG, "createCameraPreviewSession: preview size is not ready");
+            Log.d(TAG, "createCameraPreviewSession - preview size is not ready");
             return;
         }
 
         try {
             if (null == mCameraDevice) {
-                Log.e(TAG, "createCameraPreviewSession: camera isn't opened");
+                Log.e(TAG, "Camera isn't opened");
                 return;
             }
             if (null != mCaptureSession) {
-                Log.e(TAG, "createCameraPreviewSession: mCaptureSession is already started");
+                Log.e(TAG, "createCameraPreviewSession - mCaptureSession is already started");
                 return;
             }
 
@@ -209,13 +209,13 @@ public class Camera2CvView extends Camera2CvViewBase {
                                 mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), null, mBackgroundHandler);
                                 Log.i(TAG, "CameraPreviewSession has been started");
                             } catch (Exception e) {
-                                Log.e(TAG, "createCaptureSession failed", e);
+                                Log.e(TAG, "createCameraPreviewSession - failed", e);
                             }
                         }
 
                         @Override
                         public void onConfigureFailed(CameraCaptureSession cameraCaptureSession) {
-                            Log.e(TAG, "createCameraPreviewSession failed");
+                            Log.e(TAG, "createCameraPreviewSession - onConfigureFailed");
                         }
                     },
                     null);
@@ -359,6 +359,11 @@ public class Camera2CvView extends Camera2CvViewBase {
         openCamera();
 
         boolean needReconfig = calcPreviewSize(width, height);
+        AllocateCache(
+                width, height,
+                mPreviewWidth, mPreviewHeight,
+                mScale,
+                rotationDegree(mSensorOrientation, mDisplayRotation));
         if (needReconfig) {
             if (null != mCaptureSession) {
                 Log.d(TAG, "closing existing previewSession");
@@ -367,11 +372,5 @@ public class Camera2CvView extends Camera2CvViewBase {
             }
             createCameraPreviewSession();
         }
-
-        AllocateCache(
-                width, height,
-                mPreviewWidth, mPreviewHeight,
-                mScale,
-                rotationDegree(mSensorOrientation, mDisplayRotation));
     }
 }
