@@ -54,7 +54,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             mIvSnapshot = findViewById(R.id.iv_snapshot) as ImageView?
             mCamera2CvView = findViewById(R.id.view_camera2cv) as Camera2CvView
             mCamera2CvView?.setCvCameraViewListener(this@ScanFragment)
-            findViewById(R.id.btn_toggle).setOnClickListener { toggleScan() }
+            findViewById(R.id.btn_scan).setOnClickListener { scanToggle() }
         }
     }
 
@@ -121,7 +121,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
         return Scalar(Color.red(color).toDouble(), Color.green(color).toDouble(), Color.blue(color).toDouble())
     }
 
-    private fun toggleScan() {
+    private fun scanToggle() {
         if (isSnapshotEnabled) {
             disableSnapshot()
         } else {

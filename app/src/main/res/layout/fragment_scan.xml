@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView
+        android:id="@+id/view_camera2cv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/iv_snapshot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="matrix" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/control_panel_size"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/btn_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Scan" />
+
+    </FrameLayout>
+
+</RelativeLayout>
