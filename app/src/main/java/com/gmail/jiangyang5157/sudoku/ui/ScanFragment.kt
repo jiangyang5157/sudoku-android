@@ -74,14 +74,14 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
 
         Imgproc.cvtColor(mRgba, mRgba, Imgproc.COLOR_RGB2BGR)
 
-//        if (mProcessorFps.accept()) {
-//            mRgba = handleRgba(mRgba!!, mGray!!)
-//        }
+        if (mProcessorFps.accept()) {
+//            handleRgba(mGray!!)
+        }
 
-        return mRgba!!
+        return mGray!!
     }
 
-    private fun handleRgba(rgba: Mat, gray: Mat): Mat {
+    private fun handleRgba(gray: Mat): Mat {
 
         /**
          * This smooths out the noise a bit and makes extracting the grid lines easier
@@ -134,10 +134,10 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
         /**
          * Draw contour with largest area
          */
-        Imgproc.drawContours(rgba, contoursMatOfPoint, maxContourIndex,
+        Imgproc.drawContours(gray, contoursMatOfPoint, maxContourIndex,
                 color2scalar(R.color.colorAccent), 2)
 
-        return rgba
+        return gray
     }
 
     private fun color2scalar(@ColorRes resId: Int): Scalar {
@@ -165,7 +165,6 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
 
     private fun disableSnapshot() {
         mIvSnapshot?.visibility = View.GONE
-        mIvSnapshot?.setImageBitmap(null)
     }
 
     private fun enableScanCamera2View() {
