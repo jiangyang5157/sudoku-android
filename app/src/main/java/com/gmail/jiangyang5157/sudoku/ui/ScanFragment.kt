@@ -14,7 +14,10 @@ import com.gmail.jiangyang5157.kotlin_kit.render.FPSValidation
 import com.gmail.jiangyang5157.sudoku.R
 import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView
 import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvViewBase
-import org.opencv.core.*
+import com.gmail.jiangyang5157.sudoku.widget.scan.imgproc.*
+import org.opencv.core.CvType
+import org.opencv.core.Mat
+import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
 
 /**
@@ -28,9 +31,10 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
 
     private var mIvSnapshot: ImageView? = null
     private var mCamera2CvView: Camera2CvView? = null
+    private var isSnapshotEnabled = false
+    private var isCamera2ViewEnabled = false
 
     private val mProcessorFps = FPSValidation(-1)
-    private var isScanCamera2ViewEnabled = false
     private lateinit var scalarAccent: Scalar
     private var mRgba: Mat? = null
     private var mGray: Mat? = null
@@ -71,71 +75,43 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
     override fun onCameraFrame(inputFrame: Camera2CvViewBase.CvCameraViewFrame): Mat {
         mRgba = inputFrame.rgba()
         mGray = inputFrame.gray()
-
         Imgproc.cvtColor(mRgba, mRgba, Imgproc.COLOR_RGB2BGR)
 
         if (mProcessorFps.accept()) {
-//            handleRgba(mGray!!)
+            handleFrame(mGray!!)
         }
 
         return mGray!!
     }
 
-    private fun handleRgba(gray: Mat): Mat {
+    private val mGaussianBlur = GaussianBlur(5.0, 5.0, 0.0, 0.0)
+    private val mAdaptiveThreshold = AdaptiveThreshold(255.0, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 5, 2.0)
+    private val mCrossDilate = CrossDilate(0.5)
+    private val mCanny = Canny(127.0, 255.0, 3)
+    private val mDrawContour = DrawContour(Color.RED, 2)
+    private val mFindContours = FindContours(Imgproc.RETR_EXTERNAL)
+    private val mMaxAreaContourFilter = MaxAreaContourFilter
 
-        /**
-         * This smooths out the noise a bit and makes extracting the grid lines easier
-         */
-        val blurMat = Mat()
-        Imgproc.GaussianBlur(gray, blurMat, Size(5.0, 5.0), 0.0, 0.0)
+    private fun handleFrame(gray: Mat): Mat {
+        val blurMat = mGaussianBlur.convert(gray)
 
-        /**
-         * It calculates a mean over a 5x5 window and subtracts 2 from the mean.
-         * This is the threshold level for every pixel.
-         */
-        val adaptiveThresholdMat = Mat()
-        Imgproc.adaptiveThreshold(blurMat, adaptiveThresholdMat,
-                255.0, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 5, 2.0)
+        val adaptiveThresholdMat = mAdaptiveThreshold.convert(blurMat)
+        blurMat.release()
 
-        /**
-         * Thresholding operation can disconnect certain connected parts (like lines).
-         * So dilating the image once will fill up any small "cracks" that might have crept in.
-         */
-        val dilateMat = Mat()
-        val dilationSize = 0.5
-        val kernelMat = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS,
-                Size(2 * dilationSize + 1, 2 * dilationSize + 1), Point(dilationSize, dilationSize))
-        Imgproc.dilate(adaptiveThresholdMat, dilateMat, kernelMat)
+        val dilateMat = mCrossDilate.convert(adaptiveThresholdMat)
+        adaptiveThresholdMat.release()
 
-        /**
-         * Canny
-         */
-//        val cannyMat = Mat()
-//        Imgproc.Canny(dilateMat, cannyMat, 127.0, 255.0, 3, false)
+//        val canny = mCanny.convert(dilateMat)
+//        dilateMat.release()
 
-        /**
-         * Find contour with largest area
-         */
-        val contoursMatOfPoint = arrayListOf<MatOfPoint>()
-        Imgproc.findContours(dilateMat, contoursMatOfPoint, Mat(),
-                Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
+        val contours = mFindContours.find(dilateMat)
+        dilateMat.release()
 
-        var maxContourIndex = -1
-        var maxContourArea = 0.0
-        contoursMatOfPoint.forEachIndexed { i, matOfPoint ->
-            Imgproc.contourArea(matOfPoint).apply {
-                if (this > maxContourArea) {
-                    maxContourArea = this
-                    maxContourIndex = i
-                }
-            }
+        val maxAreaContour = mMaxAreaContourFilter.filter(contours)
+        maxAreaContour?.apply {
+            mDrawContour.draw(gray, maxAreaContour)
         }
-
-        /**
-         * Draw contour with largest area
-         */
-        Imgproc.drawContours(gray, contoursMatOfPoint, maxContourIndex,
-                color2scalar(R.color.colorAccent), 2)
+        contours.forEach { it.release() }
 
         return gray
     }
@@ -146,44 +122,55 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
     }
 
     private fun toggleScan() {
-        if (isScanCamera2ViewEnabled) {
+        if (isSnapshotEnabled) {
+            disableSnapshot()
+        } else {
             enableSnapshot()
+        }
+        if (isCamera2ViewEnabled) {
             disableScanCamera2View()
         } else {
-            disableSnapshot()
             enableScanCamera2View()
         }
     }
 
-    private fun enableSnapshot() {
-        mCamera2CvView?.apply {
-            mIvSnapshot?.visibility = View.VISIBLE
-            mIvSnapshot?.imageMatrix = this.cacheMatrix
-            mIvSnapshot?.setImageBitmap(Bitmap.createBitmap(this.cacheBitmap))
-        }
-    }
-
-    private fun disableSnapshot() {
-        mIvSnapshot?.visibility = View.GONE
-    }
-
     private fun enableScanCamera2View() {
-        if (!isScanCamera2ViewEnabled) {
+        if (!isCamera2ViewEnabled) {
             mCamera2CvView?.enableView()
-            isScanCamera2ViewEnabled = true
+            isCamera2ViewEnabled = true
         }
     }
 
     private fun disableScanCamera2View() {
-        if (isScanCamera2ViewEnabled) {
+        if (isCamera2ViewEnabled) {
             mCamera2CvView?.disableView()
-            isScanCamera2ViewEnabled = false
+            isCamera2ViewEnabled = false
+        }
+    }
+
+    private fun enableSnapshot() {
+        if (!isSnapshotEnabled) {
+            mCamera2CvView?.apply {
+                mIvSnapshot?.imageMatrix = this.cacheMatrix
+                mIvSnapshot?.setImageBitmap(Bitmap.createBitmap(this.cacheBitmap))
+                mIvSnapshot?.visibility = View.VISIBLE
+                isSnapshotEnabled = true
+            }
+        }
+    }
+
+    private fun disableSnapshot() {
+        if (isSnapshotEnabled) {
+            mIvSnapshot?.visibility = View.GONE
+            isSnapshotEnabled = false
         }
     }
 
     override fun onResume() {
         super.onResume()
-        enableScanCamera2View()
+        if (!isSnapshotEnabled) {
+            enableScanCamera2View()
+        }
     }
 
     override fun onPause() {
