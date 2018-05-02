@@ -1,5 +1,6 @@
 package com.gmail.jiangyang5157.sudoku.ui
 
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.support.annotation.ColorRes
@@ -8,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import com.gmail.jiangyang5157.kotlin_kit.render.FPSValidation
 import com.gmail.jiangyang5157.sudoku.R
 import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView
@@ -24,30 +26,38 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
         const val TAG = "ScanFragment"
     }
 
+    private var mIvSnapshot: ImageView? = null
     private var mCamera2CvView: Camera2CvView? = null
+
+    private val mProcessorFps = FPSValidation(-1)
     private var isScanCamera2ViewEnabled = false
     private lateinit var scalarAccent: Scalar
-    private val mProcessorFps = FPSValidation(-1)
     private var mRgba: Mat? = null
     private var mGray: Mat? = null
+    private var width = 0
+    private var height = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_scan, container, false)
+        val view = inflater.inflate(R.layout.fragment_scan, container, false)
+        scalarAccent = color2scalar(R.color.colorAccent)
+        return view
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         view?.apply {
+            mIvSnapshot = findViewById(R.id.iv_snapshot) as ImageView?
             mCamera2CvView = findViewById(R.id.view_camera2cv) as Camera2CvView
             mCamera2CvView?.setCvCameraViewListener(this@ScanFragment)
-            findViewById(R.id.btn_toggle).setOnClickListener { toggleScanCamera2View() }
+            findViewById(R.id.btn_toggle).setOnClickListener { toggleScan() }
         }
     }
 
     override fun onCameraViewStarted(width: Int, height: Int) {
         Log.d(TAG, "onCameraViewStarted: ${width}x$height")
-        scalarAccent = color2scalar(R.color.colorAccent)
+        this.width = width
+        this.height = height
         mRgba = Mat(height, width, CvType.CV_8UC4)
         mGray = Mat(height, width, CvType.CV_8UC1)
     }
@@ -135,12 +145,27 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
         return Scalar(Color.red(color).toDouble(), Color.green(color).toDouble(), Color.blue(color).toDouble())
     }
 
-    private fun toggleScanCamera2View() {
+    private fun toggleScan() {
         if (isScanCamera2ViewEnabled) {
+            enableSnapshot()
             disableScanCamera2View()
         } else {
+            disableSnapshot()
             enableScanCamera2View()
         }
+    }
+
+    private fun enableSnapshot() {
+        mCamera2CvView?.apply {
+            mIvSnapshot?.visibility = View.VISIBLE
+            mIvSnapshot?.imageMatrix = this.cacheMatrix
+            mIvSnapshot?.setImageBitmap(Bitmap.createBitmap(this.cacheBitmap))
+        }
+    }
+
+    private fun disableSnapshot() {
+        mIvSnapshot?.visibility = View.GONE
+        mIvSnapshot?.setImageBitmap(null)
     }
 
     private fun enableScanCamera2View() {

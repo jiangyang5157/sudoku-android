@@ -18,10 +18,22 @@
 
     </FrameLayout>
 
-    <com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView
-        android:id="@+id/view_camera2cv"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/layout_scan_panel"/>
+        android:layout_above="@id/layout_scan_panel">
+
+        <com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView
+            android:id="@+id/view_camera2cv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/iv_snapshot"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="matrix" />
+
+    </FrameLayout>
 
 </RelativeLayout>

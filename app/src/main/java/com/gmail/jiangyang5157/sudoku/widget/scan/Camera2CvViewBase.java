@@ -33,10 +33,10 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
     private static final int STARTED = 1;
     private int mState = STOPPED;
 
-    protected int mCacheFrameWidth;
-    protected int mCacheFrameHeight;
+    private int mCacheFrameWidth;
+    private int mCacheFrameHeight;
     private Bitmap mCacheBitmap;
-    protected Matrix mCacheMatrix;
+    private Matrix mCacheMatrix;
 
     public Camera2CvViewBase(Context context) {
         super(context);
@@ -291,6 +291,14 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
                 new RectF(left, top, right, bottom),
                 Matrix.ScaleToFit.FILL);
         mCacheMatrix.postRotate(rotation, getWidth() / 2, getHeight() / 2);
+    }
+
+    public Bitmap getCacheBitmap() {
+        return mCacheBitmap;
+    }
+
+    public Matrix getCacheMatrix() {
+        return mCacheMatrix;
     }
 
 }
