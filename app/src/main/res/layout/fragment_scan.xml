@@ -28,4 +28,6 @@
 
     </FrameLayout>
 
+    <include layout="@layout/debug_panel_frameproc" />
+
 </RelativeLayout>
