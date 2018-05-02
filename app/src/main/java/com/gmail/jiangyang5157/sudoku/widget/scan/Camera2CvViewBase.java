@@ -34,12 +34,6 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
     public static final int CAMERA_ID_FRONT = 98;
     protected int mCameraIndex = CAMERA_ID_ANY;
 
-    // 0, 90, 180, 270
-    protected int mSensorOrientation = 0;
-    protected int mDisplayRotation = 0;
-    protected int mRotationDegree = 0;
-    protected float mScale = 1;
-
     protected int mCacheWidth;
     protected int mCacheHeight;
     protected float mCacheCenterX;
@@ -49,6 +43,7 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
     private Bitmap mCacheBitmap;
     private Rect mCacheSrcRect;
     private Rect mCacheDstRect;
+    protected int mCacheRotation = 0;
 
     private final Object mSyncObject = new Object();
 
@@ -299,7 +294,7 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
             if (canvas != null) {
                 canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
                 canvas.save();
-                canvas.rotate(mRotationDegree, mCacheCenterX, mCacheCenterY);
+                canvas.rotate(mCacheRotation, mCacheCenterX, mCacheCenterY);
                 canvas.drawBitmap(mCacheBitmap, mCacheSrcRect, mCacheDstRect, null);
                 canvas.restore();
                 if (mFpsMeter != null) {
@@ -327,19 +322,30 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
      */
     protected abstract void disconnectCamera();
 
-    protected void AllocateCache(int width, int height, int previewWidth, int previewHeight) {
+    protected void AllocateCache(int width, int height, int frameWidth, int frameHeight, int previewWidth, int previewHeight, float scale, int rotation) {
         mCacheWidth = width;
         mCacheHeight = height;
         mCacheCenterX = (float) width / 2;
         mCacheCenterY = (float) height / 2;
-        mCacheFrameWidth = previewWidth;
-        mCacheFrameHeight = previewHeight;
+
+        mCacheFrameWidth = frameWidth;
+        mCacheFrameHeight = frameHeight;
+
         mCacheBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888);
         mCacheSrcRect = new Rect(0, 0, previewWidth, previewHeight);
-        mCacheDstRect = new Rect((int) ((width - mScale * previewWidth) / 2),
-                (int) ((height - mScale * previewHeight) / 2),
-                (int) ((width - mScale * previewWidth) / 2 + mScale * previewWidth),
-                (int) ((height - mScale * previewHeight) / 2 + mScale * previewHeight));
+        int left = (int) ((width - scale * previewWidth) / 2);
+        int top = (int) ((height - scale * previewHeight) / 2);
+        int right = (int) (left + scale * previewWidth);
+        int bottom = (int) (top + scale * previewHeight);
+        mCacheDstRect = new Rect(left, top, right, bottom);
+
+        mCacheRotation = rotation;
+
+        Log.d(TAG, "AllocateCache: width_height=" + width + "_" + height + ", "
+                + "frameWidth_frameHeight=" + frameWidth + "_" + frameHeight + ", "
+                + "previewWidth_previewHeight=" + previewWidth + "_" + previewHeight + ", "
+                + "scale=" + scale + ", "
+                + "rotation=" + rotation);
     }
 
 }

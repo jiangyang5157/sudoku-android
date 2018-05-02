@@ -46,17 +46,21 @@ public class Camera2CvView extends Camera2CvViewBase {
 
     private static final String TAG = "ScanCamera2View";
 
-    private ImageReader mImageReader;
-    private int mPreviewFormat = ImageFormat.YUV_420_888;
-
     private CameraDevice mCameraDevice;
     private CameraCaptureSession mCaptureSession;
     private CaptureRequest.Builder mPreviewRequestBuilder;
     private String mCameraID;
-    private Size mPreviewSize = new Size(-1, -1);
 
     private HandlerThread mBackgroundThread;
     private Handler mBackgroundHandler;
+
+    private ImageReader mImageReader;
+    private int mPreviewFormat = ImageFormat.YUV_420_888;
+
+    protected int mSensorOrientation = 0;
+    protected int mDisplayRotation = 0;
+    private Size mPreviewSize = new Size(-1, -1);
+    protected float mScale = 1;
 
     public Camera2CvView(Context context) {
         super(context);
@@ -127,7 +131,6 @@ public class Camera2CvView extends Camera2CvViewBase {
             if (mCameraID != null) {
                 mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
                 mDisplayRotation = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
-                mRotationDegree = rotationDegree();
                 Log.i(TAG, "Opening camera: " + mCameraID);
                 manager.openCamera(mCameraID, mStateCallback, mBackgroundHandler);
             }
@@ -361,7 +364,6 @@ public class Camera2CvView extends Camera2CvViewBase {
        trying size: 352x288   : 1.222 Failed
    */
     boolean calcPreviewSize(final int width, final int height) {
-        Log.i(TAG, "calcPreviewSize: " + width + "x" + height);
         if (mCameraID == null) {
             Log.e(TAG, "Camera isn't initialized!");
             return false;
@@ -388,7 +390,7 @@ public class Camera2CvView extends Camera2CvViewBase {
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             Size[] sizes = map.getOutputSizes(ImageReader.class);
             Size bestSize = calcBestPreviewSize(sizes, minWidth, aspect, aspectError);
-            Log.i(TAG, "Best preview size: " + bestSize.toString());
+            Log.i(TAG, "Best size: " + bestSize.toString());
 
             if (mPreviewSize.equals(bestSize)) {
                 return false;
@@ -419,7 +421,10 @@ public class Camera2CvView extends Camera2CvViewBase {
 
         try {
             boolean needReconfig = calcPreviewSize(width, height);
-            AllocateCache(width, height, mPreviewSize.getWidth(), mPreviewSize.getHeight());
+            AllocateCache(width, height,
+                    mPreviewSize.getWidth(), mPreviewSize.getHeight(),
+                    mPreviewSize.getWidth(), mPreviewSize.getHeight(),
+                    mScale, rotationDegree());
             if (needReconfig) {
                 if (null != mCaptureSession) {
                     Log.d(TAG, "closing existing previewSession");
