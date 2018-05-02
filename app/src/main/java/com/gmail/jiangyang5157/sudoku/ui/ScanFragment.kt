@@ -215,19 +215,44 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
         }
 
         /* Gaussian Blur */
-        val debug_cb_guassian_blur = debug_panel_gaussian_blur.findViewById(R.id.debug_cb_guassian_blur) as CheckBox
-        val debug_tv_guassion_blur_ksize = debug_panel_gaussian_blur.findViewById(R.id.debug_tv_guassion_blur_ksize) as TextView
-        val debug_tv_guassion_blur_sigma = debug_panel_gaussian_blur.findViewById(R.id.debug_tv_guassion_blur_sigma) as TextView
-        val debug_sb_guassion_blur_ksize = debug_panel_gaussian_blur.findViewById(R.id.debug_sb_guassion_blur_sigma) as SeekBar
+        val debug_sb_guassion_blur_ksize = debug_panel_gaussian_blur.findViewById(R.id.debug_sb_guassion_blur_ksize) as SeekBar
         val debug_sb_guassion_blur_sigma = debug_panel_gaussian_blur.findViewById(R.id.debug_sb_guassion_blur_sigma) as SeekBar
-        debug_cb_guassian_blur.setOnCheckedChangeListener { _, isChecked ->
-            debug_enable_GaussianBlur = isChecked
-        }
+        (debug_panel_gaussian_blur.findViewById(R.id.debug_cb_guassian_blur) as CheckBox)
+                .setOnCheckedChangeListener { _, isChecked ->
+                    debug_enable_GaussianBlur = isChecked
+                }
+        val guassion_blur_ksize_step = 2.0
+        val guassion_blur_ksize_min = 1.0
+        val guassion_blur_ksize_max = 21.0
+        debug_sb_guassion_blur_ksize.max = ((guassion_blur_ksize_max - guassion_blur_ksize_min) / guassion_blur_ksize_step).toInt()
         debug_sb_guassion_blur_ksize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val value = guassion_blur_ksize_min + progress.toDouble() * guassion_blur_ksize_step
+                (debug_panel_gaussian_blur.findViewById(R.id.debug_tv_guassion_blur_ksize) as TextView).text = value.toString()
+                mGaussianBlur.kWidth = value
+                mGaussianBlur.kHeight = value
+            }
+
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
+        val guassion_blur_sigma_step = 0.1
+        val guassion_blur_sigma_min = 0.0
+        val guassion_blur_sigma_max = 20.0
+        debug_sb_guassion_blur_sigma.max = ((guassion_blur_sigma_max - guassion_blur_sigma_min) / guassion_blur_sigma_step).toInt()
+        debug_sb_guassion_blur_sigma.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val value = guassion_blur_sigma_min + progress.toDouble() * guassion_blur_sigma_step
+                (debug_panel_gaussian_blur.findViewById(R.id.debug_tv_guassion_blur_sigma) as TextView).text = value.toString()
+                mGaussianBlur.sigmaX = value
+                mGaussianBlur.sigmaY = value
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+        debug_sb_guassion_blur_ksize.progress = 2
+        debug_sb_guassion_blur_sigma.progress = 0
 
 
     }

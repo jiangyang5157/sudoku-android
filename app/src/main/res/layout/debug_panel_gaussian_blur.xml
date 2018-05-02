@@ -30,6 +30,7 @@
             android:id="@+id/debug_tv_guassion_blur_ksize"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_normal_plus"
             android:text=""
             android:textColor="@color/colorAccent" />
     </LinearLayout>
@@ -54,6 +55,7 @@
             android:id="@+id/debug_tv_guassion_blur_sigma"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_normal_plus"
             android:text=""
             android:textColor="@color/colorAccent" />
     </LinearLayout>
