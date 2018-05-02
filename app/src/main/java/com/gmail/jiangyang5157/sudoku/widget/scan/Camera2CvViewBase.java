@@ -81,7 +81,6 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
         /**
          * This method is invoked when delivery of the frame needs to be done.
          * The returned values - is a modified frame which needs to be displayed on the screen.
-         * TODO: pass the parameters specifying the format of the frame (BPP, YUV or RGB and etc)
          */
         Mat onCameraFrame(CvCameraViewFrame inputFrame);
     }
@@ -291,6 +290,14 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
                 new RectF(left, top, right, bottom),
                 Matrix.ScaleToFit.FILL);
         mCacheMatrix.postRotate(rotation, getWidth() / 2, getHeight() / 2);
+    }
+
+    public int getCacheFrameWidth() {
+        return mCacheFrameWidth;
+    }
+
+    public int getCacheFrameHeight() {
+        return mCacheFrameHeight;
     }
 
     public Bitmap getCacheBitmap() {
