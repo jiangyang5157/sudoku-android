@@ -7,6 +7,8 @@ import org.opencv.imgproc.Imgproc;
 
 /**
  * Created by Yang Jiang on May 01, 2018
+ * <p>
+ * This class is copied from openCVLibrary341 {@link org.opencv.android.JavaCamera2View.JavaCamera2Frame} and modified.
  */
 public class Camera2CvFrame implements Camera2CvViewBase.CvCameraViewFrame {
 

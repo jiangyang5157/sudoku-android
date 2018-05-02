@@ -3,10 +3,10 @@ package com.gmail.jiangyang5157.sudoku.widget.scan;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Rect;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -16,7 +16,7 @@ import org.opencv.core.Mat;
 /**
  * Created by Yang Jiang on April 30, 2018
  * <p>
- * This class is copied from openCVLibrary341 {@link org.opencv.android.CameraBridgeViewBase} to optimize for a better frame rate.
+ * This class is copied from openCVLibrary341 {@link org.opencv.android.CameraBridgeViewBase} and modified.
  */
 public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -33,16 +33,10 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
     private static final int STARTED = 1;
     private int mState = STOPPED;
 
-    protected int mCacheWidth;
-    protected int mCacheHeight;
-    protected float mCacheCenterX;
-    protected float mCacheCenterY;
     protected int mCacheFrameWidth;
     protected int mCacheFrameHeight;
     private Bitmap mCacheBitmap;
-    private Rect mCacheSrcRect;
-    private Rect mCacheDstRect;
-    protected int mCacheRotation = 0;
+    protected Matrix mCacheMatrix;
 
     public Camera2CvViewBase(Context context) {
         super(context);
@@ -244,14 +238,23 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
         } else {
             modified = frame.rgba();
         }
-        Utils.matToBitmap(modified, mCacheBitmap);
+
+        if (modified != null) {
+            try {
+                Utils.matToBitmap(modified, mCacheBitmap);
+            } catch (Exception e) {
+                Log.e(TAG, "Mat type: " + modified);
+                Log.e(TAG, "Bitmap type: " + mCacheFrameWidth + "*" + mCacheFrameHeight);
+                Log.e(TAG, "Utils.matToBitmap() throws an exception: " + e.getMessage());
+                return;
+            }
+        }
 
         if (getHolder().getSurface().isValid()) {
             Canvas canvas = getHolder().lockCanvas();
             if (canvas != null) {
                 canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
-                canvas.rotate(mCacheRotation, mCacheCenterX, mCacheCenterY);
-                canvas.drawBitmap(mCacheBitmap, mCacheSrcRect, mCacheDstRect, null);
+                canvas.drawBitmap(mCacheBitmap, mCacheMatrix, null);
                 getHolder().unlockCanvasAndPost(canvas);
             }
         }
@@ -271,72 +274,23 @@ public abstract class Camera2CvViewBase extends SurfaceView implements SurfaceHo
      */
     protected abstract void disconnectCamera();
 
-    public int rotationDegree(int sensorOrientation, int surfaceRotation) {
-        switch (surfaceRotation) {
-            case Surface.ROTATION_0:
-                return (90 + sensorOrientation + 270) % 360;
-            case Surface.ROTATION_90:
-                return (sensorOrientation + 270) % 360;
-            case Surface.ROTATION_180:
-                return (270 + sensorOrientation + 270) % 360;
-            case Surface.ROTATION_270:
-                return (180 + sensorOrientation + 270) % 360;
-            default:
-                Log.e(TAG, "Surface rotation is invalid: " + surfaceRotation);
-                return 0;
-        }
-    }
+    protected void allocateCache(int frameWidth, int frameHeight, float scale, int rotation) {
+        Log.d(TAG, "AllocateCache: " + "frameWidth_frameHeight=" + frameWidth + "_" + frameHeight + ", " + "scale=" + scale + ", " + "rotation=" + rotation);
+        mCacheFrameWidth = frameWidth;
+        mCacheFrameHeight = frameHeight;
+        mCacheBitmap = Bitmap.createBitmap(frameWidth, frameHeight, Bitmap.Config.ARGB_8888);
+        float left = (getWidth() - scale * frameWidth) / 2;
+        float top = (getHeight() - scale * frameHeight) / 2;
+        float right = left + scale * frameWidth;
+        float bottom = top + scale * frameHeight;
 
-    /**
-     * Determines if the dimensions are swapped given the phone's current rotation.
-     *
-     * @return true if the dimensions are swapped, false otherwise.
-     */
-    public boolean areDimensionsSwapped(int sensorOrientation, int surfaceRotation) {
-        boolean swappedDimensions = false;
-        switch (surfaceRotation) {
-            case Surface.ROTATION_0:
-            case Surface.ROTATION_180:
-                if (sensorOrientation == 90 || sensorOrientation == 270) {
-                    swappedDimensions = true;
-                }
-                break;
-            case Surface.ROTATION_90:
-            case Surface.ROTATION_270:
-                if (sensorOrientation == 0 || sensorOrientation == 180) {
-                    swappedDimensions = true;
-                }
-                break;
-            default:
-                Log.e(TAG, "Surface rotation is invalid: " + surfaceRotation);
-                break;
-        }
-        return swappedDimensions;
-    }
-
-    protected void AllocateCache(int width, int height, int previewWidth, int previewHeight, float scale, int rotation) {
-        mCacheWidth = width;
-        mCacheHeight = height;
-        mCacheCenterX = (float) width / 2;
-        mCacheCenterY = (float) height / 2;
-
-        mCacheFrameWidth = previewWidth;
-        mCacheFrameHeight = previewHeight;
-
-        mCacheBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888);
-        mCacheSrcRect = new Rect(0, 0, previewWidth, previewHeight);
-        int left = (int) ((width - scale * previewWidth) / 2);
-        int top = (int) ((height - scale * previewHeight) / 2);
-        int right = (int) (left + scale * previewWidth);
-        int bottom = (int) (top + scale * previewHeight);
-        mCacheDstRect = new Rect(left, top, right, bottom);
-
-        mCacheRotation = rotation;
-
-        Log.d(TAG, "AllocateCache: width_height=" + width + "_" + height + ", "
-                + "previewWidth_previewHeight=" + previewWidth + "_" + previewHeight + ", "
-                + "scale=" + scale + ", "
-                + "rotation=" + rotation);
+        mCacheMatrix = new Matrix();
+        mCacheMatrix.setScale(scale, scale);
+        mCacheMatrix.setRectToRect(
+                new RectF(0, 0, frameWidth, frameHeight),
+                new RectF(left, top, right, bottom),
+                Matrix.ScaleToFit.FILL);
+        mCacheMatrix.postRotate(rotation, getWidth() / 2, getHeight() / 2);
     }
 
 }

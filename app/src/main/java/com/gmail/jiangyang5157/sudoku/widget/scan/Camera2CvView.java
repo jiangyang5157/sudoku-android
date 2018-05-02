@@ -28,7 +28,7 @@ import java.util.Collections;
 /**
  * Created by Yang Jiang on April 29, 2018
  * <p>
- * This class is copied from openCVLibrary341 {@link org.opencv.android.JavaCamera2View} to optimize for a better frame rate.
+ * This class is copied from openCVLibrary341 {@link org.opencv.android.JavaCamera2View} and modified.
  */
 
 /**
@@ -356,11 +356,7 @@ public class Camera2CvView extends Camera2CvViewBase {
         openCamera();
 
         boolean needReconfig = calcPreviewSize(width, height);
-        AllocateCache(
-                width, height,
-                mPreviewWidth, mPreviewHeight,
-                mScale,
-                rotationDegree(mSensorOrientation, mDisplayRotation));
+        allocateCache(mPreviewWidth, mPreviewHeight, mScale, rotationDegree(mSensorOrientation, mDisplayRotation));
         if (needReconfig) {
             if (null != mCaptureSession) {
                 Log.d(TAG, "closing existing previewSession");
@@ -369,5 +365,48 @@ public class Camera2CvView extends Camera2CvViewBase {
             }
             createCameraPreviewSession();
         }
+    }
+
+    public int rotationDegree(int sensorOrientation, int surfaceRotation) {
+        switch (surfaceRotation) {
+            case Surface.ROTATION_0:
+                return (90 + sensorOrientation + 270) % 360;
+            case Surface.ROTATION_90:
+                return (sensorOrientation + 270) % 360;
+            case Surface.ROTATION_180:
+                return (270 + sensorOrientation + 270) % 360;
+            case Surface.ROTATION_270:
+                return (180 + sensorOrientation + 270) % 360;
+            default:
+                Log.e(TAG, "Surface rotation is invalid: " + surfaceRotation);
+                return 0;
+        }
+    }
+
+    /**
+     * Determines if the dimensions are swapped given the phone's current rotation.
+     *
+     * @return true if the dimensions are swapped, false otherwise.
+     */
+    public boolean areDimensionsSwapped(int sensorOrientation, int surfaceRotation) {
+        boolean swappedDimensions = false;
+        switch (surfaceRotation) {
+            case Surface.ROTATION_0:
+            case Surface.ROTATION_180:
+                if (sensorOrientation == 90 || sensorOrientation == 270) {
+                    swappedDimensions = true;
+                }
+                break;
+            case Surface.ROTATION_90:
+            case Surface.ROTATION_270:
+                if (sensorOrientation == 0 || sensorOrientation == 180) {
+                    swappedDimensions = true;
+                }
+                break;
+            default:
+                Log.e(TAG, "Surface rotation is invalid: " + surfaceRotation);
+                break;
+        }
+        return swappedDimensions;
     }
 }
