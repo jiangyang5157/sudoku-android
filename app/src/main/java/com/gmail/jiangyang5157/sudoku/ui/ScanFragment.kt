@@ -18,7 +18,8 @@ import com.gmail.jiangyang5157.sudoku.R
 import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView
 import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvViewBase
 import com.gmail.jiangyang5157.sudoku.widget.scan.imgproc.*
-import org.opencv.core.*
+import org.opencv.core.Mat
+import org.opencv.core.MatOfPoint
 import org.opencv.imgproc.Imgproc
 
 /**
@@ -35,8 +36,9 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
     private var isSnapshotEnabled = false
     private var isCamera2ViewEnabled = false
 
-    private var mRgba: Mat? = null
-    private var mFrameProcd: Mat? = null
+    private var mFrameRgb: Mat? = null
+    private var mFrameProcess: Mat? = null
+
     private var mGaussianBlurd = Mat()
     private var mAdaptiveThresholdd = Mat()
     private var mCrossDilated = Mat()
@@ -53,8 +55,8 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        mRgba?.release()
-        mFrameProcd?.release()
+        mFrameRgb?.release()
+        mFrameProcess?.release()
         mGaussianBlurd.release()
         mAdaptiveThresholdd.release()
         mCrossDilated.release()
@@ -91,49 +93,55 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
     }
 
     override fun onCameraFrame(inputFrame: Camera2CvViewBase.CvCameraViewFrame): Mat {
-        val gray = inputFrame.gray()
-        mFrameProcd = frameproc(gray)
-        gray.release()
+        mFrameRgb?.release()
+        mFrameProcess?.release()
 
-        mRgba?.release()
-        mRgba = Mat()
-        ImgUtils.gray2rgb(mFrameProcd!!, mRgba!!)
+        mFrameRgb = Mat()
+        mFrameProcess = frameProcessing(inputFrame.gray())
+        ImgUtils.gray2rgb(mFrameProcess!!, mFrameRgb!!)
 
-        ContoursUtils.findExternals(mFrameProcd!!, mContours, mContourHierarchy)
-        ContoursUtils.sortedByDescendingArea(mContours)
+        ContoursUtils.findExternals(mFrameProcess!!, mContours, mContourHierarchy)
         if (mContours.isNotEmpty()) {
-            mDrawContour.draw(mRgba!!, mContours[0])
+            val index = ContoursUtils.findIndexOfMaxArea(mContours)
+            mDrawContour.draw(mFrameRgb!!, mContours[index])
+            mContours.forEach { it.release() }
+            mContours.clear()
         }
-
-        mContours.forEach { it.release() }
-        mContours.clear()
-        return mRgba!!
+        return mFrameRgb!!
     }
 
-    private fun frameproc(src: Mat): Mat {
-        var last = src
+    private fun frameProcessing(src: Mat): Mat {
+        var curr = src
+        var isOriginal = true
 
         if (debug_enable_GaussianBlur) {
-            mGaussianBlur.convert(last, mGaussianBlurd)
-            last = mGaussianBlurd
+            mGaussianBlur.convert(curr, mGaussianBlurd)
+            curr = mGaussianBlurd
+            isOriginal = false
         }
 
         if (debug_enable_AdaptiveThreshold) {
-            mAdaptiveThreshold.convert(last, mAdaptiveThresholdd)
-            last = mAdaptiveThresholdd
+            mAdaptiveThreshold.convert(curr, mAdaptiveThresholdd)
+            curr = mAdaptiveThresholdd
+            isOriginal = false
         }
 
         if (debug_enable_CrossDilate) {
-            mCrossDilate.convert(last, mCrossDilated)
-            last = mCrossDilated
+            mCrossDilate.convert(curr, mCrossDilated)
+            curr = mCrossDilated
+            isOriginal = false
         }
 
         if (debug_enable_Canny) {
-            mCanny.convert(last, mCannyd)
-            last = mCannyd
+            mCanny.convert(curr, mCannyd)
+            curr = mCannyd
+            isOriginal = false
         }
 
-        return last
+        if (!isOriginal) {
+            src.release()
+        }
+        return curr
     }
 
     private fun scanToggle() {
