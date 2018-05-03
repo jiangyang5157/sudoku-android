@@ -14,10 +14,8 @@ data class GaussianBlur(var kWidth: Double,
                         var boardType: Int)
     : ImgConverter {
 
-    override fun convert(src: Mat): Mat {
-        val ret = Mat()
-        Imgproc.GaussianBlur(src, ret, Size(kWidth, kHeight), sigmaX, sigmaY, boardType)
-        return ret
+    override fun convert(src: Mat, dst: Mat) {
+        Imgproc.GaussianBlur(src, dst, Size(kWidth, kHeight), sigmaX, sigmaY, boardType)
     }
 
 }

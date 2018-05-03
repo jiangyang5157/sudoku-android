@@ -8,10 +8,8 @@ import org.opencv.imgproc.Imgproc
  */
 object Gray2Rgb : ImgConverter {
 
-    override fun convert(src: Mat): Mat {
-        val ret = Mat()
-        Imgproc.cvtColor(src, ret, Imgproc.COLOR_GRAY2RGB)
-        return ret
+    override fun convert(src: Mat, dst: Mat) {
+        Imgproc.cvtColor(src, dst, Imgproc.COLOR_GRAY2RGB)
     }
 
 }

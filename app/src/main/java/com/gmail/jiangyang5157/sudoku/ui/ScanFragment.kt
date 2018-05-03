@@ -20,6 +20,7 @@ import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvViewBase
 import com.gmail.jiangyang5157.sudoku.widget.scan.imgproc.*
 import org.opencv.core.Core
 import org.opencv.core.Mat
+import org.opencv.core.MatOfPoint
 import org.opencv.imgproc.Imgproc
 
 /**
@@ -82,9 +83,10 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
 
         mFrameRgb = Mat()
         mFrameProcess = frameProcessing(inputFrame.gray())
-        Imgproc.cvtColor(mFrameProcess, mFrameRgb, Imgproc.COLOR_GRAY2RGB)
+        Gray2Rgb.convert(mFrameProcess!!, mFrameRgb!!)
 
-        val contours = ContoursUtils.findExternals(mFrameProcess!!)
+        val contours = arrayListOf<MatOfPoint>()
+        ContoursUtils.findExternals(mFrameProcess!!, contours)
         if (contours.isNotEmpty()) {
             val indexOfMaxArea = ContoursUtils.findIndexOfMaxArea(contours)
             mDrawContour.draw(mFrameRgb!!, contours[indexOfMaxArea])
@@ -98,25 +100,29 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
         var curr = frame
 
         if (debug_enable_GaussianBlur) {
-            val dst = mGaussianBlur.convert(curr)
+            val dst = Mat()
+            mGaussianBlur.convert(curr, dst)
             curr.release()
             curr = dst
         }
 
         if (debug_enable_AdaptiveThreshold) {
-            val dst = mAdaptiveThreshold.convert(curr)
+            val dst = Mat()
+            mAdaptiveThreshold.convert(curr, dst)
             curr.release()
             curr = dst
         }
 
         if (debug_enable_CrossDilate) {
-            val dst = mCrossDilate.convert(curr)
+            val dst = Mat()
+            mCrossDilate.convert(curr, dst)
             curr.release()
             curr = dst
         }
 
         if (debug_enable_Canny) {
-            val dst = mCanny.convert(curr)
+            val dst = Mat()
+            mCanny.convert(curr, dst)
             curr.release()
             curr = dst
         }

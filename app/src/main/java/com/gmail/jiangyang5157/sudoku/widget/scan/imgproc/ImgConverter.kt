@@ -7,6 +7,6 @@ import org.opencv.core.Mat
  */
 interface ImgConverter {
 
-    fun convert(src: Mat): Mat
+    fun convert(src: Mat, dst: Mat)
 
 }
