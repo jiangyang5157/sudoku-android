@@ -36,8 +36,10 @@ public class Camera2CvFrame implements Camera2CvViewBase.CvCameraViewFrame {
 
     @Override
     public Mat rgba() {
-        Imgproc.cvtColorTwoPlane(mYuvFrameData, mUVFrameData, mRgba, Imgproc.COLOR_YUV2RGBA_NV21);
-        Imgproc.cvtColor(mRgba, mRgba, Imgproc.COLOR_RGB2BGR);
+        Mat rgbaNv21 = new Mat();
+        Imgproc.cvtColorTwoPlane(mYuvFrameData, mUVFrameData, rgbaNv21, Imgproc.COLOR_YUV2RGBA_NV21);
+        Imgproc.cvtColor(rgbaNv21, mRgba, Imgproc.COLOR_RGB2BGR);
+        rgbaNv21.release();
         return mRgba;
     }
 
