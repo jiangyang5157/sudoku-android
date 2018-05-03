@@ -7,6 +7,6 @@ import org.opencv.core.MatOfPoint
  */
 interface ContourFilter {
 
-    fun filter(contours: List<MatOfPoint>): MatOfPoint?
+    fun filter(contours: List<MatOfPoint>)
 
 }

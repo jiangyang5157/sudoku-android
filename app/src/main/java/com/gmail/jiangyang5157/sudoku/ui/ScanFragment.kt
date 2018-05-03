@@ -3,7 +3,6 @@ package com.gmail.jiangyang5157.sudoku.ui
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
-import android.support.annotation.ColorRes
 import android.support.v4.app.Fragment
 import android.support.v7.widget.SwitchCompat
 import android.util.Log
@@ -19,8 +18,7 @@ import com.gmail.jiangyang5157.sudoku.R
 import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView
 import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvViewBase
 import com.gmail.jiangyang5157.sudoku.widget.scan.imgproc.*
-import org.opencv.core.Mat
-import org.opencv.core.Scalar
+import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 
 /**
@@ -37,24 +35,38 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
     private var isSnapshotEnabled = false
     private var isCamera2ViewEnabled = false
 
-    private lateinit var scalarAccent: Scalar
     private var mRgba: Mat? = null
-    private var mGray: Mat? = null
-    private var width = 0
-    private var height = 0
+    private var mFrameProcd: Mat? = null
+    private var mGaussianBlurd = Mat()
+    private var mAdaptiveThresholdd = Mat()
+    private var mCrossDilated = Mat()
+    private var mCannyd = Mat()
+    private var mCrossDilateKernel = CrossDilate.buildKernel(0.5)
+    private var mContourHierarchy = Mat()
+    private var mContours = arrayListOf<MatOfPoint>()
 
-    private val mGaussianBlur = GaussianBlur(5.0, 5.0, 0.0, 0.0)
+    private val mGaussianBlur = GaussianBlur(GaussianBlur.buildSize(5.0), 0.0, 0.0)
     private val mAdaptiveThreshold = AdaptiveThreshold(255.0, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 5, 2.0)
-    private val mCrossDilate = CrossDilate(0.5)
-    private val mCanny = Canny(127.0, 255.0, 3)
-    private val mFindContours = FindContours(Imgproc.RETR_EXTERNAL)
-    private val mMaxAreaContourFilter = MaxAreaContourFilter
-    private val mDrawContour = DrawContour(Color.RED, 2)
+    private val mCrossDilate = CrossDilate(mCrossDilateKernel)
+    private val mCanny = Canny(127.0, 255.0, 3, false)
+    private val mDrawContour = DrawContour(DrawContour.buildScalar(Color.RED), 2)
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mRgba?.release()
+        mFrameProcd?.release()
+        mGaussianBlurd.release()
+        mAdaptiveThresholdd.release()
+        mCrossDilated.release()
+        mCannyd.release()
+        mCrossDilateKernel.release()
+        mContourHierarchy.release()
+        mContours.forEach { it.release() }
+        mContours.clear()
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_scan, container, false)
-        scalarAccent = color2scalar(R.color.colorAccent)
-        return view
+        return inflater.inflate(R.layout.fragment_scan, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -72,71 +84,56 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
 
     override fun onCameraViewStarted(width: Int, height: Int) {
         Log.d(TAG, "onCameraViewStarted: ${width}x$height")
-        this.width = width
-        this.height = height
     }
 
     override fun onCameraViewStopped() {
         Log.d(TAG, "onCameraViewStopped")
-        mRgba?.release()
-        mGray?.release()
     }
 
     override fun onCameraFrame(inputFrame: Camera2CvViewBase.CvCameraViewFrame): Mat {
+        val gray = inputFrame.gray()
+        mFrameProcd = frameproc(gray)
+        gray.release()
+
         mRgba?.release()
-        mGray?.release()
-
-//        mRgba = inputFrame.rgba()
-//        Imgproc.cvtColor(mRgba, mRgba, Imgproc.COLOR_RGB2BGR)
         mRgba = Mat()
-        mGray = inputFrame.gray()
+        ImgUtils.gray2rgb(mFrameProcd!!, mRgba!!)
 
-        mGray = frameproc(mGray!!)
-        Imgproc.cvtColor(mGray, mRgba, Imgproc.COLOR_GRAY2RGB)
-
-        val contours = mFindContours.find(mGray!!)
-        val maxAreaContour = mMaxAreaContourFilter.filter(contours)
-        maxAreaContour?.apply {
-            mDrawContour.draw(mRgba!!, maxAreaContour)
+        ContoursUtils.findExternals(mFrameProcd!!, mContours, mContourHierarchy)
+        ContoursUtils.sortedByDescendingArea(mContours)
+        if (mContours.isNotEmpty()) {
+            mDrawContour.draw(mRgba!!, mContours[0])
         }
-        contours.forEach { it.release() }
 
+        mContours.forEach { it.release() }
+        mContours.clear()
         return mRgba!!
     }
 
-    private fun frameproc(gray: Mat): Mat {
-        var last = gray
+    private fun frameproc(src: Mat): Mat {
+        var last = src
 
         if (debug_enable_GaussianBlur) {
-            val gaussianBlurMat = mGaussianBlur.convert(last)
-            last.release()
-            last = gaussianBlurMat
+            mGaussianBlur.convert(last, mGaussianBlurd)
+            last = mGaussianBlurd
         }
 
         if (debug_enable_AdaptiveThreshold) {
-            val adaptiveThresholdMat = mAdaptiveThreshold.convert(last)
-            last.release()
-            last = adaptiveThresholdMat
+            mAdaptiveThreshold.convert(last, mAdaptiveThresholdd)
+            last = mAdaptiveThresholdd
         }
 
         if (debug_enable_CrossDilate) {
-            val crossDilateMat = mCrossDilate.convert(last)
-            last.release()
-            last = crossDilateMat
+            mCrossDilate.convert(last, mCrossDilated)
+            last = mCrossDilated
         }
 
         if (debug_enable_Canny) {
-            val cannyMat = mCanny.convert(last)
-            last.release()
-            last = cannyMat
+            mCanny.convert(last, mCannyd)
+            last = mCannyd
         }
 
         return last
-    }
-
-    private fun color2scalar(@ColorRes resId: Int): Scalar {
-        val color = context.resources.getColor(resId, context.theme)
-        return Scalar(Color.red(color).toDouble(), Color.green(color).toDouble(), Color.blue(color).toDouble())
     }
 
     private fun scanToggle() {
@@ -259,8 +256,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val value = guassion_blur_ksize_min + progress.toDouble() * guassion_blur_ksize_step
                 (debug_panel_gaussian_blur.findViewById(R.id.debug_tv_guassion_blur_ksize) as TextView).text = value.toString()
-                mGaussianBlur.kWidth = value
-                mGaussianBlur.kHeight = value
+                mGaussianBlur.kSize = GaussianBlur.buildSize(value)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -340,7 +336,9 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val value = cross_dilate_dilation_size_min + progress.toDouble() * cross_dilate_dilation_size_step
                 (debug_panel_cross_dilate.findViewById(R.id.debug_tv_cross_dilate_dilation_size) as TextView).text = value.toString()
-                mCrossDilate.dilationSize = value
+                mCrossDilateKernel?.release()
+                mCrossDilateKernel = CrossDilate.buildKernel(value)
+                mCrossDilate.kernel = mCrossDilateKernel
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}

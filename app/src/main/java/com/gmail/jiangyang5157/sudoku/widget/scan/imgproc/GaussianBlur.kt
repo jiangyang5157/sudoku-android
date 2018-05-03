@@ -8,16 +8,18 @@ import org.opencv.imgproc.Imgproc
 /**
  * Created by Yang Jiang on May 02, 2018
  */
-data class GaussianBlur(var kWidth: Double,
-                        var kHeight: Double,
+data class GaussianBlur(var kSize: Size,
                         var sigmaX: Double,
                         var sigmaY: Double,
-                        var boardType: Int = Core.BORDER_DEFAULT) : ImgConverter {
+                        var boardType: Int = Core.BORDER_DEFAULT)
+    : ImgConverter {
 
-    override fun convert(src: Mat): Mat {
-        val ret = Mat()
-        Imgproc.GaussianBlur(src, ret, Size(kWidth, kHeight), sigmaX, sigmaY, boardType)
-        return ret
+    companion object {
+        fun buildSize(k: Double) = Size(k, k)
+    }
+
+    override fun convert(src: Mat, dst: Mat) {
+        Imgproc.GaussianBlur(src, dst, kSize, sigmaX, sigmaY, boardType)
     }
 
 }

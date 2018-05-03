@@ -6,16 +6,15 @@ import org.opencv.imgproc.Imgproc
 /**
  * Created by Yang Jiang on May 02, 2018
  */
-data class AdaptiveThreshold(var maxValue: Double,
+data class AdaptiveThreshold(var maxValue: Double = 255.0,
                              var adaptiveMethod: Int,
                              var thresholdType: Int,
                              var blockSize: Int,
-                             var c: Double) : ImgConverter {
+                             var c: Double)
+    : ImgConverter {
 
-    override fun convert(src: Mat): Mat {
-        val ret = Mat()
-        Imgproc.adaptiveThreshold(src, ret, maxValue, adaptiveMethod, thresholdType, blockSize, c)
-        return ret
+    override fun convert(src: Mat, dst: Mat) {
+        Imgproc.adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, blockSize, c)
     }
 
 }

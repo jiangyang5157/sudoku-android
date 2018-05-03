@@ -8,21 +8,18 @@ import org.opencv.imgproc.Imgproc
 /**
  * Created by Yang Jiang on May 02, 2018
  */
-data class CrossDilate(var dilationSize: Double) : ImgConverter {
+data class CrossDilate(var kernel: Mat) : ImgConverter {
 
-    private fun buildKernel(): Mat {
-        return Imgproc.getStructuringElement(
+    companion object {
+        fun buildKernel(dilationSize: Double) = Imgproc.getStructuringElement(
                 Imgproc.MORPH_CROSS,
                 Size(2 * dilationSize + 1, 2 * dilationSize + 1),
                 Point(dilationSize, dilationSize))
     }
 
-    override fun convert(src: Mat): Mat {
-        val ret = Mat()
-        val kernel = buildKernel()
-        Imgproc.dilate(src, ret, kernel)
-        kernel.release()
-        return ret
+
+    override fun convert(src: Mat, dst: Mat) {
+        Imgproc.dilate(src, dst, kernel)
     }
 
 }
