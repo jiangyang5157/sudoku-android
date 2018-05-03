@@ -13,8 +13,10 @@ data class AdaptiveThreshold(var maxValue: Double,
                              var c: Double)
     : ImgConverter {
 
-    override fun convert(src: Mat, dst: Mat) {
-        Imgproc.adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, blockSize, c)
+    override fun convert(src: Mat): Mat {
+        val ret = Mat()
+        Imgproc.adaptiveThreshold(src, ret, maxValue, adaptiveMethod, thresholdType, blockSize, c)
+        return ret
     }
 
 }

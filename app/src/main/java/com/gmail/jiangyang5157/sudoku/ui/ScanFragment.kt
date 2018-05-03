@@ -20,7 +20,6 @@ import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvViewBase
 import com.gmail.jiangyang5157.sudoku.widget.scan.imgproc.*
 import org.opencv.core.Core
 import org.opencv.core.Mat
-import org.opencv.core.MatOfPoint
 import org.opencv.imgproc.Imgproc
 
 /**
@@ -83,15 +82,15 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
 
         mFrameRgb = Mat()
         mFrameProcess = frameProcessing(inputFrame.gray())
-        Gray2Rgb.convert(mFrameProcess!!, mFrameRgb!!)
+        Imgproc.cvtColor(mFrameProcess, mFrameRgb, Imgproc.COLOR_GRAY2RGB)
 
-        val contours = arrayListOf<MatOfPoint>()
-        ContoursUtils.findExternals(mFrameProcess!!, contours)
+        val contours = ContoursUtils.findExternals(mFrameProcess!!)
         if (contours.isNotEmpty()) {
             val indexOfMaxArea = ContoursUtils.findIndexOfMaxArea(contours)
             mDrawContour.draw(mFrameRgb!!, contours[indexOfMaxArea])
             contours.forEach { it.release() }
         }
+
         return mFrameRgb!!
     }
 
@@ -99,29 +98,25 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
         var curr = frame
 
         if (debug_enable_GaussianBlur) {
-            val dst = Mat()
-            mGaussianBlur.convert(curr, dst)
+            val dst = mGaussianBlur.convert(curr)
             curr.release()
             curr = dst
         }
 
         if (debug_enable_AdaptiveThreshold) {
-            val dst = Mat()
-            mAdaptiveThreshold.convert(curr, dst)
+            val dst = mAdaptiveThreshold.convert(curr)
             curr.release()
             curr = dst
         }
 
         if (debug_enable_CrossDilate) {
-            val dst = Mat()
-            mCrossDilate.convert(curr, dst)
+            val dst = mCrossDilate.convert(curr)
             curr.release()
             curr = dst
         }
 
         if (debug_enable_Canny) {
-            val dst = Mat()
-            mCanny.convert(curr, dst)
+            val dst = mCanny.convert(curr)
             curr.release()
             curr = dst
         }

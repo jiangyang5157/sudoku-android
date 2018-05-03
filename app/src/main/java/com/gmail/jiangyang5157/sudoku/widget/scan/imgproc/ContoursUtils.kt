@@ -9,10 +9,12 @@ import org.opencv.imgproc.Imgproc
  */
 object ContoursUtils {
 
-    fun findExternals(src: Mat, dst: ArrayList<MatOfPoint>) {
+    fun findExternals(src: Mat): List<MatOfPoint> {
+        val ret = arrayListOf<MatOfPoint>()
         val hierarchy = Mat()
-        Imgproc.findContours(src, dst, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
+        Imgproc.findContours(src, ret, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
         hierarchy.release()
+        return ret
     }
 
     fun findIndexOfMaxArea(contours: List<MatOfPoint>): Int {

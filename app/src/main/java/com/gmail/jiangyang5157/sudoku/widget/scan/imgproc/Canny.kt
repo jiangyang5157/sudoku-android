@@ -12,8 +12,10 @@ data class Canny(var threshold1: Double,
                  var l2gradient: Boolean)
     : ImgConverter {
 
-    override fun convert(src: Mat, dst: Mat) {
-        Imgproc.Canny(src, dst, threshold1, threshold2, apertureSize, l2gradient)
+    override fun convert(src: Mat): Mat {
+        val ret = Mat()
+        Imgproc.Canny(src, ret, threshold1, threshold2, apertureSize, l2gradient)
+        return ret
     }
 
 }

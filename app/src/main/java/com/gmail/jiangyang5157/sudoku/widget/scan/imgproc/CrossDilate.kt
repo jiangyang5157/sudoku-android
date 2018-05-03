@@ -17,10 +17,12 @@ data class CrossDilate(var dilationSize: Double) : ImgConverter {
                 Point(dilationSize, dilationSize))
     }
 
-    override fun convert(src: Mat, dst: Mat) {
+    override fun convert(src: Mat): Mat {
+        val ret = Mat()
         val kernel = buildKernel()
-        Imgproc.dilate(src, dst, kernel)
+        Imgproc.dilate(src, ret, kernel)
         kernel.release()
+        return ret
     }
 
 }
