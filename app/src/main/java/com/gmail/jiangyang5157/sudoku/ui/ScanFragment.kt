@@ -89,7 +89,9 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
         ContoursUtils.findExternals(mFrameProcess!!, contours)
         if (contours.isNotEmpty()) {
             val indexOfMaxArea = ContoursUtils.findIndexOfMaxArea(contours)
-            mDrawContour.draw(mFrameRgb!!, contours[indexOfMaxArea])
+            if (indexOfMaxArea >= 0) {
+                mDrawContour.draw(mFrameRgb!!, contours[indexOfMaxArea])
+            }
             contours.forEach { it.release() }
         }
 
