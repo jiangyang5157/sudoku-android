@@ -40,32 +40,16 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
     private var mFrameRgb: Mat? = null
     private var mFrameProcess: Mat? = null
 
-    private var mGaussianBlurd = Mat()
-    private var mAdaptiveThresholdd = Mat()
-    private var mCrossDilated = Mat()
-    private var mCannyd = Mat()
-    private var mCrossDilateKernel = CrossDilate.buildKernel(0.5)
-    private var mContourHierarchy = Mat()
-    private var mContours = arrayListOf<MatOfPoint>()
-
-    private val mGaussianBlur = GaussianBlur(GaussianBlur.buildSize(5.0), 0.0, 0.0, Core.BORDER_DEFAULT)
+    private val mGaussianBlur = GaussianBlur(5.0, 5.0, 0.0, 0.0, Core.BORDER_DEFAULT)
     private val mAdaptiveThreshold = AdaptiveThreshold(255.0, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 5, 2.0)
-    private val mCrossDilate = CrossDilate(mCrossDilateKernel)
+    private val mCrossDilate = CrossDilate(0.5)
     private val mCanny = Canny(127.0, 255.0, 3, false)
-    private val mDrawContour = DrawContour(DrawContour.buildScalar(Color.RED), 2)
+    private val mDrawContour = DrawContour(Color.RED, 2)
 
     override fun onDestroy() {
         super.onDestroy()
         mFrameRgb?.release()
         mFrameProcess?.release()
-        mGaussianBlurd.release()
-        mAdaptiveThresholdd.release()
-        mCrossDilated.release()
-        mCannyd.release()
-        mCrossDilateKernel.release()
-        mContourHierarchy.release()
-        mContours.forEach { it.release() }
-        mContours.clear()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -99,49 +83,49 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
 
         mFrameRgb = Mat()
         mFrameProcess = frameProcessing(inputFrame.gray())
-        ImgUtils.gray2rgb(mFrameProcess!!, mFrameRgb!!)
+        Gray2Rgb.convert(mFrameProcess!!, mFrameRgb!!)
 
-        ContoursUtils.findExternals(mFrameProcess!!, mContours, mContourHierarchy)
-        if (mContours.isNotEmpty()) {
-            val index = ContoursUtils.findIndexOfMaxArea(mContours)
-            mDrawContour.draw(mFrameRgb!!, mContours[index])
-            mContours.forEach { it.release() }
-            mContours.clear()
+        val contours = arrayListOf<MatOfPoint>()
+        ContoursUtils.findExternals(mFrameProcess!!, contours)
+        if (contours.isNotEmpty()) {
+            val indexOfMaxArea = ContoursUtils.findIndexOfMaxArea(contours)
+            mDrawContour.draw(mFrameRgb!!, contours[indexOfMaxArea])
+            contours.forEach { it.release() }
         }
         return mFrameRgb!!
     }
 
-    private fun frameProcessing(src: Mat): Mat {
-        var curr = src
-        var isOriginal = true
+    private fun frameProcessing(frame: Mat): Mat {
+        var curr = frame
 
         if (debug_enable_GaussianBlur) {
-            mGaussianBlur.convert(curr, mGaussianBlurd)
-            curr = mGaussianBlurd
-            isOriginal = false
+            val dst = Mat()
+            mGaussianBlur.convert(curr, dst)
+            curr.release()
+            curr = dst
         }
 
         if (debug_enable_AdaptiveThreshold) {
-            mAdaptiveThreshold.convert(curr, mAdaptiveThresholdd)
-            curr = mAdaptiveThresholdd
-            isOriginal = false
+            val dst = Mat()
+            mAdaptiveThreshold.convert(curr, dst)
+            curr.release()
+            curr = dst
         }
 
         if (debug_enable_CrossDilate) {
-            mCrossDilate.convert(curr, mCrossDilated)
-            curr = mCrossDilated
-            isOriginal = false
+            val dst = Mat()
+            mCrossDilate.convert(curr, dst)
+            curr.release()
+            curr = dst
         }
 
         if (debug_enable_Canny) {
-            mCanny.convert(curr, mCannyd)
-            curr = mCannyd
-            isOriginal = false
+            val dst = Mat()
+            mCanny.convert(curr, dst)
+            curr.release()
+            curr = dst
         }
 
-        if (!isOriginal) {
-            src.release()
-        }
         return curr
     }
 
@@ -265,7 +249,8 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val value = guassion_blur_ksize_min + progress.toDouble() * guassion_blur_ksize_step
                 (debug_panel_gaussian_blur.findViewById(R.id.debug_tv_guassion_blur_ksize) as TextView).text = value.toString()
-                mGaussianBlur.kSize = GaussianBlur.buildSize(value)
+                mGaussianBlur.kWidth = value
+                mGaussianBlur.kHeight = value
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -345,9 +330,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val value = cross_dilate_dilation_size_min + progress.toDouble() * cross_dilate_dilation_size_step
                 (debug_panel_cross_dilate.findViewById(R.id.debug_tv_cross_dilate_dilation_size) as TextView).text = value.toString()
-                mCrossDilateKernel?.release()
-                mCrossDilateKernel = CrossDilate.buildKernel(value)
-                mCrossDilate.kernel = mCrossDilateKernel
+                mCrossDilate.dilationSize = value
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
