@@ -18,6 +18,7 @@ import com.gmail.jiangyang5157.sudoku.R
 import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvView
 import com.gmail.jiangyang5157.sudoku.widget.scan.Camera2CvViewBase
 import com.gmail.jiangyang5157.sudoku.widget.scan.imgproc.*
+import org.opencv.core.Core
 import org.opencv.core.Mat
 import org.opencv.core.MatOfPoint
 import org.opencv.imgproc.Imgproc
@@ -47,7 +48,7 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
     private var mContourHierarchy = Mat()
     private var mContours = arrayListOf<MatOfPoint>()
 
-    private val mGaussianBlur = GaussianBlur(GaussianBlur.buildSize(5.0), 0.0, 0.0)
+    private val mGaussianBlur = GaussianBlur(GaussianBlur.buildSize(5.0), 0.0, 0.0, Core.BORDER_DEFAULT)
     private val mAdaptiveThreshold = AdaptiveThreshold(255.0, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 5, 2.0)
     private val mCrossDilate = CrossDilate(mCrossDilateKernel)
     private val mCanny = Canny(127.0, 255.0, 3, false)

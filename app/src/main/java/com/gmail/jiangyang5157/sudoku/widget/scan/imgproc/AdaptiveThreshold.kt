@@ -6,7 +6,7 @@ import org.opencv.imgproc.Imgproc
 /**
  * Created by Yang Jiang on May 02, 2018
  */
-data class AdaptiveThreshold(var maxValue: Double = 255.0,
+data class AdaptiveThreshold(var maxValue: Double,
                              var adaptiveMethod: Int,
                              var thresholdType: Int,
                              var blockSize: Int,

@@ -1,6 +1,5 @@
 package com.gmail.jiangyang5157.sudoku.widget.scan.imgproc
 
-import org.opencv.core.Core
 import org.opencv.core.Mat
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
@@ -11,7 +10,7 @@ import org.opencv.imgproc.Imgproc
 data class GaussianBlur(var kSize: Size,
                         var sigmaX: Double,
                         var sigmaY: Double,
-                        var boardType: Int = Core.BORDER_DEFAULT)
+                        var boardType: Int)
     : ImgConverter {
 
     companion object {
