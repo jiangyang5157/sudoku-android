@@ -1,9 +1,7 @@
 package com.gmail.jiangyang5157.sudoku.widget.scan.imgproc
 
-import android.graphics.Color
 import org.opencv.core.Mat
 import org.opencv.core.MatOfPoint
-import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
 
 /**
@@ -11,16 +9,22 @@ import org.opencv.imgproc.Imgproc
  */
 object ContoursUtils {
 
-    fun buildScalar(color: Int) = Scalar(Color.red(color).toDouble(), Color.green(color).toDouble(), Color.blue(color).toDouble())
-
-    fun findExternals(src: Mat, dst: ArrayList<MatOfPoint>, hierarchy: Mat) {
+    fun findExternals(src: Mat, dst: MutableList<MatOfPoint>, hierarchy: Mat) {
         Imgproc.findContours(src, dst, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
     }
 
-    fun sortedByDescendingArea(contours: List<MatOfPoint>) {
-        contours.sortedByDescending {
-            Imgproc.contourArea(it)
+    fun findIndexOfMaxArea(contours: List<MatOfPoint>): Int {
+        var maxArea = 0.0
+        var indexOfMaxArea = -1
+        contours.forEachIndexed { i, contour ->
+            Imgproc.contourArea(contour).apply {
+                if (this > maxArea) {
+                    maxArea = this
+                    indexOfMaxArea = i
+                }
+            }
         }
+        return indexOfMaxArea
     }
 
 }
