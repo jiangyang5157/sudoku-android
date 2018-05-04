@@ -28,8 +28,7 @@ data class TCellSpec(
             else -> 0xFFF5F5F5.toInt()
         }
 
-    val backgroundMargin: Int
-        get() = 1
+    val backgroundMargin: Int = 1
 
     val digitColorInt: Int
         get() = when (flag.getStatus()) {
