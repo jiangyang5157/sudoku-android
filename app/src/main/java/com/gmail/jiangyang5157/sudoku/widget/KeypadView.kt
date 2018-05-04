@@ -74,7 +74,7 @@ class KeypadView : FrameLayout {
             val relativeLayout = this as RelativeLayout
             relativeLayout.removeAllViews()
 
-            val keypadBtnNormal = resources.getDimension(R.dimen.keypad_btn_normal).toInt()
+            val btnSize = resources.getDimension(R.dimen.btn_keypad_size).toInt()
             val btns = Array(size) { Button(context) }
             btns.forEachIndexed { i, btn ->
                 relativeLayout.addView(btn.apply {
@@ -83,19 +83,19 @@ class KeypadView : FrameLayout {
                     setOnClickListener { enterDigit(i + 1) }
                     when {
                         i == 0 -> {
-                            layoutParams = RelativeLayout.LayoutParams(keypadBtnNormal, keypadBtnNormal)
+                            layoutParams = RelativeLayout.LayoutParams(btnSize, btnSize)
                         }
                         i < sqrtS -> {
-                            layoutParams = RelativeLayout.LayoutParams(keypadBtnNormal, keypadBtnNormal).apply {
+                            layoutParams = RelativeLayout.LayoutParams(btnSize, btnSize).apply {
                                 addRule(RelativeLayout.RIGHT_OF, btns[i - 1].id)
                             }
                         }
                         i % sqrtS == 0 ->
-                            layoutParams = RelativeLayout.LayoutParams(keypadBtnNormal, keypadBtnNormal).apply {
+                            layoutParams = RelativeLayout.LayoutParams(btnSize, btnSize).apply {
                                 addRule(RelativeLayout.BELOW, btns[i - sqrtS].id)
                             }
                         else -> {
-                            layoutParams = RelativeLayout.LayoutParams(keypadBtnNormal, keypadBtnNormal).apply {
+                            layoutParams = RelativeLayout.LayoutParams(btnSize, btnSize).apply {
                                 addRule(RelativeLayout.RIGHT_OF, btns[i - 1].id)
                                 addRule(RelativeLayout.BELOW, btns[i - sqrtS].id)
                             }

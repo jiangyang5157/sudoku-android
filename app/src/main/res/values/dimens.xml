@@ -10,6 +10,6 @@
     <dimen name="space_tiny">2dp</dimen>
     <dimen name="space_micro">1dp</dimen>
 
-    <dimen name="keypad_btn_normal">56dip</dimen>
+    <dimen name="btn_keypad_size">56dip</dimen>
 
 </resources>
