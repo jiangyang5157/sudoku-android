@@ -85,13 +85,11 @@ class ScanFragment : Fragment(), Camera2CvViewBase.Camera2CvViewListener {
         mFrameProcess = frameProcessing(inputFrame.gray())
         Gray2Rgb.convert(mFrameProcess!!, mFrameRgb!!)
 
-        val contours = arrayListOf<MatOfPoint>()
+        var contours = mutableListOf<MatOfPoint>()
         ContoursUtils.findExternals(mFrameProcess!!, contours)
         if (contours.isNotEmpty()) {
-            val indexOfMaxArea = ContoursUtils.findIndexOfMaxArea(contours)
-            if (indexOfMaxArea >= 0) {
-                mDrawContour.draw(mFrameRgb!!, contours[indexOfMaxArea])
-            }
+            contours = ContoursUtils.sortByDescendingArea(contours)
+            mDrawContour.draw(mFrameRgb!!, contours[0])
             contours.forEach { it.release() }
         }
 
