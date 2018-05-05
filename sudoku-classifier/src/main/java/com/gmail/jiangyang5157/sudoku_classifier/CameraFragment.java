@@ -50,11 +50,11 @@ public class CameraFragment extends Fragment {
     public static final String TAG = "CameraFragment";
     public static final String TAG_HANDLER_THREAD = "CameraFragment_HANDLER_THREAD";
 
-    public interface ConnectionCallback {
+    public interface Callback {
         void onPreviewSizeChosen(Size size, int cameraRotation);
     }
 
-    private final ConnectionCallback mCameraConnectionCallback;
+    private final Callback mCallback;
     private final OnImageAvailableListener mOnImageAvailableListener;
     private ImageReader mPreviewReader;
 
@@ -94,18 +94,18 @@ public class CameraFragment extends Fragment {
 
     private CameraFragment(
             final String cameraId,
-            final ConnectionCallback connectionCallback,
+            final Callback callback,
             final OnImageAvailableListener imageAvailableListener,
             final Size mDesiredSize) {
         this.mCameraId = cameraId;
-        this.mCameraConnectionCallback = connectionCallback;
+        this.mCallback = callback;
         this.mOnImageAvailableListener = imageAvailableListener;
         this.mDesiredSize = mDesiredSize;
     }
 
     public static CameraFragment newInstance(
             final String cameraId,
-            final ConnectionCallback callback,
+            final Callback callback,
             final OnImageAvailableListener imageListener,
             final Size desiredSize) {
         return new CameraFragment(cameraId, callback, imageListener, desiredSize);
@@ -420,7 +420,7 @@ public class CameraFragment extends Fragment {
 
             Integer sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
             assert sensorOrientation != null;
-            mCameraConnectionCallback.onPreviewSizeChosen(mPreviewSize, sensorOrientation);
+            mCallback.onPreviewSizeChosen(mPreviewSize, sensorOrientation);
         } catch (final CameraAccessException e) {
             Log.e(TAG, "CameraAccessException");
             activity.finish();

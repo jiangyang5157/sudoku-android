@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 import java.nio.ByteBuffer;
 
-public abstract class CameraActivity extends AppCompatActivity implements CameraFragment.ConnectionCallback {
+public abstract class CameraActivity extends AppCompatActivity implements CameraFragment.Callback {
     public static final String TAG = "CameraActivity";
     public static final String TAG_HANDLER_THREAD = "CameraActivity_HANDLER_THREAD";
 
@@ -52,7 +52,6 @@ public abstract class CameraActivity extends AppCompatActivity implements Camera
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        Log.d("####", "onCreate " + this);
         super.onCreate(null);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -158,7 +157,7 @@ public abstract class CameraActivity extends AppCompatActivity implements Camera
         mCameraFragment =
                 CameraFragment.newInstance(
                         cameraId,
-                        new CameraFragment.ConnectionCallback() {
+                        new CameraFragment.Callback() {
                             @Override
                             public void onPreviewSizeChosen(final Size size, final int rotation) {
                                 previewHeight = size.getHeight();
