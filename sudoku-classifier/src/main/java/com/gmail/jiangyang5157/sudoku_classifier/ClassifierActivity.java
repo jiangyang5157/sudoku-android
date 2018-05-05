@@ -9,7 +9,6 @@ import android.media.ImageReader.OnImageAvailableListener;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.Size;
-import android.util.TypedValue;
 
 import com.gmail.jiangyang5157.kotlin_kit.render.Renderable;
 
@@ -34,7 +33,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
 
     @Override
     protected int getLayoutId() {
-        return R.layout.camera_connection_fragment;
+        return R.layout.fragment_camera;
     }
 
     @Override
@@ -46,10 +45,6 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
 
     @Override
     public void onPreviewSizeChosen(final Size size, final int rotation) {
-        final float textSizePx = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
-
-
         previewWidth = size.getWidth();
         previewHeight = size.getHeight();
 

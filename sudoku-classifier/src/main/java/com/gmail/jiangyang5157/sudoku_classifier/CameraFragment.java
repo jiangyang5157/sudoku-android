@@ -37,6 +37,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.gmail.jiangyang5157.kotlin_android_kit.widget.AutoFitTextureView;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,7 +47,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-public class CameraConnectionFragment extends Fragment {
+public class CameraFragment extends Fragment {
 
     /**
      * The camera preview size will be chosen to be the smallest frame by pixel size capable of
@@ -77,7 +79,7 @@ public class CameraConnectionFragment extends Fragment {
 
     private final ConnectionCallback cameraConnectionCallback;
 
-    private CameraConnectionFragment(
+    private CameraFragment(
             final ConnectionCallback connectionCallback,
             final OnImageAvailableListener imageListener,
             final int layout,
@@ -88,12 +90,12 @@ public class CameraConnectionFragment extends Fragment {
         this.inputSize = inputSize;
     }
 
-    public static CameraConnectionFragment newInstance(
+    public static CameraFragment newInstance(
             final ConnectionCallback callback,
             final OnImageAvailableListener imageListener,
             final int layout,
             final Size inputSize) {
-        return new CameraConnectionFragment(callback, imageListener, layout, inputSize);
+        return new CameraFragment(callback, imageListener, layout, inputSize);
     }
 
     /**
@@ -137,14 +139,8 @@ public class CameraConnectionFragment extends Fragment {
      */
     private String cameraId;
 
-    /**
-     * An {@link AutoFitTextureView} for camera preview.
-     */
     private AutoFitTextureView textureView;
 
-    /**
-     * A {@link CameraCaptureSession } for camera preview.
-     */
     private CameraCaptureSession captureSession;
 
     /**
@@ -272,7 +268,7 @@ public class CameraConnectionFragment extends Fragment {
 
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
-        textureView = (AutoFitTextureView) view.findViewById(R.id.textureview);
+        textureView = (AutoFitTextureView) view.findViewById(R.id.textureview_autofit);
     }
 
     @Override
@@ -354,7 +350,7 @@ public class CameraConnectionFragment extends Fragment {
     }
 
     /**
-     * Opens the camera specified by {@link CameraConnectionFragment#cameraId}.
+     * Opens the camera specified by {@link CameraFragment#cameraId}.
      */
     private void openCamera(final int width, final int height) {
         setUpCameraOutputs();

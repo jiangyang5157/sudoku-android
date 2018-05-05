@@ -5,6 +5,8 @@ import android.util.Log;
 
 public class ImageUtils {
 
+    public static final String TAG = "ImageUtils";
+
     public static int getYUVByteSize(final int width, final int height) {
         // The luminance plane requires 1 byte per pixel.
         final int ySize = width * height;
@@ -16,9 +18,8 @@ public class ImageUtils {
         return ySize + uvSize;
     }
 
-    // This value is 2 ^ 18 - 1, and is used to clamp the RGB values before their ranges
-    // are normalized to eight bits.
-    static final int kMaxChannelValue = 262143;
+    // It's used to clamp the RGB values before their ranges are normalized to eight bits.
+    static final int kMaxChannelValue = 262143; // 2 ^ 18 - 1
 
     public static void convertYUV420SPToARGB8888(
             byte[] input,
@@ -67,7 +68,6 @@ public class ImageUtils {
 
         return 0xff000000 | ((r << 6) & 0xff0000) | ((g >> 2) & 0xff00) | ((b >> 10) & 0xff);
     }
-
 
     public static void convertYUV420ToARGB8888(
             byte[] yData,
@@ -121,7 +121,7 @@ public class ImageUtils {
 
         if (applyRotation != 0) {
             if (applyRotation % 90 != 0) {
-                Log.w("####", "Rotation of " + applyRotation + " % 90 != 0");
+                Log.w(TAG, "Rotation of " + applyRotation + " % 90 != 0");
             }
 
             // Translate so center of image is at origin.

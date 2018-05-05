@@ -293,9 +293,9 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
 
         Fragment fragment;
         if (useCamera2API) {
-            CameraConnectionFragment camera2Fragment =
-                    CameraConnectionFragment.newInstance(
-                            new CameraConnectionFragment.ConnectionCallback() {
+            CameraFragment camera2Fragment =
+                    CameraFragment.newInstance(
+                            new CameraFragment.ConnectionCallback() {
                                 @Override
                                 public void onPreviewSizeChosen(final Size size, final int rotation) {
                                     previewHeight = size.getHeight();
@@ -338,14 +338,14 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
     }
 
     public void requestRender() {
-        final OverlayView overlay = (OverlayView) findViewById(R.id.overlayview);
+        final OverlayView overlay = (OverlayView) findViewById(R.id.view_overlay);
         if (overlay != null) {
             overlay.postInvalidate();
         }
     }
 
     public void addCallback(final Renderable<Canvas> callback) {
-        final OverlayView overlay = (OverlayView) findViewById(R.id.overlayview);
+        final OverlayView overlay = (OverlayView) findViewById(R.id.view_overlay);
         if (overlay != null) {
             overlay.addRenderable(callback);
         }

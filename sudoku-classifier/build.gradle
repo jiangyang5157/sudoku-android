@@ -35,6 +35,7 @@ dependencies {
     implementation "org.tensorflow:tensorflow-android:$tensorflow_version"
 
     implementation project(':kotlin-kit')
+    implementation project(':kotlin-android-kit')
 }
 
 repositories {
