@@ -44,19 +44,22 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
     private var mImageConverter: Runnable? = null
     private var mImageCloser: Runnable? = null
 
+    private var mPreviewWidth = 0
+    private var mPreviewHeight = 0
+    private var mFrameBytes: IntArray? = null
+    private var mFrameBitmap: Bitmap? = null
+    private val croppedBitmapSize = 224
+    private var mCroppedBitmap: Bitmap? = null
+    private var mFrameToCropMatrix: Matrix? = null
+
+
     private val DESIRED_SIZE = Size(640, 480)
     private var mIsProcessingFrame = false
     private val mYuvBytes = arrayOfNulls<ByteArray?>(3)
-    private var mRgbBytes: IntArray? = null
     private var mYRowStride: Int = 0
 
-    private var previewWidth = 0
-    private var previewHeight = 0
-    private var rgbFrameBitmap: Bitmap? = null
-    private var croppedBitmap: Bitmap? = null
-    private val croppedBitmapSize = 224
+
     private var cropCopyBitmap: Bitmap? = null
-    private var frameToCropTransform: Matrix? = null
 
     private var mOverlayView: OverlayView? = null
 
@@ -201,31 +204,29 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
     }
 
     override fun onPreviewSizeChosen(size: Size, cameraRotation: Int, screenRotation: Int) {
-        previewWidth = size.width
-        previewHeight = size.height
-        Log.d(TAG, "Initializing at size $previewWidth, $previewHeight")
+        mPreviewWidth = size.width
+        mPreviewHeight = size.height
+        Log.d(TAG, "Initializing at size $mPreviewWidth, $mPreviewHeight")
 
         val rotation = cameraRotation - screenRotation
         Log.d(TAG, "Camera orientation relative to screen canvas: $rotation")
 
-        mRgbBytes = IntArray(previewWidth * previewHeight)
-        rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888)
-        croppedBitmap = Bitmap.createBitmap(croppedBitmapSize, croppedBitmapSize, Bitmap.Config.ARGB_8888)
-        frameToCropTransform = ImageUtils.getTransformationMatrix(
-                previewWidth, previewHeight,
-                croppedBitmapSize, croppedBitmapSize,
-                rotation,
-                true)
+        mFrameBytes = IntArray(mPreviewWidth * mPreviewHeight)
+        mFrameBitmap = Bitmap.createBitmap(mPreviewWidth, mPreviewHeight, Bitmap.Config.ARGB_8888)
+        mCroppedBitmap = Bitmap.createBitmap(croppedBitmapSize, croppedBitmapSize, Bitmap.Config.ARGB_8888)
+
+        mFrameToCropMatrix = ImageUtils.getTransformationMatrix(
+                mPreviewWidth, mPreviewHeight, croppedBitmapSize, croppedBitmapSize, rotation, true)
 
         mOverlayView?.addRenderable(object : Renderable<Canvas> {
             override fun onRender(t: Canvas) {
-                renderDebug(t)
+                renderOverlay(t)
             }
         })
     }
 
     override fun onImageAvailable(reader: ImageReader?) {
-        if (previewWidth == 0 || previewHeight == 0) {
+        if (mPreviewWidth == 0 || mPreviewHeight == 0) {
             return
         }
 
@@ -259,12 +260,12 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
                         mYuvBytes[0],
                         mYuvBytes[1],
                         mYuvBytes[2],
-                        previewWidth,
-                        previewHeight,
+                        mPreviewWidth,
+                        mPreviewHeight,
                         mYRowStride,
                         uvRowStride,
                         uvPixelStride,
-                        mRgbBytes)
+                        mFrameBytes)
             }
 
             mImageCloser = Runnable {
@@ -282,18 +283,18 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
 
     private fun processImage() {
         mImageConverter?.run()
-        rgbFrameBitmap?.setPixels(mRgbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight)
-        val canvas = Canvas(croppedBitmap)
-        canvas.drawBitmap(rgbFrameBitmap, frameToCropTransform, null)
+        mFrameBitmap?.setPixels(mFrameBytes, 0, mPreviewWidth, 0, 0, mPreviewWidth, mPreviewHeight)
+        val canvas = Canvas(mCroppedBitmap)
+        canvas.drawBitmap(mFrameBitmap, mFrameToCropMatrix, null)
 
         runInBackground(Runnable {
-            cropCopyBitmap = Bitmap.createBitmap(croppedBitmap)
+            cropCopyBitmap = Bitmap.createBitmap(mCroppedBitmap)
             mOverlayView?.postInvalidate()
             mImageCloser?.run()
         })
     }
 
-    private fun renderDebug(canvas: Canvas) {
+    private fun renderOverlay(canvas: Canvas) {
         val copy = cropCopyBitmap
         if (copy != null) {
             val matrix = Matrix()
