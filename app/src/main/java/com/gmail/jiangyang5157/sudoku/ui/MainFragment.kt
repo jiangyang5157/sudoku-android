@@ -1,9 +1,13 @@
 package com.gmail.jiangyang5157.sudoku.ui
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,14 +41,18 @@ class MainFragment : Fragment() {
                 })
             }
             findViewById(R.id.btn_scan)?.setOnClickListener {
-                val desiredPreviewWidth = (findViewById(R.id.et_desired_preview_width) as TextInputEditText).text.trim().toString()
-                        .toInt()
-                val desiredPreviewHeight = (findViewById(R.id.et_desired_preview_height) as TextInputEditText).text.trim().toString()
-                        .toInt()
-                activity.startActivity(Intent(context, FrameCameraActivity::class.java).apply {
-                    putExtra(FrameCameraActivity.KEY_DESIRED_PREVIEW_WIDTH, desiredPreviewWidth)
-                    putExtra(FrameCameraActivity.KEY_DESIRED_PREVIEW_HEIGHT, desiredPreviewHeight)
-                })
+                if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.CAMERA), 1)
+                } else {
+                    val desiredPreviewWidth = (findViewById(R.id.et_desired_preview_width) as TextInputEditText).text.trim().toString()
+                            .toInt()
+                    val desiredPreviewHeight = (findViewById(R.id.et_desired_preview_height) as TextInputEditText).text.trim().toString()
+                            .toInt()
+                    activity.startActivity(Intent(context, FrameCameraActivity::class.java).apply {
+                        putExtra(FrameCameraActivity.KEY_DESIRED_PREVIEW_WIDTH, desiredPreviewWidth)
+                        putExtra(FrameCameraActivity.KEY_DESIRED_PREVIEW_HEIGHT, desiredPreviewHeight)
+                    })
+                }
             }
         }
     }
