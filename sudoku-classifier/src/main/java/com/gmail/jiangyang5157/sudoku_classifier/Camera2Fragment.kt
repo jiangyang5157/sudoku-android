@@ -35,7 +35,6 @@ class Camera2Fragment : Fragment() {
         const val KEY_CAMERA_ID = "KEY_CAMERA_ID"
         const val KEY_DESIRED_SIZE = "KEY_DESIRED_SIZE"
 
-        const val TIMEOUT_CAMERA_OPEN_CLOSE_LOCK: Long = 2500
         const val FORMAT_IMAGE_READER = ImageFormat.YUV_420_888
     }
 
@@ -61,13 +60,13 @@ class Camera2Fragment : Fragment() {
     private var mCallback: Callback? = null
     private var mOnImageAvailableListener: ImageReader.OnImageAvailableListener? = null
 
+    private val mCameraOpenCloseLock = Semaphore(1)
     private lateinit var mCameraId: String
     private var mCameraDevice: CameraDevice? = null
     private var mCaptureSession: CameraCaptureSession? = null
     private var mPreviewRequestBuilder: CaptureRequest.Builder? = null
     private var mPreviewRequest: CaptureRequest? = null
     private var mPreviewReader: ImageReader? = null
-    private val mCameraOpenCloseLock = Semaphore(1)
 
     private lateinit var mDesiredSize: Size
     private lateinit var mPreviewSize: Size
@@ -212,7 +211,7 @@ class Camera2Fragment : Fragment() {
         setUpCameraOutputs()
         configureTransform(width, height)
         try {
-            if (!mCameraOpenCloseLock.tryAcquire(TIMEOUT_CAMERA_OPEN_CLOSE_LOCK, TimeUnit.MILLISECONDS)) {
+            if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 throw RuntimeException("Time out waiting to lock camera opening.")
             }
             activity.cameraManager.openCamera(mCameraId, mStateCallback, mBackgroundHandler)
