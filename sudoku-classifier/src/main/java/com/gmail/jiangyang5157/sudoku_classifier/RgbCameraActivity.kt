@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
+import android.graphics.Paint
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
@@ -22,6 +23,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import com.gmail.jiangyang5157.kotlin_android_kit.ext.instance
 import com.gmail.jiangyang5157.kotlin_android_kit.ext.replaceFragmentInActivity
+import com.gmail.jiangyang5157.kotlin_kit.render.Renderable
 
 /**
  * Created by Yang Jiang on May 06, 2018
@@ -57,10 +59,12 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
     private val INPUT_SIZE = 224
     private val MAINTAIN_ASPECT = true
 
+    private var mOverlayView: OverlayView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(null)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        setContentView(R.layout.container_activity)
+        setContentView(R.layout.activity_rgb_camera)
 
         if (hasPermission()) {
             setContent()
@@ -135,7 +139,9 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
         }) as Camera2Fragment
         camera2Fragment.setCallback(this)
         camera2Fragment.setOnImageAvailableListener(this)
-        replaceFragmentInActivity(R.id.activity_container, camera2Fragment)
+        replaceFragmentInActivity(R.id.camera_container, camera2Fragment)
+
+        mOverlayView = findViewById(R.id.view_overlay) as OverlayView?
     }
 
     private fun chooseCamera(): String? {
@@ -175,20 +181,17 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
         }
     }
 
-    //    @Synchronized
     private fun runInBackground(r: Runnable) {
         mBackgroundHandler?.apply {
             post(r)
         }
     }
 
-    //    @Synchronized
     public override fun onResume() {
         super.onResume()
         startBackgroundThread()
     }
 
-    //    @Synchronized
     public override fun onPause() {
         if (!isFinishing) {
             Log.d(TAG, "onPause: Requesting finish")
@@ -217,6 +220,12 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
                 rotation,
                 MAINTAIN_ASPECT)
         frameToCropTransform?.invert(Matrix())
+
+        mOverlayView?.addRenderable(object : Renderable<Canvas> {
+            override fun onRender(t: Canvas) {
+                renderDebug(t)
+            }
+        })
     }
 
     override fun onImageAvailable(reader: ImageReader?) {
@@ -283,8 +292,22 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
 
         runInBackground(Runnable {
             cropCopyBitmap = Bitmap.createBitmap(croppedBitmap)
+            mOverlayView?.postInvalidate()
             mImageCloser?.run()
         })
+    }
+
+    private fun renderDebug(canvas: Canvas) {
+        val copy = cropCopyBitmap
+        if (copy != null) {
+            val matrix = Matrix()
+            val scaleFactor = 2f
+            matrix.postScale(scaleFactor, scaleFactor)
+            matrix.postTranslate(
+                    canvas.width - copy.width * scaleFactor,
+                    canvas.height - copy.height * scaleFactor)
+            canvas.drawBitmap(copy, matrix, Paint())
+        }
     }
 
 }
