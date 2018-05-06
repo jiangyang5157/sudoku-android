@@ -250,7 +250,11 @@ class FrameCamera2Fragment : Fragment() {
     }
 
     /**
+     * Given [choices] of [Size]s supported by a camera, chooses the smallest one whose
+     * width and height are at least as large as the minimum of [desiredSize], or an exact match the [desiredSize] if possible.
+     *
      * @param choices The list of sizes that the camera supports for the intended output class
+     * @param desiredSize The desired size to choose
      * @return The optimal [Size], or an arbitrary one if none were big enough
      */
     private fun chooseOptimalSize(choices: Array<Size>, desiredSize: Size): Size {
