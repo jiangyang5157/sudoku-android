@@ -43,5 +43,5 @@ dependencies {
     implementation project(':kotlin-kit')
     implementation project(':kotlin-android-kit')
     implementation project(':sudoku-presenter')
-    implementation project(':sudoku-classifier')
+    implementation project(':sudoku-scan')
 }

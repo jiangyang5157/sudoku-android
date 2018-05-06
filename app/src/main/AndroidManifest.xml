@@ -20,7 +20,7 @@
 
         <activity android:name=".ui.SudokuActivity" />
 
-        <activity android:name="com.gmail.jiangyang5157.sudoku_classifier.FrameCameraActivity" />
+        <activity android:name="com.gmail.jiangyang5157.sudoku_scan.ui.FrameCameraActivity" />
 
     </application>
 

@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <com.gmail.jiangyang5157.sudoku_classifier.OverlayView
+    <com.gmail.jiangyang5157.sudoku_scan.widget.overlay.OverlayView
         android:id="@+id/view_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

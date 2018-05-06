@@ -3,4 +3,4 @@ include ':app',
         ':kotlin-android-kit',
         ':go-sudoku',
         ':sudoku-presenter',
-        ':sudoku-classifier'
+        ':sudoku-scan'
