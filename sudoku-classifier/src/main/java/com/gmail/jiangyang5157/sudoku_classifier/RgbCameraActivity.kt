@@ -2,7 +2,6 @@ package com.gmail.jiangyang5157.sudoku_classifier
 
 import android.Manifest
 import android.app.AlertDialog
-import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -10,7 +9,6 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
-import android.hardware.camera2.CameraManager
 import android.media.ImageReader
 import android.os.Bundle
 import android.os.Handler
@@ -21,6 +19,7 @@ import android.util.Log
 import android.util.Size
 import android.view.WindowManager
 import android.widget.Toast
+import com.gmail.jiangyang5157.kotlin_android_kit.ext.cameraManager
 import com.gmail.jiangyang5157.kotlin_android_kit.ext.instance
 import com.gmail.jiangyang5157.kotlin_android_kit.ext.replaceFragmentInActivity
 import com.gmail.jiangyang5157.kotlin_kit.render.Renderable
@@ -34,6 +33,9 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
         const val TAG = "RgbCameraActivity"
         const val TAG_HANDLER_THREAD = "RgbCameraActivity_Handler_Thread"
 
+        const val KEY_DESIRED_PREVIEW_WIDTH = "KEY_DESIRED_PREVIEW_WIDTH"
+        const val KEY_DESIRED_PREVIEW_HEIGHT = "KEY_DESIRED_PREVIEW_HEIGHT"
+
         const val PERMISSION_CAMERA = Manifest.permission.CAMERA
         const val REQUEST_PERMISSION = 1
     }
@@ -43,25 +45,20 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
 
     private var mImageConverter: Runnable? = null
     private var mImageCloser: Runnable? = null
+    private var mIsProcessingFrame = false
 
+    private lateinit var mDesiredSize: Size
     private var mPreviewWidth = 0
     private var mPreviewHeight = 0
     private var mFrameBytes: IntArray? = null
     private var mFrameBitmap: Bitmap? = null
-    private val croppedBitmapSize = 224
-    private var mCroppedBitmap: Bitmap? = null
-    private var mFrameToCropMatrix: Matrix? = null
-
-
-    private val DESIRED_SIZE = Size(640, 480)
-    private var mIsProcessingFrame = false
     private val mYuvBytes = arrayOfNulls<ByteArray?>(3)
-    private var mYRowStride: Int = 0
-
-
-    private var cropCopyBitmap: Bitmap? = null
 
     private var mOverlayView: OverlayView? = null
+
+    private val croppedBitmapSize = 320
+    private var mCroppedFrameBitmap: Bitmap? = null
+    private var mCropFrameMatrix: Matrix? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(null)
@@ -135,9 +132,15 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
             finish()
         }
 
+        intent.extras?.apply {
+            val w = getInt(KEY_DESIRED_PREVIEW_WIDTH, 640)
+            val h = getInt(KEY_DESIRED_PREVIEW_HEIGHT, 480)
+            mDesiredSize = Size(w, h)
+        }
+
         val camera2Fragment = instance<Camera2Fragment>(Bundle().apply {
             putString(Camera2Fragment.KEY_CAMERA_ID, cameraId)
-            putSize(Camera2Fragment.KEY_DESIRED_SIZE, DESIRED_SIZE)
+            putSize(Camera2Fragment.KEY_DESIRED_SIZE, mDesiredSize)
         }) as Camera2Fragment
         camera2Fragment.setCallback(this)
         camera2Fragment.setOnImageAvailableListener(this)
@@ -147,11 +150,9 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
     }
 
     private fun chooseCamera(): String? {
-        val manager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
-
         try {
-            for (cameraId in manager.cameraIdList) {
-                val characteristics = manager.getCameraCharacteristics(cameraId)
+            for (cameraId in cameraManager.cameraIdList) {
+                val characteristics = cameraManager.getCameraCharacteristics(cameraId)
                 characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
                         ?: continue
                 return cameraId
@@ -212,15 +213,17 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
         Log.d(TAG, "Camera orientation relative to screen canvas: $rotation")
 
         mFrameBytes = IntArray(mPreviewWidth * mPreviewHeight)
-        mFrameBitmap = Bitmap.createBitmap(mPreviewWidth, mPreviewHeight, Bitmap.Config.ARGB_8888)
-        mCroppedBitmap = Bitmap.createBitmap(croppedBitmapSize, croppedBitmapSize, Bitmap.Config.ARGB_8888)
+        mFrameBitmap = Bitmap.createBitmap(
+                mPreviewWidth, mPreviewHeight, Bitmap.Config.ARGB_8888)
 
-        mFrameToCropMatrix = ImageUtils.getTransformationMatrix(
+        mCroppedFrameBitmap = Bitmap.createBitmap(
+                croppedBitmapSize, croppedBitmapSize, Bitmap.Config.ARGB_8888)
+        mCropFrameMatrix = ImageUtils.getTransformationMatrix(
                 mPreviewWidth, mPreviewHeight, croppedBitmapSize, croppedBitmapSize, rotation, true)
 
         mOverlayView?.addRenderable(object : Renderable<Canvas> {
             override fun onRender(t: Canvas) {
-                renderOverlay(t)
+                renderCroppedFrame(t)
             }
         })
     }
@@ -232,40 +235,39 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
 
         try {
             val image = reader?.acquireLatestImage() ?: return
-
             if (mIsProcessingFrame) {
                 image.close()
                 return
             }
-            mIsProcessingFrame = true
 
             Trace.beginSection("imageAvailable")
-            val planes = image.planes
+            mIsProcessingFrame = true
 
-            for (i in planes.indices) {
-                val buffer = planes[i].buffer
-                if (mYuvBytes[i] == null) {
-                    Log.d(TAG, "Initializing buffer " + i + " at size " + buffer.capacity())
-                    mYuvBytes[i] = ByteArray(buffer.capacity())
+            val planes = image.planes
+            planes.forEachIndexed { i, plane ->
+                plane.buffer.apply {
+                    if (mYuvBytes[i] == null) {
+                        Log.d(TAG, "Initializing buffer " + i + " at size " + capacity())
+                        mYuvBytes[i] = ByteArray(capacity())
+                    }
+                    get(mYuvBytes[i])
                 }
-                buffer.get(mYuvBytes[i])
             }
 
-            mYRowStride = planes[0].rowStride
+            val yRowStride = planes[0].rowStride
             val uvRowStride = planes[1].rowStride
             val uvPixelStride = planes[1].pixelStride
-
             mImageConverter = Runnable {
                 ImageUtils.convertYuv420ToArgb8888(
-                        mYuvBytes[0],
-                        mYuvBytes[1],
-                        mYuvBytes[2],
+                        mYuvBytes[0]!!,
+                        mYuvBytes[1]!!,
+                        mYuvBytes[2]!!,
                         mPreviewWidth,
                         mPreviewHeight,
-                        mYRowStride,
+                        yRowStride,
                         uvRowStride,
                         uvPixelStride,
-                        mFrameBytes)
+                        mFrameBytes!!)
             }
 
             mImageCloser = Runnable {
@@ -273,37 +275,41 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
                 mIsProcessingFrame = false
             }
 
-            processImage()
+            runInBackground(Runnable {
+                processImage()
+            })
         } catch (e: Exception) {
             Log.d(TAG, "onImageAvailable: Exception $e")
         }
-
         Trace.endSection()
     }
 
     private fun processImage() {
+        // gen frame bytes
         mImageConverter?.run()
-        mFrameBitmap?.setPixels(mFrameBytes, 0, mPreviewWidth, 0, 0, mPreviewWidth, mPreviewHeight)
-        val canvas = Canvas(mCroppedBitmap)
-        canvas.drawBitmap(mFrameBitmap, mFrameToCropMatrix, null)
 
-        runInBackground(Runnable {
-            cropCopyBitmap = Bitmap.createBitmap(mCroppedBitmap)
-            mOverlayView?.postInvalidate()
-            mImageCloser?.run()
-        })
+        // gen frame bitmap
+        mFrameBitmap?.setPixels(mFrameBytes, 0, mPreviewWidth, 0, 0, mPreviewWidth, mPreviewHeight)
+
+        // gen cropped frame bitmap
+        Canvas(mCroppedFrameBitmap).drawBitmap(mFrameBitmap, mCropFrameMatrix, null)
+
+        // draw overlays
+        mOverlayView?.postInvalidate()
+
+        // close image
+        mImageCloser?.run()
     }
 
-    private fun renderOverlay(canvas: Canvas) {
-        val copy = cropCopyBitmap
-        if (copy != null) {
-            val matrix = Matrix()
-            val scaleFactor = 2f
-            matrix.postScale(scaleFactor, scaleFactor)
-            matrix.postTranslate(
-                    canvas.width - copy.width * scaleFactor,
-                    canvas.height - copy.height * scaleFactor)
-            canvas.drawBitmap(copy, matrix, Paint())
+    private fun renderCroppedFrame(canvas: Canvas) {
+        if (mCroppedFrameBitmap != null) {
+            Bitmap.createBitmap(mCroppedFrameBitmap)?.apply {
+                val matrix = Matrix()
+                matrix.postTranslate(
+                        (canvas.width - this.width).toFloat(),
+                        (canvas.height - this.height).toFloat())
+                canvas.drawBitmap(this, matrix, Paint())
+            }
         }
     }
 

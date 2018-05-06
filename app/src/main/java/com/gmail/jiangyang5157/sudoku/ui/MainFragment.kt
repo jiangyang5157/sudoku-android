@@ -25,8 +25,11 @@ class MainFragment : Fragment() {
         view?.apply {
             findViewById(R.id.btn_sudoku)?.setOnClickListener {
                 val edge = (findViewById(R.id.et_edge) as TextInputEditText).text.trim().toString()
+                        .toInt()
                 val subGiven = (findViewById(R.id.et_min_sub_given) as TextInputEditText).text.trim().toString()
+                        .toInt()
                 val totalGiven = (findViewById(R.id.et_min_total_given) as TextInputEditText).text.trim().toString()
+                        .toInt()
                 activity.startActivity(Intent(context, SudokuActivity::class.java).apply {
                     putExtra(SudokuFragment.KEY_EDGE, edge)
                     putExtra(SudokuFragment.KEY_MIN_SUB_GIVEN, subGiven)
@@ -34,8 +37,14 @@ class MainFragment : Fragment() {
                 })
             }
             findViewById(R.id.btn_scan)?.setOnClickListener {
-//                activity.startActivity(Intent(context, ScanActivity::class.java))
-                activity.startActivity(Intent(context, RgbCameraActivity::class.java))
+                val desiredPreviewWidth = (findViewById(R.id.et_desired_preview_width) as TextInputEditText).text.trim().toString()
+                        .toInt()
+                val desiredPreviewHeight = (findViewById(R.id.et_desired_preview_height) as TextInputEditText).text.trim().toString()
+                        .toInt()
+                activity.startActivity(Intent(context, RgbCameraActivity::class.java).apply {
+                    putExtra(RgbCameraActivity.KEY_DESIRED_PREVIEW_WIDTH, desiredPreviewWidth)
+                    putExtra(RgbCameraActivity.KEY_DESIRED_PREVIEW_HEIGHT, desiredPreviewHeight)
+                })
             }
         }
     }

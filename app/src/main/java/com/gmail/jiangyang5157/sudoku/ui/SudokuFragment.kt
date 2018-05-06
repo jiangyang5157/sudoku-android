@@ -39,25 +39,21 @@ class SudokuFragment : Fragment(), SudokuContract.View {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.apply {
-            try {
-                val edge = arguments.getString(KEY_EDGE).toInt()
-                val msg = arguments.getString(KEY_MIN_SUB_GIVEN).toInt()
-                val mtg = arguments.getString(KEY_MIN_TOTAL_GIVEN).toInt()
-                val sqrtE = Math.sqrt(edge.toDouble()).toInt()
-                if (edge > 1 && edge == sqrtE * sqrtE && msg >= 0 && mtg >= 0) {
-                    mSudokuPresenter.generatePuzzle(edge, msg, mtg)
+            val edge = arguments.getInt(KEY_EDGE)
+            val msg = arguments.getInt(KEY_MIN_SUB_GIVEN)
+            val mtg = arguments.getInt(KEY_MIN_TOTAL_GIVEN)
+            val sqrtE = Math.sqrt(edge.toDouble()).toInt()
+            if (edge > 1 && edge == sqrtE * sqrtE && msg >= 0 && mtg >= 0) {
+                mSudokuPresenter.generatePuzzle(edge, msg, mtg)
 
-                    view?.apply {
-                        mKeypadView = findViewById(R.id.view_keypad) as KeypadView
-                        mKeypadView?.setSize(edge)
-                        mKeypadView?.setCallback(keypadViewCallback)
-                        mTerminalView = findViewById(R.id.view_terminal) as TerminalView?
-                        mTerminalView?.isClickable = true
-                    }
-                } else {
-                    activity.finish()
+                view?.apply {
+                    mKeypadView = findViewById(R.id.view_keypad) as KeypadView
+                    mKeypadView?.setSize(edge)
+                    mKeypadView?.setCallback(keypadViewCallback)
+                    mTerminalView = findViewById(R.id.view_terminal) as TerminalView?
+                    mTerminalView?.isClickable = true
                 }
-            } catch (e: NumberFormatException) {
+            } else {
                 activity.finish()
             }
         }
