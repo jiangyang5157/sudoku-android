@@ -17,11 +17,17 @@
         android:layout_alignStart="@id/camera_container"
         android:layout_alignTop="@id/camera_container" />
 
-    <Button
-        android:id="@+id/btn_debug"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/camera_container"
-        android:text="btn_debug" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/camera_container">
+
+        <Button
+            android:id="@+id/btn_debug"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="debug" />
+    </FrameLayout>
 
 </RelativeLayout>

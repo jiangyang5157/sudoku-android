@@ -54,10 +54,9 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
     private var previewHeight = 0
     private var rgbFrameBitmap: Bitmap? = null
     private var croppedBitmap: Bitmap? = null
+    private val croppedBitmapSize = 224
     private var cropCopyBitmap: Bitmap? = null
     private var frameToCropTransform: Matrix? = null
-    private val INPUT_SIZE = 224
-    private val MAINTAIN_ASPECT = true
 
     private var mOverlayView: OverlayView? = null
 
@@ -201,7 +200,6 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
         super.onPause()
     }
 
-
     override fun onPreviewSizeChosen(size: Size, cameraRotation: Int, screenRotation: Int) {
         previewWidth = size.width
         previewHeight = size.height
@@ -212,14 +210,12 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
 
         mRgbBytes = IntArray(previewWidth * previewHeight)
         rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888)
-        croppedBitmap = Bitmap.createBitmap(INPUT_SIZE, INPUT_SIZE, Bitmap.Config.ARGB_8888)
-
+        croppedBitmap = Bitmap.createBitmap(croppedBitmapSize, croppedBitmapSize, Bitmap.Config.ARGB_8888)
         frameToCropTransform = ImageUtils.getTransformationMatrix(
                 previewWidth, previewHeight,
-                INPUT_SIZE, INPUT_SIZE,
+                croppedBitmapSize, croppedBitmapSize,
                 rotation,
-                MAINTAIN_ASPECT)
-        frameToCropTransform?.invert(Matrix())
+                true)
 
         mOverlayView?.addRenderable(object : Renderable<Canvas> {
             override fun onRender(t: Canvas) {
