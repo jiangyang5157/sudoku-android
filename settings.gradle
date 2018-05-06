@@ -1,5 +1,6 @@
-include ':app', ':sudoku-classifier',
+include ':app',
         ':kotlin-kit',
         ':kotlin-android-kit',
         ':go-sudoku',
-        ':sudoku-presenter'
+        ':sudoku-presenter',
+        ':sudoku-classifier'

@@ -3,10 +3,7 @@ package com.gmail.jiangyang5157.sudoku_classifier
 import android.Manifest
 import android.app.AlertDialog
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Matrix
-import android.graphics.Paint
+import android.graphics.*
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
 import android.media.ImageReader
@@ -22,16 +19,17 @@ import android.widget.Toast
 import com.gmail.jiangyang5157.kotlin_android_kit.ext.cameraManager
 import com.gmail.jiangyang5157.kotlin_android_kit.ext.instance
 import com.gmail.jiangyang5157.kotlin_android_kit.ext.replaceFragmentInActivity
+import com.gmail.jiangyang5157.kotlin_kit.render.FpsMeter
 import com.gmail.jiangyang5157.kotlin_kit.render.Renderable
 
 /**
  * Created by Yang Jiang on May 06, 2018
  */
-class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageReader.OnImageAvailableListener {
+class FrameCameraActivity : AppCompatActivity(), FrameCamera2Fragment.Callback, ImageReader.OnImageAvailableListener {
 
     companion object {
-        const val TAG = "RgbCameraActivity"
-        const val TAG_HANDLER_THREAD = "RgbCameraActivity_Handler_Thread"
+        const val TAG = "FrameCameraActivity"
+        const val TAG_HANDLER_THREAD = "FrameCameraActivity_Handler_Thread"
 
         const val KEY_DESIRED_PREVIEW_WIDTH = "KEY_DESIRED_PREVIEW_WIDTH"
         const val KEY_DESIRED_PREVIEW_HEIGHT = "KEY_DESIRED_PREVIEW_HEIGHT"
@@ -48,17 +46,23 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
     private var mIsProcessingFrame = false
 
     private lateinit var mDesiredSize: Size
+    private var mViewWidth = 0
+    private var mViewHeight = 0
     private var mPreviewWidth = 0
     private var mPreviewHeight = 0
     private var mFrameBytes: IntArray? = null
     private var mFrameBitmap: Bitmap? = null
     private val mYuvBytes = arrayOfNulls<ByteArray?>(3)
 
-    private var mOverlayView: OverlayView? = null
+    private val mImageProcessingRate = FpsMeter()
 
-    private val croppedBitmapSize = 320
-    private var mCroppedFrameBitmap: Bitmap? = null
-    private var mCropFrameMatrix: Matrix? = null
+    private var mOverlayView: OverlayView? = null
+    private var mDebugText: FrameText? = null
+
+    private val mCroppedWidth = 320
+    private val mCroppedHeight = 320
+    private var mCroppedBitmap: Bitmap? = null
+    private var mCropMatrix: Matrix? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(null)
@@ -138,10 +142,10 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
             mDesiredSize = Size(w, h)
         }
 
-        val camera2Fragment = instance<Camera2Fragment>(Bundle().apply {
-            putString(Camera2Fragment.KEY_CAMERA_ID, cameraId)
-            putSize(Camera2Fragment.KEY_DESIRED_SIZE, mDesiredSize)
-        }) as Camera2Fragment
+        val camera2Fragment = instance<FrameCamera2Fragment>(Bundle().apply {
+            putString(FrameCamera2Fragment.KEY_CAMERA_ID, cameraId)
+            putSize(FrameCamera2Fragment.KEY_DESIRED_SIZE, mDesiredSize)
+        }) as FrameCamera2Fragment
         camera2Fragment.setCallback(this)
         camera2Fragment.setOnImageAvailableListener(this)
         replaceFragmentInActivity(R.id.camera_container, camera2Fragment)
@@ -204,10 +208,17 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
         super.onPause()
     }
 
-    override fun onPreviewSizeChosen(size: Size, cameraRotation: Int, screenRotation: Int) {
-        mPreviewWidth = size.width
-        mPreviewHeight = size.height
-        Log.d(TAG, "Initializing at size $mPreviewWidth, $mPreviewHeight")
+    override fun onViewSizeChanged(viewWidth: Int, viewHeight: Int) {
+        Log.d(TAG, "onViewSizeChanged: $viewWidth")
+        mViewWidth = viewWidth
+        mViewHeight = viewHeight
+        mDebugText = FrameText(size = 40f, color = Color.RED, x = 20f, y = viewHeight.toFloat() - 20)
+    }
+
+    override fun onPreviewSizeChosen(previewSize: Size, cameraRotation: Int, screenRotation: Int) {
+        Log.d(TAG, "onPreviewSizeChosen: $previewSize")
+        mPreviewWidth = previewSize.width
+        mPreviewHeight = previewSize.height
 
         val rotation = cameraRotation - screenRotation
         Log.d(TAG, "Camera orientation relative to screen canvas: $rotation")
@@ -216,14 +227,20 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
         mFrameBitmap = Bitmap.createBitmap(
                 mPreviewWidth, mPreviewHeight, Bitmap.Config.ARGB_8888)
 
-        mCroppedFrameBitmap = Bitmap.createBitmap(
-                croppedBitmapSize, croppedBitmapSize, Bitmap.Config.ARGB_8888)
-        mCropFrameMatrix = ImageUtils.getTransformationMatrix(
-                mPreviewWidth, mPreviewHeight, croppedBitmapSize, croppedBitmapSize, rotation, true)
+        mCroppedBitmap = Bitmap.createBitmap(
+                mCroppedWidth, mCroppedHeight, Bitmap.Config.ARGB_8888)
+        mCropMatrix = ImageUtils.getTransformationMatrix(
+                mPreviewWidth, mPreviewHeight, mCroppedWidth, mCroppedHeight, rotation, true)
 
         mOverlayView?.addRenderable(object : Renderable<Canvas> {
             override fun onRender(t: Canvas) {
-                renderCroppedFrame(t)
+                renderDebug(t)
+            }
+        })
+
+        mOverlayView?.addRenderable(object : Renderable<Canvas> {
+            override fun onRender(t: Canvas) {
+                renderCrop(t)
             }
         })
     }
@@ -237,6 +254,10 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
             val image = reader?.acquireLatestImage() ?: return
             if (mIsProcessingFrame) {
                 image.close()
+                return
+            }
+
+            if (!mImageProcessingRate.accept()) {
                 return
             }
 
@@ -292,7 +313,7 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
         mFrameBitmap?.setPixels(mFrameBytes, 0, mPreviewWidth, 0, 0, mPreviewWidth, mPreviewHeight)
 
         // gen cropped frame bitmap
-        Canvas(mCroppedFrameBitmap).drawBitmap(mFrameBitmap, mCropFrameMatrix, null)
+        Canvas(mCroppedBitmap).drawBitmap(mFrameBitmap, mCropMatrix, null)
 
         // draw overlays
         mOverlayView?.postInvalidate()
@@ -301,9 +322,20 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
         mImageCloser?.run()
     }
 
-    private fun renderCroppedFrame(canvas: Canvas) {
-        if (mCroppedFrameBitmap != null) {
-            Bitmap.createBitmap(mCroppedFrameBitmap)?.apply {
+    private fun renderDebug(t: Canvas) {
+        mDebugText?.apply {
+            lines.clear()
+            lines.add("Image Processing Rate: ${mImageProcessingRate.fpsRealTime}")
+            lines.add("View Size: ${mViewWidth}x$mViewHeight")
+            lines.add("Preview Size: ${mPreviewWidth}x$mPreviewHeight")
+            lines.add("Cropped Image Size: ${mCroppedWidth}x$mCroppedHeight")
+            onRender(t)
+        }
+    }
+
+    private fun renderCrop(canvas: Canvas) {
+        if (mCroppedBitmap != null) {
+            Bitmap.createBitmap(mCroppedBitmap)?.apply {
                 val matrix = Matrix()
                 matrix.postTranslate(
                         (canvas.width - this.width).toFloat(),

@@ -18,7 +18,7 @@
 
         <activity android:name=".ui.SudokuActivity" />
 
-        <activity android:name="com.gmail.jiangyang5157.sudoku_classifier.RgbCameraActivity" />
+        <activity android:name="com.gmail.jiangyang5157.sudoku_classifier.FrameCameraActivity" />
 
     </application>
 

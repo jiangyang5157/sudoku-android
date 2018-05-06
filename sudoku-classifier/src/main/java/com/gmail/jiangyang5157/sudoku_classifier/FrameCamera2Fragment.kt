@@ -26,11 +26,11 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by Yang Jiang on May 06, 2018
  */
-class Camera2Fragment : Fragment() {
+class FrameCamera2Fragment : Fragment() {
 
     companion object {
-        const val TAG = "Camera2Fragment"
-        const val TAG_HANDLER_THREAD = "Camera2Fragment_Handler_Thread"
+        const val TAG = "FrameCamera2Fragment"
+        const val TAG_HANDLER_THREAD = "FrameCamera2Fragment_Handler_Thread"
 
         const val KEY_CAMERA_ID = "KEY_CAMERA_ID"
         const val KEY_DESIRED_SIZE = "KEY_DESIRED_SIZE"
@@ -39,7 +39,8 @@ class Camera2Fragment : Fragment() {
     }
 
     interface Callback {
-        fun onPreviewSizeChosen(size: Size, cameraRotation: Int, screenRotation: Int)
+        fun onViewSizeChanged(viewWidth: Int, viewHeight: Int)
+        fun onPreviewSizeChosen(previewSize: Size, cameraRotation: Int, screenRotation: Int)
     }
 
     /**
@@ -90,6 +91,7 @@ class Camera2Fragment : Fragment() {
 
         override fun onSurfaceTextureSizeChanged(texture: SurfaceTexture, width: Int, height: Int) {
             configureTransform(width, height)
+            mCallback?.onViewSizeChanged(width, height)
         }
 
         override fun onSurfaceTextureDestroyed(texture: SurfaceTexture): Boolean {
@@ -207,9 +209,9 @@ class Camera2Fragment : Fragment() {
     /**
      * Opens the camera specified by [CameraFragment.mCameraId].
      */
-    private fun openCamera(width: Int, height: Int) {
+    private fun openCamera(viewWidth: Int, viewHeight: Int) {
         setUpCameraOutputs()
-        configureTransform(width, height)
+        configureTransform(viewWidth, viewHeight)
         try {
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 throw RuntimeException("Time out waiting to lock camera opening.")

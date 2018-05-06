@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.gmail.jiangyang5157.sudoku.R
-import com.gmail.jiangyang5157.sudoku_classifier.RgbCameraActivity
+import com.gmail.jiangyang5157.sudoku_classifier.FrameCameraActivity
 
 /**
  * Created by Yang Jiang on April 21, 2018
@@ -41,9 +41,9 @@ class MainFragment : Fragment() {
                         .toInt()
                 val desiredPreviewHeight = (findViewById(R.id.et_desired_preview_height) as TextInputEditText).text.trim().toString()
                         .toInt()
-                activity.startActivity(Intent(context, RgbCameraActivity::class.java).apply {
-                    putExtra(RgbCameraActivity.KEY_DESIRED_PREVIEW_WIDTH, desiredPreviewWidth)
-                    putExtra(RgbCameraActivity.KEY_DESIRED_PREVIEW_HEIGHT, desiredPreviewHeight)
+                activity.startActivity(Intent(context, FrameCameraActivity::class.java).apply {
+                    putExtra(FrameCameraActivity.KEY_DESIRED_PREVIEW_WIDTH, desiredPreviewWidth)
+                    putExtra(FrameCameraActivity.KEY_DESIRED_PREVIEW_HEIGHT, desiredPreviewHeight)
                 })
             }
         }
