@@ -27,9 +27,7 @@ class OverlayView : View {
     @Synchronized
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-        for (renderable in renderables) {
-            renderable.onRender(canvas)
-        }
+        renderables.forEach { it.onRender(canvas) }
     }
 
 }
