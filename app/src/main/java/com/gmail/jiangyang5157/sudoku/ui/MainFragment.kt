@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.gmail.jiangyang5157.sudoku.R
-import com.gmail.jiangyang5157.sudoku_classifier.ClassifierActivity
+import com.gmail.jiangyang5157.sudoku_classifier.RgbCameraActivity
 
 /**
  * Created by Yang Jiang on April 21, 2018
@@ -35,7 +35,7 @@ class MainFragment : Fragment() {
             }
             findViewById(R.id.btn_scan)?.setOnClickListener {
 //                activity.startActivity(Intent(context, ScanActivity::class.java))
-                activity.startActivity(Intent(context, ClassifierActivity::class.java))
+                activity.startActivity(Intent(context, RgbCameraActivity::class.java))
             }
         }
     }

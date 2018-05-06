@@ -20,7 +20,7 @@
 
         <activity android:name=".ui.ScanActivity" />
 
-        <activity android:name="com.gmail.jiangyang5157.sudoku_classifier.ClassifierActivity" />
+        <activity android:name="com.gmail.jiangyang5157.sudoku_classifier.RgbCameraActivity" />
 
     </application>
 
