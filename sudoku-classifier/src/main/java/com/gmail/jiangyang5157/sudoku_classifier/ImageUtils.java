@@ -7,7 +7,10 @@ public class ImageUtils {
 
     public static final String TAG = "ImageUtils";
 
-    public static int getYUVByteSize(final int width, final int height) {
+    // It's used to clamp the RGB values before their ranges are normalized to eight bits.
+    private static final int MAX_K = 262143; // 2 ^ 18 - 1
+
+    public static int getYuvByteSize(final int width, final int height) {
         // The luminance plane requires 1 byte per pixel.
         final int ySize = width * height;
 
@@ -18,34 +21,7 @@ public class ImageUtils {
         return ySize + uvSize;
     }
 
-    // It's used to clamp the RGB values before their ranges are normalized to eight bits.
-    static final int kMaxChannelValue = 262143; // 2 ^ 18 - 1
-
-    public static void convertYUV420SPToARGB8888(
-            byte[] input,
-            int width,
-            int height,
-            int[] output) {
-
-        final int frameSize = width * height;
-        for (int j = 0, yp = 0; j < height; j++) {
-            int uvp = frameSize + (j >> 1) * width;
-            int u = 0;
-            int v = 0;
-
-            for (int i = 0; i < width; i++, yp++) {
-                int y = 0xff & input[yp];
-                if ((i & 1) == 0) {
-                    v = 0xff & input[uvp++];
-                    u = 0xff & input[uvp++];
-                }
-
-                output[yp] = YUV2RGB(y, u, v);
-            }
-        }
-    }
-
-    private static int YUV2RGB(int y, int u, int v) {
+    private static int Yuv2Rgb(int y, int u, int v) {
         // Adjust and check YUV values
         y = (y - 16) < 0 ? 0 : (y - 16);
         u -= 128;
@@ -61,15 +37,15 @@ public class ImageUtils {
         int g = (y1192 - 833 * v - 400 * u);
         int b = (y1192 + 2066 * u);
 
-        // Clipping RGB values to be inside boundaries [ 0 , kMaxChannelValue ]
-        r = r > kMaxChannelValue ? kMaxChannelValue : (r < 0 ? 0 : r);
-        g = g > kMaxChannelValue ? kMaxChannelValue : (g < 0 ? 0 : g);
-        b = b > kMaxChannelValue ? kMaxChannelValue : (b < 0 ? 0 : b);
+        // Clipping RGB values to be inside boundaries [ 0 , MAX_K ]
+        r = r > MAX_K ? MAX_K : (r < 0 ? 0 : r);
+        g = g > MAX_K ? MAX_K : (g < 0 ? 0 : g);
+        b = b > MAX_K ? MAX_K : (b < 0 ? 0 : b);
 
         return 0xff000000 | ((r << 6) & 0xff0000) | ((g >> 2) & 0xff00) | ((b >> 10) & 0xff);
     }
 
-    public static void convertYUV420ToARGB8888(
+    public static void convertYuv420ToArgb8888(
             byte[] yData,
             byte[] uData,
             byte[] vData,
@@ -88,10 +64,34 @@ public class ImageUtils {
             for (int i = 0; i < width; i++) {
                 int uv_offset = pUV + (i >> 1) * uvPixelStride;
 
-                out[yp++] = YUV2RGB(
+                out[yp++] = Yuv2Rgb(
                         0xff & yData[pY + i],
                         0xff & uData[uv_offset],
                         0xff & vData[uv_offset]);
+            }
+        }
+    }
+
+    public static void convertYuv420SpToArgb8888(
+            byte[] input,
+            int width,
+            int height,
+            int[] output) {
+
+        final int frameSize = width * height;
+        for (int j = 0, yp = 0; j < height; j++) {
+            int uvp = frameSize + (j >> 1) * width;
+            int u = 0;
+            int v = 0;
+
+            for (int i = 0; i < width; i++, yp++) {
+                int y = 0xff & input[yp];
+                if ((i & 1) == 0) {
+                    v = 0xff & input[uvp++];
+                    u = 0xff & input[uvp++];
+                }
+
+                output[yp] = Yuv2Rgb(y, u, v);
             }
         }
     }
@@ -117,8 +117,8 @@ public class ImageUtils {
             final int dstHeight,
             final int applyRotation,
             final boolean maintainAspectRatio) {
-        final Matrix matrix = new Matrix();
 
+        final Matrix matrix = new Matrix();
         if (applyRotation != 0) {
             if (applyRotation % 90 != 0) {
                 Log.w(TAG, "Rotation of " + applyRotation + " % 90 != 0");

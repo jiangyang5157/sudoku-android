@@ -255,7 +255,7 @@ class RgbCameraActivity : AppCompatActivity(), Camera2Fragment.Callback, ImageRe
             val uvPixelStride = planes[1].pixelStride
 
             mImageConverter = Runnable {
-                ImageUtils.convertYUV420ToARGB8888(
+                ImageUtils.convertYuv420ToArgb8888(
                         mYuvBytes[0],
                         mYuvBytes[1],
                         mYuvBytes[2],
