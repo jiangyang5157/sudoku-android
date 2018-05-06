@@ -10,17 +10,6 @@ object ImageUtils {
     // It's used to clamp the RGB values before their ranges are normalized to eight bits.
     private const val MAX_K = 262143 // 2 ^ 18 - 1
 
-    fun getYuvByteSize(width: Int, height: Int): Int {
-        // The luminance plane requires 1 byte per pixel.
-        val ySize = width * height
-
-        // The UV plane works on 2x2 blocks, so dimensions with odd size must be rounded up.
-        // Each 2x2 block takes 2 bytes to encode, one each for U and V.
-        val uvSize = (width + 1) / 2 * ((height + 1) / 2) * 2
-
-        return ySize + uvSize
-    }
-
     private fun Yuv2Rgb(y: Int, u: Int, v: Int): Int {
         // Adjust and check YUV values
         val y = if (y - 16 < 0) 0 else y - 16
@@ -69,36 +58,6 @@ object ImageUtils {
                         0xff and uData[uvOffset].toInt(),
                         0xff and vData[uvOffset].toInt())
             }
-        }
-    }
-
-    fun convertYuv420SpToArgb8888(
-            input: ByteArray,
-            width: Int,
-            height: Int,
-            output: IntArray) {
-
-        val frameSize = width * height
-        var j = 0
-        var yp = 0
-        while (j < height) {
-            var uvp = frameSize + (j shr 1) * width
-            var u = 0
-            var v = 0
-
-            var i = 0
-            while (i < width) {
-                val y = 0xff and input[yp].toInt()
-                if (i and 1 == 0) {
-                    v = 0xff and input[uvp++].toInt()
-                    u = 0xff and input[uvp++].toInt()
-                }
-
-                output[yp] = Yuv2Rgb(y, u, v)
-                i++
-                yp++
-            }
-            j++
         }
     }
 
